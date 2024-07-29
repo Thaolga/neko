@@ -94,7 +94,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         height: 320px; 
         margin: 50px auto;
         padding: 20px;     
-        background: url('/nekoclash/assets/img/3.jpg') no-repeat center center;
+        background: url('/nekoclash/assets/img/3.svg') no-repeat center center;
         background-size: cover;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         display: flex;
