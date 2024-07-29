@@ -1,1 +1,1 @@
-/etc/neko/config/nosignal2.yaml
+/etc/neko/config/NekoClash.yaml

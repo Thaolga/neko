@@ -9,8 +9,9 @@ if(isset($_POST['url'])){
     if ($basebuff['scheme'] == "vless") parseUrl($basebuff,$tmpdata);
     else if ($basebuff['scheme'] == "vmess") parseVmess($basebuff,$tmpdata);
     else if ($basebuff['scheme'] == "trojan") parseUrl($basebuff,$tmpdata);
+    else if ($basebuff['scheme'] == "hysteria2") parseUrl($basebuff,$tmpdata);
     else if ($basebuff['scheme'] == "ss") parseUrl($basebuff,$tmpdata);
-    else exec("echo \"ERROR, PLEASE CHECK YOUR URL!\ntrojan://...\nvless://...\nss://...\nvmess://...\nYOU ENTERED : $tmp\" > $tmpdata");
+    else exec("echo \"ERROR, PLEASE CHECK YOUR URL!\ntrojan://...\nhysteria2://...\nvless://...\nss://...\nvmess://...\nYOU ENTERED : $tmp\" > $tmpdata");
 }
 function parseVmess($base,$tmpdata){
     $decoded = base64_decode($base['host']);
@@ -130,6 +131,33 @@ function printcfg($data,$tmpdata){
         $outcfg .= "  skip-cert-verify: true \n";
         exec("echo \"$outcfg\" > $tmpdata");
         //echo $outcfg;
+       }
+        else if ($data['cfgtype'] == "hysteria2" ){
+        if(!empty($data['name'])) $outcfg .= "- name: ".$data['name']."\n";
+        else $outcfg .= "- name: HYSTERIA2\n";
+        $outcfg .= "  type: ".$data['cfgtype']."\n";
+        $outcfg .= "  server: ".$data['host']."\n";
+        $outcfg .= "  port: ".$data['port']."\n";
+        $outcfg .= "  password: ".$data['uuid']."\n";
+        if(!empty($data['sni'])) $outcfg .= "  sni: ".$data['sni']."\n";
+        else $outcfg .= "  sni: ".$data['host']."\n";
+        if ($data['type'] == "ws"){
+            $outcfg .= "  network: ".$data['type']."\n";
+            $outcfg .= "  ws-opts: \n";
+            $outcfg .= "   path: ".$data['path']."\n";
+            $outcfg .= "   Headers: \n";
+            $outcfg .= "      Host: ".$data['host']."\n";
+        }
+        else if($data['type'] == "grpc"){
+            $outcfg .= "  network: ".$data['type']."\n";
+            $outcfg .= "  grpc-opts: \n";
+            $outcfg .= "   grpc-service-name: ".$data['serviceName']."\n";
+        }
+        $outcfg .= "  up: 500\n";
+        $outcfg .= "  down: 500\n";
+        $outcfg .= "  skip-cert-verify: true \n";
+        exec("echo \"$outcfg\" > $tmpdata");
+        //echo $outcfg;
     }
     else if ($data['cfgtype'] == "ss" ){
         if(!empty($data['name'])) $outcfg .= "- name: ".$data['name']."\n";
@@ -229,8 +257,8 @@ shell_exec("rm -f $tmpdata");
             <div class="container text-center justify-content-md-center">
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
-                        <input type="text" class="form-control" name="url" placeholder="Paste Here">
-                        <input class="btn btn-info col-2" type="submit" value="Convert">
+                        <input type="text" class="form-control" name="url" placeholder="贴在这里">
+                        <input class="btn btn-info col-2" type="submit" value="选择">
                     </div>
                 </div>
             </div>
@@ -239,7 +267,7 @@ shell_exec("rm -f $tmpdata");
             <textarea name="dt" class="form-control" rows="16"><?php echo $strdata ?></textarea>
         </div>
         <div>
-            <a>Supported : </br>TROJAN(GFW, WS TLS/NTLS, GRPC)</br>VMESS(WS TLS/NTLS, HTTP, H2, GRPC)</br>VLESS(WS TLS/NTLS, XTLS, GRPC)</br>SS(DIRECT, OBFS, V2RAY/XRAY-PLUGIN)</a>
+            <a>支援 : </br>TROJAN(GFW, WS TLS/NTLS, GRPC)</br>HYSTERIA2(GFW, WS TLS/NTLS, GRPC)</br>VMESS(WS TLS/NTLS, HTTP, H2, GRPC)</br>VLESS(WS TLS/NTLS, XTLS, GRPC)</br>SS(DIRECT, OBFS, V2RAY/XRAY-PLUGIN)</a>
         </div>
     </div>
   </body>

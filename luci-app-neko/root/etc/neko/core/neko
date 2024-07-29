@@ -24,11 +24,11 @@ php_pid_path="$neko_tmp_dir/php_pid.txt"
 log="$neko_dir/tmp/log.txt"
 
 core_ver="neko"
-url_core="https://github.com/nosignals/neko/releases/download/core_neko"
+url_core="https://github.com/Thaolga/neko/releases/download/core_neko"
 url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
 
 neko_ver(){
-    neko_version="0.0.0-beta"
+    neko_version="1.1.14-beta"
 }
 
 logs() {
@@ -44,7 +44,7 @@ logs() {
 }
 
 neko_checknewver(){
-    new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/nosignals/neko/luci-app-neko/neko_version)
+    new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/Thaolga/neko/luci-app-neko/neko_version)
     if [ $neko_version = $new_version ] || [ -z $new_version ]; then
         strversion="- Latest"
     else

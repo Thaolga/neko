@@ -38,21 +38,61 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
     <script type="text/javascript" src="./assets/js/neko.js"></script>
   </head>
   <body>
+<head>
+    <meta charset="UTF-8">
+   <head>
+    <meta charset="UTF-8">
+      <title>双击显示图标</title>
+    <style>
+        .container-sm {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
     <div class="container-sm text-center col-8">
-	    <img src="./assets/img/neko.png" class="img-fluid mb-5">
+        <img src="./assets/img/neko.png" class="img-fluid mb-5" style="display: none;">
     </div>
+
+    <script>
+        function toggleImage() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'none') {
+                img.style.display = 'block';
+                btn.innerText = '隐藏图标';
+            } else {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        function hideIcon() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'block') {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        document.body.ondblclick = function() {
+            toggleImage();
+        };
+    </script>
+
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
-            <a href="./" class="col btn btn-lg">Home</a>
-            <a href="./dashboard.php" class="col btn btn-lg">Dashboard</a>
-            <a href="./configs.php" class="col btn btn-lg">Configs</a>
-            <a href="#" class="col btn btn-lg">Settings</a>
+            <a href="./" class="col btn btn-lg">首页</a>
+            <a href="./dashboard.php" class="col btn btn-lg">仪表板</a>
+            <a href="./configs.php" class="col btn btn-lg">配置</a>
+            <a href="#" class="col btn btn-lg">设定</a>
         </div>
     </div>
     <div class="container text-left p-3">
-        <h1 class="text-center p-2 mb-3">Settings</h1>
+       
         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-        <h2 class="text-center p-2 mb-3">Theme Setting</h2>
+        <h2 class="text-center p-2 mb-3">主题设定</h2>
             <form action="settings.php" method="post">
                 <div class="container text-center justify-content-md-center">
                     <div class="row justify-content-md-center">
@@ -64,34 +104,34 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                         </div>
                         <div class="row justify-content-md-center">
                             <div class="col justify-content-md-center mb-3">
-                              <input class="btn btn-info" type="submit" value="Change Theme">
+                              <input class="btn btn-info" type="submit" value="更改主题">
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <h2 class="text-center p-2 mb-3">Software Information</h2>
+            <h2 class="text-center p-2 mb-3">软体资讯</h2>
             <table class="table table-borderless mb-3">
                 <tbody>
                     <tr>
-                        <td class="col-2">Auto Reload Firewall</td>
+                        <td class="col-2">自动重新载入防火墙</td>
                         <form action="settings.php" method="post">
                             <td class="d-grid">
                                 <div class="btn-group col" role="group" aria-label="ctrl">
-                                    <button type="submit" name="fw" value="enable" class="btn btn<?php if($fwstatus==1) echo "-outline" ?>-success <?php if($fwstatus==1) echo "disabled" ?> d-grid">Enable</button>
-                                    <button type="submit" name="fw" value="disable" class="btn btn<?php if($fwstatus==0) echo "-outline" ?>-danger <?php if($fwstatus==0) echo "disabled" ?> d-grid">Disable</button>
+                                    <button type="submit" name="fw" value="enable" class="btn btn<?php if($fwstatus==1) echo "-outline" ?>-success <?php if($fwstatus==1) echo "disabled" ?> d-grid">启用</button>
+                                    <button type="submit" name="fw" value="disable" class="btn btn<?php if($fwstatus==0) echo "-outline" ?>-danger <?php if($fwstatus==0) echo "disabled" ?> d-grid">停用</button>
                                 </div>
                             </td>
                         </form>
                     </tr>
                     <tr>
-                        <td class="col-2">Client Version</td>
+                        <td class="col-2">客戶端版本</td>
                         <td class="col-4">
                             <div class="form-control text-center" id="cliver">-</div>
                         </td>
                     </tr>
                     <tr>
-                        <td class="col-2">Core Version</td>
+                        <td class="col-2">核心版本</td>
                         <td class="col-4">
                             <div class="form-control text-center" id="corever">-</div>
                         </td>
@@ -100,13 +140,13 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
             </table>
         </div>
         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-            <h2 class="text-center p-2 mb-3">About</h2>
+            <h2 class="text-center p-2 mb-3">关於</h2>
             <div class="container text-center border border-3 rounded-4 col-10 mb-4">
                 </br>
                 <h5 class="mb-3">NekoClash</h5>
-                <p>NekoClash is a family friendly Clash Proxy tool, this tool makes it easy for users to use Clash Proxy, and User can modify your own Theme based Bootstrap, inspired by OpenClash Tools. NekoClash has writen by PHP, and BASH.</p>
-                <p>This tool aims to make it easier to use Clash Proxy</p>
-                <p>If you have questions or feedback about NekoClash you can contact me on the <b>DBAI Discord Server</b> link below</p>
+                <p>NekoClash是一款适合家庭的Clash代理工具,该工具使用戶可以轻松使用Clash代理,NekoClash由PHP和BASH编写。</p>
+                <p>该工具旨在让Clash代理的使用更加容易</p>
+                <p>如果您对NekoClash有疑问或反馈，可以透过下方链接与我联系</b>
                 <table class="table table-borderless callout mb-5">
                     <tbody>
                         <tr class="text-center">
@@ -127,7 +167,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                         </tr>
                     </tbody>
                 </table>
-                <h5 class="mb-3">External Links</h5>
+                <h5 class="mb-3">外部链接</h5>
                 <table class="table table-borderless callout mb-5">
                     <tbody>
                         <tr class="text-center">
@@ -148,10 +188,11 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                         </tr>
                     </tbody>
                 </table>
-                <p>Please don't <b>CHANGE</b> or <b>REMOVE</b> this Credit!.</p>
+          
             </div>
         </div>
     </div>
+    
     <footer class="text-center">
         <p><?php echo $footer ?></p>
     </footer>

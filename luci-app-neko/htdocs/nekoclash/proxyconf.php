@@ -39,14 +39,14 @@ if(isset($_POST['newproxycfg'])){
   <body class="container-bg">
     <div class="container text-center justify-content-md-center mb-3"></br>
         <form action="proxyconf.php" method="post">
-            <div class="container text-center justify-content-md-center">
+            <div class="container text-center justify-content-md-center"
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
                       <select class="form-select" name="proxycfg" aria-label="themex">
-                        <option selected>Select Proxy</option>
+                        <option selected>选择代理</option>
                         <?php foreach ($arrFiles as $file) echo "<option value=\"".$file.'">'.$file."</option>" ?>
                       </select>
-                      <input class="btn btn-info" type="submit" value="Select">
+                      <input class="btn btn-info" type="submit" value="选择">
                     </div>
                 </div>
             </div>
@@ -66,16 +66,18 @@ if(isset($_POST['newproxycfg'])){
                 </div>
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
-                        <input class="btn btn-info" type="submit" value="Save Proxy">
+                        <input class="btn btn-info" type="submit" value="保存代理">
                     </div>
                 </div>
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
-                      <?php if(!empty($strNewProxy)) echo "<h5>Proxy SUCCESSFULLY SAVED</h5>" ?>
+                      <?php if(!empty($strNewProxy)) echo "<h5>代理修改成功</h5>" ?>
                     </div>
                 </div>
             </div>
-        </form>
+        </form>  
+           <h5 class="text-center p-2">使用教程</h5>
+           <a style="color: yellow;">代理文件路径/etc/neko/proxy_provider。配置文件组成部分HKList.yaml / JPList.yaml / KRList.yaml / SGList.yaml / TWList.yaml / USList.yaml / VNList.yaml 用户可以手动修改添加clash代理，也可以直接拿clash配置文件重命名为组成部分上传到代理目录，想要订阅的小伙伴可以修改etc/neko/config里面的配置文件NekoClash.yaml 在里面找到机场订阅替换为你的机场链接</a>  
         </div>
     </div>
   </body>

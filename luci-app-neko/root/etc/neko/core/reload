@@ -12,7 +12,7 @@ firewall="/etc/init.d/firewall"
 neko_version=$1
 
 neko_checknewver(){
-    new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/nosignals/neko/luci-app-neko/neko_version)
+    new_version=$(curl -m 5 -f -s https://raw.githubusercontent.com/Thaolga/neko/luci-app-neko/neko_version)
     if [ $neko_version == $new_version ] || [ -z $new_version ]; then
         strversion="- Latest"
     else

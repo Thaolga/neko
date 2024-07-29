@@ -22,21 +22,59 @@ $meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hos
     <script type="text/javascript" src="./assets/js/jquery-2.1.3.min.js"></script>
   </head>
   <body>
+<head>
+    <meta charset="UTF-8">
+    <title>双击显示图标</title>
+    <style>
+        .container-sm {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
     <div class="container-sm text-center col-8">
-	    <img src="./assets/img/neko.png" class="img-fluid mb-5">
+        <img src="./assets/img/neko.png" class="img-fluid mb-5" style="display: none;">
     </div>
+
+    <script>
+        function toggleImage() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'none') {
+                img.style.display = 'block';
+                btn.innerText = '隐藏图标';
+            } else {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        function hideIcon() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'block') {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        document.body.ondblclick = function() {
+            toggleImage();
+        };
+    </script>
+
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
-            <a href="./" class="col btn btn-lg">Home</a>
-            <a href="#" class="col btn btn-lg">Dashboard</a>
-            <a href="./configs.php" class="col btn btn-lg">Configs</a>
-            <a href="./settings.php" class="col btn btn-lg">Settings</a>
+            <a href="./" class="col btn btn-lg">首页</a>
+            <a href="#" class="col btn btn-lg">仪表板</a>
+            <a href="./configs.php" class="col btn btn-lg">配置</a>
+            <a href="./settings.php" class="col btn btn-lg">设定</a>
         </div>
     </div>
     <div class="container text-left p-3">
-        <h1 class="text-center p-2 mb-3">Dashboard</h1>
+      
         <div class="container-fluid container-bg border border-3 rounded-4 mb-3">
-            <h2 class="text-center p-2">Meta YACD</h2>
+            <h2 class="text-center p-2">Meta面板</h2>
             <table class="table table-borderless callout mb-2">
                 <tbody>
                     <tr class="text-center callout">
@@ -46,10 +84,11 @@ $meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hos
                 </tbody>
             </table>
             <div class="container h-100 mb-5">
-                <iframe class="border border-3 rounded-4 w-100" height="700" src="http://<?=$yacd_link ?>" title="yacd" allowfullscreen></iframe>
+                <iframe class="border border-3 rounded-4 w-100" height="2000" src="http://<?=$yacd_link ?>" title="yacd" allowfullscreen></iframe>
             </div>
         </div>
     </div>
+ 
     <footer class="text-center">
         <p><?php echo $footer ?></p>
     </footer>
