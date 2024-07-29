@@ -39,7 +39,7 @@ if(isset($_POST['newproxycfg'])){
   <body class="container-bg">
     <div class="container text-center justify-content-md-center mb-3"></br>
         <form action="proxyconf.php" method="post">
-            <div class="container text-center justify-content-md-center"
+            <div class="container text-center justify-content-md-center">
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
                       <select class="form-select" name="proxycfg" aria-label="themex">
