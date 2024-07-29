@@ -174,14 +174,12 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
 
     .petal {
         position: absolute;
-        top: -10px;
-        width: 10px;
-        height: 10px;
-        background-color: pink;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background: pink;
         border-radius: 50%;
-        opacity: 0.8;
-        pointer-events: none;
-        animation: fall linear infinite;
+        animation: fall linear;
     }
 
        #hidePlayer {
@@ -251,7 +249,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 player.style.animationPlayState = 'paused'; 
             }
         }
-     function createPetal() {
+        function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
             petal.style.left = Math.random() * 100 + 'vw';
@@ -263,7 +261,14 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             });
         }
 
-        setInterval(createPetal, 300);
+        setInterval(createPetal, 50);
+		
+		function clearAllPetals() {
+            const petals = document.querySelectorAll('.petal');
+            petals.forEach(petal => petal.remove());
+        }
+
+        setTimeout(clearAllPetals, 10000);
 
         function updateTime() {
             var now = new Date();
