@@ -145,10 +145,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
             <table class="table table-borderless mb-2">
                 <tbody>
                     <tr>
-                        <td>设备型号</td>
-                        <td style="color: <?php echo $color; ?>;"><?php echo "$devices $cpuFreq Mhz & $cpuTemp  ℃" ?></td>
-                    </tr>
-                    <tr>                
+                              
                         <td>架构</td>
                         <td class="col-7"><?php echo  $cpuModel ?></td>
                     </tr>
@@ -172,10 +169,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
                         <td>运行时间</td>
                         <td class="col-7"><?php echo "{$days}天 {$hours}小时 {$minutes}分钟 {$seconds}秒"?></td>
                     </tr>
-                     <tr>
-                        <td>本地时间</td>
-                        <td class="col-7"><?php echo  $formattedDateTime ?></td>
-                    </tr>
+                
                 </tbody>
             </table>
         </div>

@@ -25,7 +25,7 @@ $seconds = $raw_uptime % 60;
 
 
 // CPU FREQUENCY
-$cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+/* $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
 $cpuFreq = round($cpuFreq / 1000, 1);
 
 // CPU TEMPERATURE
@@ -38,12 +38,13 @@ if ($cpuTemp >= 60) {
 } else {
     $color = "white";
 }
+
  // 设置时区为北京时间
   date_default_timezone_set('Asia/Shanghai');
  // 获取当前日期和时间
   $currentDateTime = new DateTime();
   $formattedDateTime = $currentDateTime->format('Y年m月d日 H时i分s秒');
-
+*/
 // OP Processor Architecture
 $processorArch = shell_exec("uname -m");
 
