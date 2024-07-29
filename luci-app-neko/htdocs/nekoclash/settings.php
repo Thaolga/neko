@@ -176,7 +176,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                         </tr>
                         <tr class="text-center callout">
                             <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://discord.gg/vtV5QSq6D6">DBAI</a></td>
-                            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/nosignals">nosignals</a></td>
+                            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/Thaolga/neko">Thaolga</a></td>
                         </tr>
                         <tr class="text-center">
                             <td>FB Group</td>
