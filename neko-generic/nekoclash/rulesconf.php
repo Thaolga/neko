@@ -43,10 +43,10 @@ if(isset($_POST['newrulescfg'])){
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
                       <select class="form-select" name="rulescfg" aria-label="themex">
-                        <option selected>Select Rules</option>
+                        <option selected>选择规则</option>
                         <?php foreach ($arrFiles as $file) echo "<option value=\"".$file.'">'.$file."</option>" ?>
                       </select>
-                      <input class="btn btn-info" type="submit" value="Select">
+                      <input class="btn btn-info" type="submit" value="选择">
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@ if(isset($_POST['newrulescfg'])){
                 </div>
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
-                        <input class="btn btn-info" type="submit" value="Save Rules">
+                        <input class="btn btn-info" type="submit" value="保持规则">
                     </div>
                 </div>
                 <div class="row justify-content-md-center">

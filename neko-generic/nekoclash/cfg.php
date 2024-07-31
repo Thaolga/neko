@@ -1,12 +1,11 @@
 <?php
 
 // NEKO CONFIGURATION
-$hname=exec("logname");
-$neko_dir="/home/$hname/.neko";
-$neko_www="$neko_dir/www/nekoclash";
+$neko_dir="/etc/neko";
+$neko_www="/www/nekoclash";
 $neko_bin="$neko_dir/core/mihomo";
 $neko_theme= exec("cat $neko_www/lib/theme.txt");
-$neko_status=exec("cat $neko_dir/tmp/neko.status");
+$neko_status=exec("uci -q get neko.cfg.enabled");
 
 $selected_config= exec("cat $neko_www/lib/selected_config.txt");
 $neko_cfg = array();

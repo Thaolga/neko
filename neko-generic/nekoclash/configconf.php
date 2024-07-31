@@ -35,7 +35,7 @@ $strconfig = shell_exec("cat $selected_config");
                 </div>
                 <div class="row justify-content-md-center">
                     <div class="col input-group mb-3 justify-content-md-center">
-                        <input class="btn btn-info" type="submit" value="Save config">
+                        <input class="btn btn-info" type="submit" value="保存配置">
                     </div>
                 </div>
                 <div class="row justify-content-md-center">

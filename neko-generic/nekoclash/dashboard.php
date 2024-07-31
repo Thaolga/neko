@@ -2,7 +2,11 @@
 
 include './cfg.php';
 
-$host = parse_url('http://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST);
+$neko_cfg['ctrl_host']=$_SERVER['SERVER_NAME'];
+$neko_cfg['ctrl_port']=preg_replace('/\s+/', '', (shell_exec("cat $selected_config | grep external-c | awk '{print $2}' | cut -d: -f2")));
+$yacd_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/meta?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
+$meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
+
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="<?php echo substr($neko_theme,0,-4) ?>">
@@ -18,26 +22,73 @@ $host = parse_url('http://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST);
     <script type="text/javascript" src="./assets/js/jquery-2.1.3.min.js"></script>
   </head>
   <body>
+<head>
+    <meta charset="UTF-8">
+    <title>双击显示图标</title>
+    <style>
+        .container-sm {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
     <div class="container-sm text-center col-8">
-	    <img src="./assets/img/neko.png" class="img-fluid mb-5">
+        <img src="./assets/img/neko.png" class="img-fluid mb-5" style="display: none;">
     </div>
+
+    <script>
+        function toggleImage() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'none') {
+                img.style.display = 'block';
+                btn.innerText = '隐藏图标';
+            } else {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        function hideIcon() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'block') {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        document.body.ondblclick = function() {
+            toggleImage();
+        };
+    </script>
+
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
-            <a href="./" class="col btn btn-lg">Home</a>
-            <a href="#" class="col btn btn-lg">Dashboard</a>
-            <a href="./configs.php" class="col btn btn-lg">Configs</a>
-            <a href="./settings.php" class="col btn btn-lg">Settings</a>
+            <a href="./" class="col btn btn-lg">首页</a>
+            <a href="#" class="col btn btn-lg">仪表板</a>
+            <a href="./configs.php" class="col btn btn-lg">配置</a>
+            <a href="./settings.php" class="col btn btn-lg">设定</a>
         </div>
     </div>
     <div class="container text-left p-3">
-        <h1 class="text-center p-2 mb-3">Dashboard</h1>
+      
         <div class="container-fluid container-bg border border-3 rounded-4 mb-3">
-            <h2 class="text-center p-2">MetaCubeXD</h2>
+            <h2 class="text-center p-2">Meta面板</h2>
+            <table class="table table-borderless callout mb-2">
+                <tbody>
+                    <tr class="text-center callout">
+                        <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$yacd_link ?>">META - YACD</a></td>
+                        <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$meta_link ?>">METACUBEXD</a></td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="container h-100 mb-5">
-                <iframe class="border border-3 rounded-4 w-100" height="700" src="http://<?=$host?>:9090/ui/meta" title="yacd" allowfullscreen></iframe>
+                <iframe class="border border-3 rounded-4 w-100" height="2000" src="http://<?=$yacd_link ?>" title="yacd" allowfullscreen></iframe>
             </div>
         </div>
     </div>
+ 
     <footer class="text-center">
         <p><?php echo $footer ?></p>
     </footer>

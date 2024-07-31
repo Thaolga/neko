@@ -1,7 +1,5 @@
 <?php
-$hname=exec("logname");
-$neko_dir="/home/$hname/.neko";
-$stat = exec("cat $neko_dir/tmp/neko.status");
+$stat = shell_exec("uci get neko.cfg.enabled");
 if($stat==1) $tmp = shell_exec("cat /sys/class/net/Meta/statistics/rx_bytes");
 else $tmp = "0";
 $data = "";

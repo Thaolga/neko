@@ -1,1 +1,1 @@
-/home/nosignal/.neko/config/configs.yaml
+/etc/neko/config/tuanbe.yaml

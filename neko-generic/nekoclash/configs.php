@@ -32,21 +32,56 @@ include './cfg.php';
     <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
   </head>
   <body>
+         <title>双击显示图标</title>
+    <style>
+        .container-sm {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
     <div class="container-sm text-center col-8">
-	    <img src="./assets/img/neko.png" class="img-fluid mb-5">
+        <img src="./assets/img/neko.png" class="img-fluid mb-5" style="display: none;">
     </div>
+
+    <script>
+        function toggleImage() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'none') {
+                img.style.display = 'block';
+                btn.innerText = '隐藏图标';
+            } else {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        function hideIcon() {
+            var img = document.querySelector('.container-sm img');
+            var btn = document.getElementById('showHideButton');
+            if (img.style.display === 'block') {
+                img.style.display = 'none';
+                btn.innerText = '显示图标';
+            }
+        }
+
+        document.body.ondblclick = function() {
+            toggleImage();
+        };
+    </script>
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
-            <a href="./" class="col btn btn-lg">Home</a>
-            <a href="./dashboard.php" class="col btn btn-lg">Dashboard</a>
-            <a href="#" class="col btn btn-lg">Configs</a>
-            <a href="./settings.php" class="col btn btn-lg">Settings</a>
+            <a href="./" class="col btn btn-lg">首页</a>
+            <a href="./dashboard.php" class="col btn btn-lg">仪表板</a>
+            <a href="#" class="col btn btn-lg">配置</a>
+            <a href="./settings.php" class="col btn btn-lg">设定</a>
         </div>
     </div>
     <div class="container text-left p-3">
-        <h1 class="text-center p-2 mb-3">Config Editor</h1>
+        
         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-            <h2 class="text-center p-2">Configs</h2>
+            <h2 class="text-center p-2">配置</h2>
             <form action="configs.php" method="post">
                 <div class="container text-center justify-content-md-center">
                     <div class="row justify-content-md-center">
@@ -58,38 +93,38 @@ include './cfg.php';
                         </div>
                         <div class="row justify-content-md-center">
                             <div class="btn-group d-grid d-md-flex justify-content-md-center mb-5" role="group">
-                              <input class="btn btn-info" type="submit" value="Change Configs">
-                              <button name="neko" type="submit" value="apply" class="btn btn-warning d-grid">Apply</button>
+                              <input class="btn btn-info" type="submit" value="更改配置">
+                              <button name="neko" type="submit" value="应用" class="btn btn-warning d-grid">应用</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="container container-bg border border-3 rounded-4 col-12 mb-4"></br>
+       <div class="container container-bg border border-3 rounded-4 col-12 mb-4"></br>
             <ul class="nav text-center justify-content-md-center">
                 <li class="nav-item">
-                    <a class="col btn btn-lg active" data-bs-toggle="tab" href="#info">Info</a>
+                    <a class="col btn btn-lg active" data-bs-toggle="tab" href="#info">配置</a>
                 </li>
                 <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#proxy">Proxy</a>
+                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#proxy">代理</a>
                 </li>
                 <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#rules">Rules</a>
+                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#rules">规则</a>
                 </li>
                 <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">Converter</a>
+                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">转换</a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div id="info" class="tab-pane fade show active">
-                    <h2 class="text-center p-2">Config Information</h2>
+                    <h2 class="text-center p-2">配置资讯</h2>
                     <table class="table table-borderless callout mb-5">
                         <tbody>
                             <tr class="text-center">
-                                <td class="col-2">PORT</td>
-                                <td class="col-2">REDIR</td>
-                                <td class="col-2">SOCKS</td>
+                                <td class="col-2">HTTP 端口</td>
+                                <td class="col-2">Redir 端口</td>
+                                <td class="col-2">Socks 端口</td>
                             </tr>
                             <tr class="text-center">
                                 <td class="col-2">
@@ -103,9 +138,9 @@ include './cfg.php';
                                 </td>
                             </tr>
                             <tr class="text-center">
-                                <td class="col-2">MIXED</td>
-                                <td class="col-2">TPROXY</td>
-                                <td class="col-2">MODE</td>
+                                <td class="col-2">混合 端口</td>
+                                <td class="col-2">TProxy 端口</td>
+                                <td class="col-2">模式</td>
                             </tr>
                             <tr class="text-center">
                                 <td class="col-2">
@@ -119,9 +154,9 @@ include './cfg.php';
                                 </td>
                             </tr>
                             <tr class="text-center">
-                                <td class="col-2">ENHANCED</td>
-                                <td class="col-2">SECRET</td>
-                                <td class="col-2">CONTROLLER</td>
+                                <td class="col-2">增強型</td>
+                                <td class="col-2">密钥</td>
+                                <td class="col-2">控制器</td>
                             </tr>
                             <tr class="text-center">
                                 <td class="col-2">
@@ -136,25 +171,25 @@ include './cfg.php';
                             </tr>
                         </tbody>
                     </table>
-                    <h2 class="text-center p-2">Configs</h2>
+                    <h2 class="text-center p-2">配置</h2>
                     <div class="container h-100 mb-5">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./configconf.php" title="yacd" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div id="proxy" class="tab-pane fade">
-                    <h2 class="text-center p-2">Proxy Editor</h2>
+                    <h2 class="text-center p-2">代理编辑器</h2>
                     <div class="container h-100 mb-5">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./proxyconf.php" title="yacd" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div id="rules" class="tab-pane fade">
-                    <h2 class="text-center p-2">Rules Editor</h2>
+                    <h2 class="text-center p-2">规则编辑器</h2>
                     <div class="container h-100 mb-5">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./rulesconf.php" title="yacd" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div id="converter" class="tab-pane fade">
-                    <h2 class="text-center p-2 mb-5">YAML Converter</h2>
+                    <h2 class="text-center p-2 mb-5">转换器</h2>
                     <div class="container h-100">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./yamlconv.php" title="yacd" allowfullscreen></iframe>
                     </div>
@@ -162,6 +197,7 @@ include './cfg.php';
             </div>
         </div>
     </div>
+    
     <footer class="text-center">
         <p><?php echo $footer ?></p>
     </footer>
