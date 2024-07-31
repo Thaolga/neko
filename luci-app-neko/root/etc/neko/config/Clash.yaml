@@ -133,12 +133,15 @@ dns:
 
 # 所有节点
 all: &all {type: fallback, use: [订阅 1, 订阅 2, 订阅 3, 订阅 4, 订阅 5, 订阅 6, 订阅 7]}
+filtered_lines: &filtered_lines  # 处理重复节点
+  - *all
+final_lines: *filtered_lines
 
 # 解锁 AI
 ai: &ai {type: url-test, url: "http://www.google.com/generate_204", interval: 120, tolerance: 50, lazy: true, use: [订阅 1, 订阅 2, 订阅 7], filter: "(?i)(us|unitedstates|united states|usa|jp|sg|zgo|tw|sjc|中转 US|中转 TW|中转 JP|GPT|解锁)(?i)(?!.*(hong kong|hk|香港|香|港))"}
 
 # 备用应急
-backup: &backup {type: url-test, url: "http://www.google.com/generate_204", interval: 300, tolerance: 50, lazy: true, use: [订阅 1, 订阅 2, 订阅 3, 订阅 4, 订阅 5, 订阅 6, 订阅 7],  filter: "(?i)津巴布韦|🇿🇼|ZW|Zimbabwe|越南|🇻🇳|VNVietnam|乌克兰|🇺🇦|UA|Ukraine|土耳其|🇹🇷|Turkey|法国|都柏林|🇫🇷|FR|France|阿根廷|🇦🇷|AR|Argentina|印度|🇮🇳|IN|India|加拿大|🇨🇦|CA|Canada|马来西亚|🇲🇾|MY|Malaysia|德国|🇩🇪|DE|Germany|荷兰|🇳🇱|NL|Netherlands|泰国|🇹🇭|TH|Thailand|澳大利亚|🇦🇺|AU|Australia|西班牙|🇪🇸|ES|Spain|爱沙尼亚|🇪🇪|EE|Estonia|英国|🇬🇧|United Kingdom|巴西|🇧🇷|BR|Brazil|印度|🇮🇳|IN|India|阿联酋迪拜|🇦🇪|AE|United Arab Emirates"}  
+backup: &backup {type: url-test, url: "http://www.google.com/generate_204", interval: 300, tolerance: 50, lazy: true, use: [订阅 1, 订阅 2, 订阅 3, 订阅 4, 订阅 5, 订阅 6, 订阅 7],  filter: "(?i)津巴布韦|🇿🇼|ZW|Zimbabwe|越南|🇻🇳|VNVietnam|乌克兰|🇺🇦|UA|Ukraine|土耳其|🇹🇷|Turkey|法国|都柏林|🇫🇷|FR|France|阿根廷|🇦🇷|AR|Argentina|印度|🇮🇳|IN|India|加拿大|🇨🇦|CA|Canada|马来西亚|🇲🇾|MY|Malaysia|德国|🇩🇪|DE|Germany|荷兰|🇳🇱|NL|Netherlands|泰国|🇹🇭|TH|Thailand|澳大利亚|🇦🇺|AU|Australia|西班牙|🇪🇸|ES|Spain|爱沙尼亚|🇪🇪|EE|Estonia|英国|🇬🇧|United Kingdom|巴西|🇧🇷|BR|Brazil|印度|🇮🇳|IN|India|阿联酋迪拜|🇦🇪|AE|United Arab Emirates|南非|🇿🇦|ZA|South Africa|奥地利|🇦🇹|AT|Austria|哈萨克斯坦|🇰🇿|KZ|Kazakhstan|立陶宛|🇱🇹|LT|Lithuania|瑞士|🇨🇭|CH|Switzerland|瑞典|🇸🇪|SE|Sweden"}  
 
 # 精选节点
 best: &best {type: url-test, url: "http://www.google.com/generate_204", interval: 300, tolerance: 50, lazy: true, use: [订阅 1, 订阅 2, 订阅 3, 订阅 4, 订阅 5, 订阅 6, 订阅 7],filter: "(?i)港|hk|hongkong|hong kong|台|tw|taiwan|日本|jp|japan|新|sg|singapore|美|us|unitedstates|united states|韩国|🇰🇷|KR|South Korea"}
@@ -152,41 +155,40 @@ p: &p {type: http, interval: 21600, health-check: {enable: true, url: "http://ww
 exclude-filter-list: &exclude-filter "剩余流量|距离下次重置剩余|套餐到期|跳转域名{请勿连接}|邀请好友|关注频道|收费就说明被骗了" 
 
 ###结束建立锚点
-
-proxy-providers:  # Meta支持机场通用订阅， 直接替换 url 后方链接使用
+proxy-providers:  # Meta支持机场通用订阅， 直接替换 url 后方 机场通用订阅 使用
   订阅 1:
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/HKList.yaml
     exclude-filter: *exclude-filter
   订阅 2: 
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/SGList.yaml
     exclude-filter: *exclude-filter
   订阅 3: 
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/TWList.yaml
     exclude-filter: *exclude-filter
   订阅 4: 
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/JPList.yaml
     exclude-filter: *exclude-filter
   订阅 5: # 
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/KRList.yaml
     exclude-filter: *exclude-filter
   订阅 6: 
     <<: *p
-    url: "机场订阅"
+    url: "机场通用订阅"
     path: ./proxy_provider/USList.yaml
     exclude-filter: *exclude-filter
   订阅 7: 
     <<: *p
-    url: "http://allsub.king361.cf"
+    url: "机场通用订阅"
     path: ./proxy_provider/VNList.yaml
     exclude-filter: *exclude-filter
 proxy-groups:
@@ -589,6 +591,40 @@ rule-providers:
     behavior: classical
     url: https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/Reject.yaml
     path: ./rule_provider/Reject.yaml
+    interval: 86400 
+  AD:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/AD.yaml"
+    path: ./rules/AD.yaml
+    interval: 86400
+    
+  EasyList:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/EasyList.yaml"
+    path: ./rules/EasyList.yaml
+    interval: 86400
+    
+  EasyListChina:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/EasyListChina.yaml"
+    path: ./rules/EasyListChina.yaml
+    interval: 86400
+
+  EasyPrivacy:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/EasyPrivacy.yaml"
+    path: ./rules/EasyPrivacy.yaml
+    interval: 86400
+
+  ProgramAD:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/ProgramAD.yaml"
+    path: ./rules/ProgramAD.yaml
     interval: 86400
 # 国内媒体分组
   Bilibili:
@@ -928,6 +964,11 @@ rules:
   - IP-CIDR6,fd00::/8,DIRECT
 
   # 直连和广告拦截
+  - RULE-SET,AD,REJECT
+  - RULE-SET,EasyList,REJECT
+  - RULE-SET,EasyListChina,REJECT
+  - RULE-SET,EasyPrivacy,REJECT
+  - RULE-SET,ProgramAD,REJECT
   - RULE-SET,Special,DIRECT
   - RULE-SET,Reject,🆎 广告拦截
   # 国内媒体分组

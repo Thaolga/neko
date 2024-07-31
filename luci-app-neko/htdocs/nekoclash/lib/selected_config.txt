@@ -1,1 +1,1 @@
-/etc/neko/config/NekoClash.yaml
+/etc/neko/config/tuanbe.yaml
