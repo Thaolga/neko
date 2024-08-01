@@ -38,12 +38,11 @@ if ($cpuTemp >= 60) {
 } else {
     $color = "white";
 }
-
- // 设置时区为北京时间
-  date_default_timezone_set('Asia/Shanghai');
- // 获取当前日期和时间
-  $currentDateTime = new DateTime();
-  $formattedDateTime = $currentDateTime->format('Y年m月d日 H时i分s秒');
+// 设置时区为北京时间
+date_default_timezone_set('Asia/Shanghai');
+// 获取当前日期和时间
+$currentDateTime = new DateTime();
+$formattedDateTime = $currentDateTime->format('Y年m月d日 H时i分s秒');
 */
 // OP Processor Architecture
 $processorArch = shell_exec("uname -m");
@@ -119,11 +118,13 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 20px;
+        
     }
 
     button {
         background-color: #4CAF50;
+        width: 50px;
+        height: 50px; 
         border: none;
         color: white;
         padding: 10px 20px;
@@ -173,14 +174,14 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
     }
 
     .petal {
-        position: absolute;
-        top: 0;
-        width: 20px;
-        height: 20px;
-        background: pink;
-        border-radius: 50%;
-        animation: fall linear;
-    }
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: pink;
+            border-radius: 50%;
+            animation: fall linear;
+        }
 
        #hidePlayer {
         font-size: 20px;
@@ -197,17 +198,17 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
     <div id="player" onclick="toggleAnimation()"> 
      <p id="hidePlayer" >隐藏播放</p>
             <p id="timeDisplay">00:00 </p>
-        <audio id="audioPlayer" controls autoplay loop>  
+        <audio id="audioPlayer" controls autoplay >  
             <source src="" type="audio/mpeg">
             您的浏览器不支持音频播放。
         </audio>
       <br>
      <div id="controls">
         <button id="prev">⏮️</button>
+        <button id="orderLoop">🔁</button>
         <button id="play">⏸️</button>
-        <button id="next">⏭️</button>  
-          </div> 
-    </div>
+        <button id="next">⏭️</button>         
+    </div>  
 
     <script>
        
@@ -249,7 +250,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 player.style.animationPlayState = 'paused'; 
             }
         }
-        function createPetal() {
+     function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
             petal.style.left = Math.random() * 100 + 'vw';
@@ -262,8 +263,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         }
 
         setInterval(createPetal, 50);
-		
-		function clearAllPetals() {
+        function clearAllPetals() {
             const petals = document.querySelectorAll('.petal');
             petals.forEach(petal => petal.remove());
         }
@@ -319,6 +319,10 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
     var playButton = document.getElementById('play');
     var nextButton = document.getElementById('next');
     var prevButton = document.getElementById('prev');
+    var orderLoopButton = document.getElementById('orderLoop');
+    var orderButton = document.getElementById('order'); 
+    var isLooping = false; 
+    var isOrdered = false; 
     var currentSongIndex = 0;
     var songs = [];
 
@@ -336,31 +340,47 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             audioPlayer.src = songs[index];
             audioPlayer.play();
         }
-    }
-
-    playButton.addEventListener('click', function() {
-        if (audioPlayer.paused) {
-            audioPlayer.play();
-        } else {
-            audioPlayer.pause();
         }
-    });
+        playButton.addEventListener('click', function() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
 
-    nextButton.addEventListener('click', function() {
-        currentSongIndex = (currentSongIndex + 1) % songs.length;
-        loadSong(currentSongIndex);
-    });
+        nextButton.addEventListener('click', function() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+        });
 
-    prevButton.addEventListener('click', function() {
-        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-        loadSong(currentSongIndex);
-    });
+        prevButton.addEventListener('click', function() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+        });
 
-    audioPlayer.addEventListener('ended', function() {
-        currentSongIndex = (currentSongIndex + 1) % songs.length;
-        loadSong(currentSongIndex);
-    });
-
+       orderLoopButton.addEventListener('click', function() {
+            if (isOrdered) {
+                isOrdered = false;
+                isLooping = !isLooping; 
+                orderLoopButton.textContent = isLooping ? '循' : ''; 
+            } else {
+                isOrdered = true;
+                isLooping = false; 
+                orderLoopButton.textContent = '顺';
+                
+                loadSong(currentSongIndex); 
+            }
+        });  
+        audioPlayer.addEventListener('ended', function() {
+            if (isLooping) {
+                audioPlayer.currentTime = 0; 
+                audioPlayer.play(); 
+            } else {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                loadSong(currentSongIndex);
+            }
+        });
     function initializePlayer() {
         if (songs.length > 0) {
             loadSong(currentSongIndex);
@@ -371,22 +391,6 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
