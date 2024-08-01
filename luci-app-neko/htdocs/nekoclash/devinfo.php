@@ -189,6 +189,10 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         margin-bottom: 20px; 
         
     }
+	.rounded-button {
+            border-radius: 30px 15px;
+        }
+		
 </style>
 
 </head>
@@ -202,10 +206,10 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         </audio>
       <br>
      <div id="controls">
-        <button id="prev">⏮️</button>
-        <button id="orderLoop">🔁</button>
-        <button id="play">⏸️</button>
-        <button id="next">⏭️</button>         
+        <button id="prev" class="rounded-button">⏮️</button>
+        <button id="orderLoop" class="rounded-button">🔁</button>
+        <button id="play" class="rounded-button">⏸️</button>
+        <button id="next" class="rounded-button">⏭️</button>          
     </div>  
 
     <script>
@@ -248,7 +252,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 player.style.animationPlayState = 'paused'; 
             }
         }
-     function createPetal() {
+        function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
             petal.style.left = Math.random() * 100 + 'vw';
@@ -313,20 +317,20 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         // 页面加载时先调用一次更新
         window.onload = updateTime;
 
-    var audioPlayer = document.getElementById('audioPlayer');
-    var playButton = document.getElementById('play');
-    var nextButton = document.getElementById('next');
-    var prevButton = document.getElementById('prev');
-    var orderLoopButton = document.getElementById('orderLoop');
-    var orderButton = document.getElementById('order'); 
-    var isLooping = false; 
-    var isOrdered = false; 
-    var currentSongIndex = 0;
-    var songs = [];
+        var audioPlayer = document.getElementById('audioPlayer');
+        var playButton = document.getElementById('play');
+        var nextButton = document.getElementById('next');
+        var prevButton = document.getElementById('prev');
+        var orderLoopButton = document.getElementById('orderLoop');
+        var orderButton = document.getElementById('order'); 
+        var isLooping = false; 
+        var isOrdered = false; 
+        var currentSongIndex = 0;
+        var songs = [];
 
-    fetch('https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/songs.txt')
-        .then(response => response.text())
-        .then(data => {
+        fetch('https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/songs.txt')
+           .then(response => response.text())
+           .then(data => {
             songs = data.split('\n').filter(url => url.trim() !== '');
             initializePlayer();
             console.log(songs);
