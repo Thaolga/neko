@@ -123,8 +123,6 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
 
     button {
         background-color: #4CAF50;
-        width: 50px;
-        height: 50px; 
         border: none;
         color: white;
         padding: 10px 20px;
