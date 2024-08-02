@@ -146,8 +146,8 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
                 <tbody>
                     <tr>
                               
-                        <td>架构</td>
-                        <td class="col-7"><?php echo  $cpuModel ?></td>
+                        <td>型号</td>
+                        <td class="col-7"><?php echo $devices ?></td>
                     </tr>
                     <tr>
                         <td>内存</td>
