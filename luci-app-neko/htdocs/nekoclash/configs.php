@@ -101,21 +101,26 @@ include './cfg.php';
                 </div>
             </form>
         </div>
-       <div class="container container-bg border border-3 rounded-4 col-12 mb-4"></br>
-            <ul class="nav text-center justify-content-md-center">
-                <li class="nav-item">
-                    <a class="col btn btn-lg active" data-bs-toggle="tab" href="#info">配置</a>
-                </li>
-                <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#proxy">代理</a>
-                </li>
-                <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#rules">规则</a>
-                </li>
-                <li class="nav-item">
-                    <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">转换</a>
-                </li>
-            </ul>
+<div class="container container-bg border border-3 rounded-4 col-12 mb-4"></br>
+    <ul class="nav text-center justify-content-md-center">
+        <li class="nav-item">
+            <a class="col btn btn-lg active" data-bs-toggle="tab" href="#info">配置</a>
+        </li>
+        <li class="nav-item">
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#proxy">代理</a>
+        </li>
+        <li class="nav-item">
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#rules">规则</a>
+        </li>
+        <li class="nav-item">
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">转换</a>
+        </li>
+        <li class="nav-item">
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#upload">上传</a>
+        </li>
+    </ul>
+</div>
+
             <div class="tab-content">
                 <div id="info" class="tab-pane fade show active">
                     <h2 class="text-center p-2">配置资讯</h2>
@@ -192,12 +197,30 @@ include './cfg.php';
                     <h2 class="text-center p-2 mb-5">转换器</h2>
                     <div class="container h-100">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./yamlconv.php" title="yacd" allowfullscreen></iframe>
-                    </div>
+                       </div>
                 </div>
+                 <div id="upload" class="tab-pane fade">
+             <h2 class="text-center p-2">上传</h2>
+             <div class="container h-100 mb-5">
+           <form action="./upload.php" method="post" enctype="multipart/form-data" class="text-center">
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">选择文件</label>
+                <input type="file" class="form-control" id="fileInput" name="fileInput" required>
+            </div>
+            <button type="submit" class="btn btn-primary">上传</button>
+                    </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+          <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+           <h5 class="text-center p-2 ">使用教程</h5>
+           <a style="color: pink;">代理文件路径/etc/neko/proxy_provider。配置文件组成部分HKList.yaml / JPList.yaml / KRList.yaml / SGList.yaml / TWList.yaml / USList.yaml / VNList.yaml 用户可以手动修改添加clash代理，也可以直接拿clash配置文件重命名为组成部分上传到代理目录，想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。 播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲【会手搓mihomo配置的可以无视】</a>  
+  </div>
+        </div>
             </div>
         </div>
     </div>
-    
     <footer class="text-center">
         <p><?php echo $footer ?></p>
     </footer>

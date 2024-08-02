@@ -90,8 +90,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
         </div>
     </div>
     <div class="container text-left p-3">
-       
-        <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+    <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
         <h2 class="text-center p-2 mb-3">主题设定</h2>
             <form action="settings.php" method="post">
                 <div class="container text-center justify-content-md-center">
@@ -179,11 +178,11 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
                             <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/Thaolga/neko">Thaolga</a></td>
                         </tr>
                         <tr class="text-center">
-                            <td>FB Group</td>
+                            <td>Telegram</td>
                             <td>Clash</td>
                         </tr>
                         <tr class="text-center">
-                            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://www.facebook.com/groups/indowrt">indoWRT</a></td>
+                            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://t.me/joinchat/InJrhXPcuJJiMDdl">Telegram</a></td>
                             <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/MetaCubeX/mihomo">Mihomo</a></td>
                         </tr>
                     </tbody>

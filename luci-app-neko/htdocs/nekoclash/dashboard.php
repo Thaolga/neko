@@ -6,6 +6,7 @@ $neko_cfg['ctrl_host']=$_SERVER['SERVER_NAME'];
 $neko_cfg['ctrl_port']=preg_replace('/\s+/', '', (shell_exec("cat $selected_config | grep external-c | awk '{print $2}' | cut -d: -f2")));
 $yacd_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/meta?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
 $meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
+$dashboard_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/dashboard?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
 
 ?>
 <!doctype html>
@@ -79,6 +80,7 @@ $meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hos
                 <tbody>
                     <tr class="text-center callout">
                         <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$yacd_link ?>">META - YACD</a></td>
+                        <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$dashboard_link ?>">DASHBOARD</a></td>
                         <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$meta_link ?>">METACUBEXD</a></td>
                     </tr>
                 </tbody>

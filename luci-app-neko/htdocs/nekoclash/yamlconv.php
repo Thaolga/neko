@@ -132,30 +132,17 @@ function printcfg($data,$tmpdata){
         exec("echo \"$outcfg\" > $tmpdata");
         //echo $outcfg;
        }
-        else if ($data['cfgtype'] == "hysteria2" ){
-        if(!empty($data['name'])) $outcfg .= "- name: ".$data['name']."\n";
+    else if ($data['cfgtype'] == "hysteria2") {
+    if (!empty($data['name'])) $outcfg .= "- name: " . $data['name'] . "\n";
         else $outcfg .= "- name: HYSTERIA2\n";
-        $outcfg .= "  type: ".$data['cfgtype']."\n";
-        $outcfg .= "  server: ".$data['host']."\n";
-        $outcfg .= "  port: ".$data['port']."\n";
-        $outcfg .= "  password: ".$data['uuid']."\n";
-        if(!empty($data['sni'])) $outcfg .= "  sni: ".$data['sni']."\n";
-        else $outcfg .= "  sni: ".$data['host']."\n";
-        if ($data['type'] == "ws"){
-            $outcfg .= "  network: ".$data['type']."\n";
-            $outcfg .= "  ws-opts: \n";
-            $outcfg .= "   path: ".$data['path']."\n";
-            $outcfg .= "   Headers: \n";
-            $outcfg .= "      Host: ".$data['host']."\n";
-        }
-        else if($data['type'] == "grpc"){
-            $outcfg .= "  network: ".$data['type']."\n";
-            $outcfg .= "  grpc-opts: \n";
-            $outcfg .= "   grpc-service-name: ".$data['serviceName']."\n";
-        }
-        $outcfg .= "  up: 500\n";
-        $outcfg .= "  down: 500\n";
-        $outcfg .= "  skip-cert-verify: true \n";
+        $outcfg .= "  server: " . $data['host'] . "\n";
+        $outcfg .= "  port: " . $data['port'] . "\n";
+        $outcfg .= "  udp: " . (isset($data['udp']) ? ($data['udp'] ? "true" : "false") : "false") . "\n";
+        $outcfg .= "  skip-cert-verify: " . (isset($data['skip-cert-verify']) ? ($data['skip-cert-verify'] ? "true" : "false") : "false") . "\n";
+    
+        $outcfg .= "  sni: " . (isset($data['sni']) && !empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+        $outcfg .= "  type: hysteria2\n";
+        $outcfg .= "  password: " . (isset($data['uuid']) ? $data['uuid'] : '') . "\n"; 
         exec("echo \"$outcfg\" > $tmpdata");
         //echo $outcfg;
     }
@@ -267,7 +254,7 @@ shell_exec("rm -f $tmpdata");
             <textarea name="dt" class="form-control" rows="16"><?php echo $strdata ?></textarea>
         </div>
         <div>
-            <a>支援 : </br>TROJAN(GFW, WS TLS/NTLS, GRPC)</br>HYSTERIA2(GFW, WS TLS/NTLS, GRPC)</br>VMESS(WS TLS/NTLS, HTTP, H2, GRPC)</br>VLESS(WS TLS/NTLS, XTLS, GRPC)</br>SS(DIRECT, OBFS, V2RAY/XRAY-PLUGIN)</a>
+            <a>支援 : </br>TROJAN(GFW, WS TLS/NTLS, GRPC)</br>HYSTERIA2(WS TLS/NTLS, HTTP, H2, GRPC)</br>VMESS(WS TLS/NTLS, HTTP, H2, GRPC)</br>VLESS(WS TLS/NTLS, XTLS, GRPC)</br>SS(DIRECT, OBFS, V2RAY/XRAY-PLUGIN)</a>
         </div>
     </div>
   </body>

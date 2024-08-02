@@ -25,7 +25,7 @@ $seconds = $raw_uptime % 60;
 
 
 // CPU FREQUENCY
-/* $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+/*  $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
 $cpuFreq = round($cpuFreq / 1000, 1);
 
 // CPU TEMPERATURE
@@ -209,7 +209,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         <button id="prev" class="rounded-button">⏮️</button>
         <button id="orderLoop" class="rounded-button">🔁</button>
         <button id="play" class="rounded-button">⏸️</button>
-        <button id="next" class="rounded-button">⏭️</button>          
+        <button id="next" class="rounded-button">⏭️</button>        
     </div>  
 
     <script>
@@ -235,18 +235,20 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             isDragging = false;
             player.style.cursor = 'grab';
         }); */
-		document.addEventListener('keydown', function(event) {
+
+  
+       document.addEventListener('keydown', function(event) {
             switch(event.key) {
-                case 'ArrowLeft': // 左箭头键
+                case 'ArrowLeft': 
                     document.getElementById('prev').click();
                     break;
-                case 'ArrowRight': // 右箭头键
+                case 'ArrowRight': 
                     document.getElementById('next').click();
                     break;
-                case ' ': // 空格键
+                case ' ': 
                     document.getElementById('play').click();
                     break;
-                case 'ArrowUp': // 上箭头键
+                case 'ArrowUp': 
                     document.getElementById('orderLoop').click();
                     break;
             }
@@ -406,9 +408,56 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
     }
 
 </script>
-
 </body>
 </html>
 
 
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>北京时间及天气播报</title>
+    <meta http-equiv="refresh" content="1800"> <!-- 每半小时刷新一次 -->
+    <script>
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN'; 
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('抱歉，您的浏览器不支持语音播报功能。');
+            }
+        }
 
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+            var timeAnnouncement = `现在是北京时间 ${hours} 点 ${minutes} 分 ${seconds} 秒`;
+
+            if (minutes === 0 && seconds === 0) {
+                timeAnnouncement += `，整点播报：现在是 ${hours} 点整。`;
+            }
+
+            return timeAnnouncement;
+        }
+
+        async function getWeather() {
+            const city = 'Beijing'; // 替换为您想要的城市
+            const response = await fetch(`https://wttr.in/${city}?format=3&lang=zh`);
+            const weatherAnnouncement = await response.text();
+            return `当前天气：${weatherAnnouncement}`;
+        }
+
+        window.onload = async function() {
+            const timeAnnouncement = getCurrentTime();
+            const weatherAnnouncement = await getWeather();
+            speak(timeAnnouncement + ' ' + weatherAnnouncement); 
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

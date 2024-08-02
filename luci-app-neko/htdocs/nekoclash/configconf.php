@@ -1,18 +1,18 @@
 <?php
-
 include './cfg.php';
 $strNewconfig = "";
 
-if(isset($_POST['newconfigcfg'])){
-  $dt = $_POST['newconfigcfg'];
-  $strNewconfig = $dt;
-  shell_exec("echo \"$strNewconfig\" > $selected_config");
+if (isset($_POST['newconfigcfg'])) {
+    $dt = $_POST['newconfigcfg'];
+    $strNewconfig = $dt;
+    file_put_contents($selected_config, $strNewconfig);
 }
-$strconfig = shell_exec("cat $selected_config");
+
+$strconfig = file_get_contents($selected_config);
 ?>
 <!doctype html>
-<html lang="en" data-bs-theme="<?php echo substr($neko_theme,0,-4) ?>">
-  <head>
+<html lang="en" data-bs-theme="<?php echo substr($neko_theme, 0, -4) ?>">
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Config Configurator - Neko</title>
@@ -22,30 +22,31 @@ $strconfig = shell_exec("cat $selected_config");
     <link href="./assets/theme/<?php echo $neko_theme ?>" rel="stylesheet">
     <script type="text/javascript" src="./assets/js/feather.min.js"></script>
     <script type="text/javascript" src="./assets/js/jquery-2.1.3.min.js"></script>
-  </head>
-  <body class="container-bg">
-    <div class="container text-center justify-content-md-center mb-3"></br>
+</head>
+<body class="container-bg">
+    <div class="container text-center justify-content-md-center mb-3">
+        <br>
         <div class="container mb-3">
-        <form action="configconf.php" method="post">
-            <div class="container text-center justify-content-md-center">
-                <div class="row justify-content-md-center">
-                    <div class="col input-group mb-3 justify-content-md-center">
-                      <textarea class="form-control" name="newconfigcfg" rows="22"><?php echo $strconfig ?></textarea>
+            <form action="configconf.php" method="post">
+                <div class="container text-center justify-content-md-center">
+                    <div class="row justify-content-md-center">
+                        <div class="col input-group mb-3 justify-content-md-center">
+                            <textarea class="form-control" name="newconfigcfg" rows="22"><?php echo htmlspecialchars($strconfig); ?></textarea>
+                        </div>
+                    </div>
+                    <div class="row justify-content-md-center">
+                        <div class="col input-group mb-3 justify-content-md-center">
+                            <input class="btn btn-info" type="submit" value="保存配置">
+                        </div>
+                    </div>
+                    <div class="row justify-content-md-center">
+                        <div class="col input-group mb-3 justify-content-md-center">
+                            <?php if (!empty($strNewconfig)) echo "<h5>配置已成功保存</h5>"; ?>
+                        </div>
                     </div>
                 </div>
-                <div class="row justify-content-md-center">
-                    <div class="col input-group mb-3 justify-content-md-center">
-                        <input class="btn btn-info" type="submit" value="保存配置">
-                    </div>
-                </div>
-                <div class="row justify-content-md-center">
-                    <div class="col input-group mb-3 justify-content-md-center">
-                      <?php if(!empty($strNewconfig)) echo "<h5>config SUCCESSFULLY SAVED</h5>" ?>
-                    </div>
-                </div>
-            </div>
-        </form>
+            </form>
         </div>
     </div>
-  </body>
+</body>
 </html>
