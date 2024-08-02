@@ -246,7 +246,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 case ' ': // 空格键
                     document.getElementById('play').click();
                     break;
-                case 'ArrowDown': // 下箭头键
+                case 'ArrowUp': // 上箭头键
                     document.getElementById('orderLoop').click();
                     break;
             }
