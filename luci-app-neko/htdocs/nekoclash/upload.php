@@ -39,6 +39,12 @@ $files = array_diff(scandir($uploadDir), array('.', '..'));
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>文件上传和下载</title>
     <style>
+        body {
+        background-image: url('/nekoclash/assets/img/cool.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
         .delete-button {
             background-color: red; 
             color: white; 
