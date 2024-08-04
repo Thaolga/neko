@@ -197,19 +197,19 @@ include './cfg.php';
                     <h2 class="text-center p-2 mb-5">转换器</h2>
                     <div class="container h-100">
                         <iframe class="rounded-4 w-100" scrolling="no" height="700" src="./yamlconv.php" title="yacd" allowfullscreen></iframe>
-                       </div>
+                         </div>
                 </div>
-                    <h2 class="text-center p-2" >文件管理器</h2>
-                    <button type="submit" class="btn btn-primary"  onclick="window.location.href='/nekoclash/upload.php'">打开配置文件编辑器</button>
                     <div id="upload" class="tab-pane fade">
-                  <h2 class="text-center p-2">上传</h2>
+                  <h2 class="text-center p-2 mb-5">上传</h2>
                     <div class="container h-100 mb-5">
                     <form action="./upload.php" method="post" enctype="multipart/form-data" class="text-center">
                  <div class="mb-3">
                     <label for="fileInput" class="form-label">选择文件</label>
                 <input type="file" class="form-control" id="fileInput" name="fileInput" required>
             </div>
-            <button type="submit" class="btn btn-primary">上传</button>   
+            <button type="submit" class="btn btn-primary">上传</button>  
+             <h2 class="text-center p-2" >文件管理器</h2>
+                    <button type="submit" class="btn btn-primary"  onclick="window.location.href='/nekoclash/upload.php'">打开配置文件编辑器</button> 
                     </td>
                     </tr>
                 </tbody>
