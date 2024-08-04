@@ -234,6 +234,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveContent'], $_POST
 
 $proxyFiles = array_diff(scandir($uploadDir), array('.', '..'));
 $configFiles = array_diff(scandir($configDir), array('.', '..'));
+
+function formatSize($size) {
+    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $unit = 0;
+    while ($size >= 1024 && $unit < count($units) - 1) {
+        $size /= 1024;
+        $unit++;
+    }
+    return round($size, 2) . ' ' . $units[$unit];
+}
 ?>
 
 <!doctype html>
@@ -290,8 +300,6 @@ $configFiles = array_diff(scandir($configDir), array('.', '..'));
     </style>
 </head>
 <body>
-
-
     <h2 style="color: pink;">可下载的代理文件</h2>
     <form action="" method="post">
         <label for="customPath">自定义路径：</label>
@@ -314,7 +322,8 @@ $configFiles = array_diff(scandir($configDir), array('.', '..'));
     <ul>
         <?php foreach ($proxyFiles as $file): ?>
             <li>
-                <a href="<?php echo $uploadDir . urlencode($file); ?>" download><?php echo htmlspecialchars($file); ?></a>
+                <a href="<?php echo $uploadDir . urlencode($file); ?>" download><?php echo htmlspecialchars($file); ?></a> 
+                (大小: <?php echo formatSize(filesize($uploadDir . $file)); ?>)
                 <div class="button-group">
                     <form action="" method="post" style="display:inline;">
                         <input type="hidden" name="deleteFile" value="<?php echo htmlspecialchars($file); ?>">
@@ -341,7 +350,8 @@ $configFiles = array_diff(scandir($configDir), array('.', '..'));
     <ul>
         <?php foreach ($configFiles as $file): ?>
             <li>
-                <a href="<?php echo $configDir . urlencode($file); ?>" download><?php echo htmlspecialchars($file); ?></a>
+                <a href="<?php echo $configDir . urlencode($file); ?>" download><?php echo htmlspecialchars($file); ?></a> 
+                (大小: <?php echo formatSize(filesize($configDir . $file)); ?>)
                 <div class="button-group">
                     <form action="" method="post" style="display:inline;">
                         <input type="hidden" name="deleteConfigFile" value="<?php echo htmlspecialchars($file); ?>">
