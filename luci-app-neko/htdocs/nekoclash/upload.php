@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileToSave = ($_POST['fileType'] === 'proxy') ? $uploadDir . basename($_POST['fileName']) : $configDir . basename($_POST['fileName']);
         $contentToSave = $_POST['saveContent'];
         file_put_contents($fileToSave, $contentToSave);
-        echo '文件内容已更新：' . htmlspecialchars(basename($fileToSave));
+        echo '<p style="color: red;">文件内容已更新：' . htmlspecialchars(basename($fileToSave));
     }
 }
 
@@ -348,6 +348,7 @@ function formatSize($size) {
 
     <?php if (isset($fileContent)): ?>
         <h2>编辑文件内容</h2>
+        <p style="color: red;">正在编辑文件: <?php echo htmlspecialchars($_POST['editFile']); ?></p>
         <form action="" method="post">
             <textarea name="saveContent" rows="15" cols="150"><?php echo $fileContent; ?></textarea><br>
             <input type="hidden" name="fileName" value="<?php echo htmlspecialchars($_POST['editFile']); ?>">
