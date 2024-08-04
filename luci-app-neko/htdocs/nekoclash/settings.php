@@ -142,7 +142,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
             <h2 class="text-center p-2 mb-3">关於</h2>
             <div class="container text-center border border-3 rounded-4 col-10 mb-4">
                 </br>
-                <h5 class="mb-3">NekoClash</h5>
+               <h5 class="mb-3">NekoClash</h5>
                 <p>NekoClash是一款适合家庭的Clash代理工具,该工具使用戶可以轻松使用Clash代理,NekoClash由PHP和BASH编写。</p>
                 <p>该工具旨在让Clash代理的使用更加容易</p>
                 <p>如果您对NekoClash有疑问或反馈，可以透过下方链接与我联系</b>

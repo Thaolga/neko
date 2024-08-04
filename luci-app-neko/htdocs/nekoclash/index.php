@@ -131,7 +131,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
                         </form>
                     </tr>
                     <tr>
-                        <td>运行模式</td>
+                        <td>运作模式</td>
                         <td class="d-grid">
                             <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $neko_cfg['echanced']." | ".$neko_cfg['mode'] ?>" disabled>
                         </td>
@@ -145,8 +145,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
             <table class="table table-borderless mb-2">
                 <tbody>
                     <tr>
-                              
-                        <td>型号</td>
+                           <td>型号</td>
                         <td class="col-7"><?php echo $devices ?></td>
                     </tr>
                     <tr>
@@ -169,7 +168,6 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
                         <td>运行时间</td>
                         <td class="col-7"><?php echo "{$days}天 {$hours}小时 {$minutes}分钟 {$seconds}秒"?></td>
                     </tr>
-                
                 </tbody>
             </table>
         </div>
