@@ -33,7 +33,7 @@ Credit
 ---
 - nosignals
 
-openwrt
+# openwrt编译
 ---
 克隆neko源码 :
 ---
