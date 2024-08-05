@@ -116,7 +116,7 @@ include './cfg.php';
             <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">转换</a>
         </li>
         <li class="nav-item">
-            <a class="col btn btn-lg" data-bs-toggle="tab" href="#upload">上传</a>
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#upload">编辑</a>
         </li>
     </ul>
 </div>

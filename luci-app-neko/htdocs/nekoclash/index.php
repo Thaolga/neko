@@ -131,7 +131,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
                         </form>
                     </tr>
                     <tr>
-                        <td>运作模式</td>
+                        <td>运行模式</td>
                         <td class="d-grid">
                             <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $neko_cfg['echanced']." | ".$neko_cfg['mode'] ?>" disabled>
                         </td>

@@ -12,7 +12,7 @@ $capital_numbers = ["初", "一", "二", "三", "四", "五", "六", "七", "八
 function convertSolarToLunar($year, $month, $day) {
     $lunar_year = 2024; 
     $lunar_month = 7;   
-    $lunar_day = 1;    
+    $lunar_day = 2;    
     $is_leap = false;   
 
     return [
@@ -230,7 +230,7 @@ function formatSize($size) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>文件上传和下载</title>
+    <title>文档编辑</title>
     <style>
         body {
             background-image: url('/nekoclash/assets/img/1.jpg');
