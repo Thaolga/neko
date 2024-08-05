@@ -37,12 +37,18 @@ openwrt
 ---
 克隆neko源码 :
 ---
-- git clone https://github.com/Thaolga/neko  package/neko
-- cd package/neko
+
+```bash
+git clone https://github.com/Thaolga/neko  package/neko
+cd package/neko
+```
   
 切换到指定的分支 :
 ---
-- git checkout luci-app-neko
+
+```bash
+git checkout luci-app-neko
+```
   
 
 
