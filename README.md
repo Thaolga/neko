@@ -39,7 +39,7 @@ openwrt
 ---
 - git clone https://github.com/Thaolga/neko  package/neko
 - cd package/neko
-- 
+  
 切换到指定的分支 :
 ---
 - git checkout luci-app-neko
