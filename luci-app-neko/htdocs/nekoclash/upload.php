@@ -12,7 +12,7 @@ $capital_numbers = ["初", "一", "二", "三", "四", "五", "六", "七", "八
 function convertSolarToLunar($year, $month, $day) {
     $lunar_year = 2024; 
     $lunar_month = 7;   
-    $lunar_day = 2;    
+    $lunar_day = 3;    
     $is_leap = false;   
 
     return [
@@ -82,13 +82,38 @@ if ($lunar_day == 1) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            display: flex; 
+            flex-direction: column;
+            margin: 0;
+            min-height: 100vh; 
+            overflow: auto; 
+            background-color: #f0f0f0;
+            align-items: center; 
+            justify-content: flex-start; 
+        }
+        .container {
             display: flex;
             flex-direction: column;
+            width: 100%; 
+            padding: 20px;
+            box-sizing: border-box; 
             align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0;
+            text-align: center; 
+        }
+        h1 {
+            color: white; 
+        }
+        h2 {
+            color: #333;
+        }
+        .button-group {
+            display: inline-block;
+        }
+        .delete-button,
+        .rename-button,
+        .edit-button {
+            margin-left: 5px;
+            cursor: pointer;
         }
         #current-time {
             margin-bottom: 20px; 
@@ -96,7 +121,7 @@ if ($lunar_day == 1) {
     </style>
 </head>
 <body>
-        <h1>简易文件管理器</h1>
+       <h1 style="color: #00FF7F;">简易文件管理器</h1>
     <div id="current-time"></div>
     <div>当前日期: <?php echo date('Y年m月d日'); ?></div>
     <div>农历日期: <?php echo $lunar_date_str; ?> <?php echo $chinese_weekdays[date('w')]; ?></div>
@@ -119,6 +144,8 @@ if ($lunar_day == 1) {
 <?php
 $uploadDir = '/etc/neko/proxy_provider/';
 $configDir = '/etc/neko/config/';
+
+ini_set('memory_limit', '256M');
 
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
@@ -199,7 +226,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileContent = '';
 
         if (file_exists($fileToEdit)) {
-            $fileContent = htmlspecialchars(file_get_contents($fileToEdit));
+            $handle = fopen($fileToEdit, 'r');
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $fileContent .= htmlspecialchars($line);
+                }
+                fclose($handle);
+            } else {
+                echo '无法打开文件';
+            }
         }
     }
 
@@ -207,7 +242,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fileToSave = ($_POST['fileType'] === 'proxy') ? $uploadDir . basename($_POST['fileName']) : $configDir . basename($_POST['fileName']);
         $contentToSave = $_POST['saveContent'];
         file_put_contents($fileToSave, $contentToSave);
-        echo '<p style="color: red;">文件内容已更新：' . htmlspecialchars(basename($fileToSave));
+        echo '<p>文件内容已更新：' . htmlspecialchars(basename($fileToSave)) . '</p>';
+
+    }
+
+    if (isset($_FILES['customFileInput']) && isset($_POST['customDir'])) {
+        $customDir = rtrim($_POST['customDir'], '/') . '/';
+        if (!is_dir($customDir)) {
+            if (!mkdir($customDir, 0755, true)) {
+                echo '自定义目录创建失败！';
+            }
+        }
+
+        $file = $_FILES['customFileInput'];
+        $uploadFilePath = $customDir . basename($file['name']);
+
+        if ($file['error'] === UPLOAD_ERR_OK) {
+            if (move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
+                echo '文件上传到自定义目录成功：' . htmlspecialchars(basename($file['name']));
+            } else {
+                echo '文件上传到自定义目录失败！';
+            }
+        } else {
+            echo '上传错误：' . $file['error'];
+        }
     }
 }
 
@@ -279,9 +337,15 @@ function formatSize($size) {
     </style>
 </head>
 <body>
+  <h2 style="color: #00FF7F;">自定义目录文件上传</h2>
+    <form action="" method="post" enctype="multipart/form-data">
+        <input type="file" name="customFileInput" required>
+        <input type="text" name="customDir" placeholder="请输入自定义目录路径" required>
+        <input type="submit" value="上传到自定义目录">
+    </form>
 
-    <h2 style="color: pink;">代理文件管理</h2>
-      <form action="" method="post" enctype="multipart/form-data">
+    <h2 style="color: #00FF7F;">代理文件管理</h2>
+    <form action="" method="post" enctype="multipart/form-data">
         <input type="file" name="fileInput" required>
         <input type="submit" value="上传代理文件">
     </form>
@@ -313,8 +377,8 @@ function formatSize($size) {
         <?php endforeach; ?>
     </ul>
 
-    <h2 style="color: pink;">配置文件管理</h2>
-        <form action="" method="post" enctype="multipart/form-data">
+    <h2 style="color: #00FF7F;">配置文件管理</h2>
+    <form action="" method="post" enctype="multipart/form-data">
         <input type="file" name="configFileInput" required>
         <input type="submit" value="上传配置文件">
     </form>
@@ -348,7 +412,7 @@ function formatSize($size) {
 
     <?php if (isset($fileContent)): ?>
         <h2>编辑文件内容</h2>
-        <p style="color: red;">正在编辑文件: <?php echo htmlspecialchars($_POST['editFile']); ?></p>
+        <p>正在编辑文件: <?php echo htmlspecialchars($_POST['editFile']); ?></p>
         <form action="" method="post">
             <textarea name="saveContent" rows="15" cols="150"><?php echo $fileContent; ?></textarea><br>
             <input type="hidden" name="fileName" value="<?php echo htmlspecialchars($_POST['editFile']); ?>">
@@ -358,6 +422,180 @@ function formatSize($size) {
     <?php endif; ?>
 
     <br>
+ <div style="display: flex; gap: 10px;">
     <a href="javascript:history.back()" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回上一级菜单</a>
+    <a href="/nekoclash/upload.php" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回当前菜单</a>
+    <a href="/nekoclash" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回主菜单</a>
+</div>
+
 </body>
 </html>
+
+<?php
+$subscriptionPath = '/etc/neko/proxy_provider/';
+$subscriptionFile = $subscriptionPath . 'subscriptions.json';
+$clashFile = $subscriptionPath . 'clash_config.yaml';
+
+$message = "";
+$decodedContent = ""; 
+$subscriptions = [];
+
+if (!file_exists($subscriptionPath)) {
+    mkdir($subscriptionPath, 0755, true);
+}
+
+if (!file_exists($subscriptionFile)) {
+    file_put_contents($subscriptionFile, json_encode([]));
+}
+
+$subscriptions = json_decode(file_get_contents($subscriptionFile), true);
+if (!$subscriptions) {
+    for ($i = 0; $i < 5; $i++) {
+        $subscriptions[$i] = [
+            'url' => '',
+            'file_name' => "subscription_{$i}.yaml",
+        ];
+    }
+}
+
+if (isset($_POST['update'])) {
+    $index = intval($_POST['index']);
+    $url = $_POST['subscription_url'] ?? '';
+    $customFileName = $_POST['custom_file_name'] ?? "subscription_{$index}.yaml";
+
+    $subscriptions[$index]['url'] = $url;
+    $subscriptions[$index]['file_name'] = $customFileName;
+
+    if (!empty($url)) {
+        $finalPath = $subscriptionPath . $customFileName;
+        $command = "curl -fsSL -o {$finalPath} {$url}";
+        exec($command . ' 2>&1', $output, $return_var);
+
+        if ($return_var === 0) {
+            $message = "订阅链接 {$url} 更新成功！文件已保存到: {$finalPath}";
+        } else {
+            $message = "配置更新失败！错误信息: " . implode("\n", $output);
+        }
+    } else {
+        $message = "第" . ($index + 1) . "个订阅链接为空！";
+    }
+
+    file_put_contents($subscriptionFile, json_encode($subscriptions));
+}
+
+if (isset($_POST['convert_base64'])) {
+    $base64Content = $_POST['base64_content'] ?? '';
+
+    if (!empty($base64Content)) {
+        $decodedContent = base64_decode($base64Content); 
+
+        if ($decodedContent === false) {
+            $message = "Base64 解码失败，请检查输入！";
+        } else {
+            $clashConfig = "# Clash Meta Config\n\n";
+            $clashConfig .= $decodedContent;
+            file_put_contents($clashFile, $clashConfig);
+            $message = "Clash 配置文件已生成并保存到: {$clashFile}";
+        }
+    } else {
+        $message = "Base64 内容为空！";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash订阅程序</title>
+    <style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        .help-text {
+            font-size: 14px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        body {
+            background-color: #333;
+            font-family: Arial, sans-serif; 
+        }
+        h1, .help-text {
+            color: #FFA500;
+        }
+        textarea.copyable {
+            width: 50%; 
+            height: 150px; 
+            resize: none; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            background-color: #444; 
+            color: white; 
+            font-size: 14px; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); 
+            display: none; 
+        }
+        textarea.copyable:focus {
+            outline: none; 
+            border-color: #ff79c6; 
+            box-shadow: 0 0 5px rgba(255, 121, 198, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #00FF7F;">Clash订阅程序</h1>
+    <p class="help-text">
+        请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>只支持clash订阅，要支持Meta订阅可以修改配置文件找到机场订阅替换为你的机场通用链接。<button id="convertButton" style="background-color: #00BFFF; color: white;">访问订阅转换网站</button>
+    <br>
+        在“Base64 转换节点信息”部分，您可以将 Base64 内容粘贴到文本框中，并点击“生成节点信息”按钮来转换内容。      
+    </p>
+<script>
+    document.getElementById('convertButton').onclick = function() {
+        window.open('https://suburl.v1.mk', '_blank');
+    }
+    </script>
+    <?php if ($message): ?>
+        <p><?php echo nl2br(htmlspecialchars($message)); ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($decodedContent)): ?>
+        <h2>解码后的内容</h2>
+        <textarea name="decoded_content" id="decoded_content" class="copyable" readonly><?php echo htmlspecialchars($decodedContent); ?></textarea>
+        <script>
+            document.querySelector('.copyable').style.display = 'block';
+        </script>
+    <?php endif; ?>
+
+    <?php for ($i = 0; $i < 5; $i++): ?>
+        <form method="post">
+            <div class="input-group">
+                <label for="subscription_url_<?php echo $i; ?>">订阅链接 <?php echo ($i + 1); ?>:</label>
+                <input type="text" name="subscription_url" id="subscription_url_<?php echo $i; ?>" value="<?php echo htmlspecialchars($subscriptions[$i]['url']); ?>" required>
+            </div>
+            <div class="input-group">
+                <label for="custom_file_name_<?php echo $i; ?>">自定义文件名:</label>
+                <input type="text" name="custom_file_name" id="custom_file_name_<?php echo $i; ?>" value="<?php echo htmlspecialchars($subscriptions[$i]['file_name']); ?>">
+                <input type="hidden" name="index" value="<?php echo $i; ?>">
+                <button type="submit" name="update">更新配置</button>
+            </div>
+        </form>
+    <?php endfor; ?>
+
+    <h2 style="color: #00FF7F;">Base64 节点信息转换</h2>
+    <form method="post">
+        <div class="input-group">
+            <label for="base64_content">Base64 内容:</label>
+            <textarea name="base64_content" id="base64_content" rows="4" required></textarea>
+        </div>
+        <button type="submit" name="convert_base64">生成节点信息</button>
+    </form>
+</body>
+</html>
+

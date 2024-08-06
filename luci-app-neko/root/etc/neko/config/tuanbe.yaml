@@ -1,4 +1,4 @@
-# 2024年08月03日 14:40  By:𝐓𝐮𝐚̂𝐧 𝐁𝐞́ 全球分组广告屏蔽模组 UTC/GMT +8
+# 2024年08月06日 13:40  By:𝐓𝐮𝐚̂𝐧 𝐁𝐞́ 全球分组广告屏蔽模组 UTC/GMT +8
 
 redir-port: 7892
 port: 7890
@@ -171,38 +171,38 @@ exclude-filter-list: &exclude-filter "剩余流量|距离下次重置剩余|套�
 proxy-providers:  # Meta支持机场通用订阅， 直接替换 url 后方链接使用
   订阅 1:
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/HKList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_0.yaml
     exclude-filter: *exclude-filter
   订阅 2: 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/SGList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_1.yaml
     exclude-filter: *exclude-filter
   订阅 3: 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/TWList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_2.yaml
     exclude-filter: *exclude-filter
   订阅 4: 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/JPList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_3.yaml
     exclude-filter: *exclude-filter
   订阅 5: # 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/KRList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_4.yaml
     exclude-filter: *exclude-filter
   订阅 6: 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/USList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_5.yaml
     exclude-filter: *exclude-filter
   订阅 7: 
     <<: *p
-    url: "机场通用订阅"
-    path: ./proxy_provider/VNList.yaml
+    url: "机场订阅"
+    path: ./proxy_provider/subscription_6.yaml
     exclude-filter: *exclude-filter
 proxy-groups:
 - name: "✈️ 国际代理"
@@ -543,14 +543,14 @@ rule-providers:
     type: http
     behavior: domain
     url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/AD.yaml"
-    path: ./rules/AD.yaml
+    path: ./rule_provider/AD.yaml
     interval: 86400
     
   EasyList:
     type: http
     behavior: domain
     url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/EasyList.yaml"
-    path: ./rules/EasyList.yaml
+    path: ./rule_provider/EasyList.yaml
     interval: 86400
     
   EasyListChina:
@@ -564,14 +564,14 @@ rule-providers:
     type: http
     behavior: domain
     url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/EasyPrivacy.yaml"
-    path: ./rules/EasyPrivacy.yaml
+    path: ./rule_provider/EasyPrivacy.yaml
     interval: 86400
 
   ProgramAD:
     type: http
     behavior: domain
     url: "https://raw.githubusercontent.com/Thaolga/Rules/main/Clash/Provider/ProgramAD.yaml"
-    path: ./rules/ProgramAD.yaml
+    path: ./rule_provider/ProgramAD.yaml
     interval: 86400
 # 国内媒体分组
   Bilibili:

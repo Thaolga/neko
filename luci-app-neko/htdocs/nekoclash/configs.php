@@ -116,7 +116,7 @@ include './cfg.php';
             <a class="col btn btn-lg" data-bs-toggle="tab" href="#converter">转换</a>
         </li>
         <li class="nav-item">
-            <a class="col btn btn-lg" data-bs-toggle="tab" href="#upload">编辑</a>
+            <a class="col btn btn-lg" data-bs-toggle="tab" href="#upload">订阅</a>
         </li>
     </ul>
 </div>
@@ -208,8 +208,8 @@ include './cfg.php';
                 <input type="file" class="form-control" id="fileInput" name="fileInput" required>
             </div>
             <button type="submit" class="btn btn-primary">上传</button>  
-             <h2 class="text-center p-2" >文件管理器</h2>
-                    <button type="submit" class="btn btn-primary"  onclick="window.location.href='/nekoclash/upload.php'">打开配置文件编辑器</button> 
+             <h2 class="text-center p-2" >订阅管理器</h2>
+                    <button type="submit" class="btn btn-primary"  onclick="window.location.href='/nekoclash/upload.php'">打开订阅管理器</button> 
                     </td>
                     </tr>
                 </tbody>
@@ -218,7 +218,18 @@ include './cfg.php';
            <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
     <h2 class="text-center p-2 mb-3">使用教程</h2>
     <div class="container text-center border border-3 rounded-4 col-10 mb-4">
-        <p style="color: pink; text-align: left;">代理文件路径/etc/neko/proxy_provider。配置文件组成部分HKList.yaml / JPList.yaml / KRList.yaml / SGList.yaml / TWList.yaml / USList.yaml / VNList.yaml 用户可以手动修改添加clash代理，也可以直接拿clash配置文件重命名为组成部分上传到代理目录，想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。 播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲【会手搓mihomo配置的可以无视】</p>
+        <p style="color: #87CEEB; text-align: left;">代理文件路径/etc/neko/proxy_provider。想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。会手搓mihomo配置可以自行替换】播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。<br>
+		<?php error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            $routerIp = trim(exec('uci get network.lan.ipaddr 2>&1'));
+            if (preg_match('/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/', $routerIp) && !in_array($routerIp, ['0.0.0.0', '255.255.255.255'])) {
+            $controlPanelUrl = "http://$routerIp/nekoclash";
+        echo "独立控制面板地址: $controlPanelUrl<br>";
+        } else {
+        echo "无法获取路由器的 IP 地址。错误信息: $routerIp";
+        }
+?>
+</p>
     </div>
 </div>
       </div>

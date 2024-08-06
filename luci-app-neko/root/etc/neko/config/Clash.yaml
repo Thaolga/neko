@@ -159,37 +159,37 @@ proxy-providers:  # Meta支持机场通用订阅， 直接替换 url 后方 机�
   订阅 1:
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/HKList.yaml
+    path: ./proxy_provider/subscription_0.yaml
     exclude-filter: *exclude-filter
   订阅 2: 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/SGList.yaml
+    path: ./proxy_provider/subscription_1.yaml
     exclude-filter: *exclude-filter
   订阅 3: 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/TWList.yaml
+    path: ./proxy_provider/subscription_2.yaml
     exclude-filter: *exclude-filter
   订阅 4: 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/JPList.yaml
+    path: ./proxy_provider/subscription_3.yaml
     exclude-filter: *exclude-filter
   订阅 5: # 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/KRList.yaml
+    path: ./proxy_provider/subscription_4.yaml
     exclude-filter: *exclude-filter
   订阅 6: 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/USList.yaml
+    path: ./proxy_provider/subscription_5.yaml
     exclude-filter: *exclude-filter
   订阅 7: 
     <<: *p
     url: "机场通用订阅"
-    path: ./proxy_provider/VNList.yaml
+    path: ./proxy_provider/subscription_6.yaml
     exclude-filter: *exclude-filter
 proxy-groups:
 - name: "✈️ 国际代理"
