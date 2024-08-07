@@ -357,8 +357,8 @@ function formatSize($size) {
             background-color: darkgreen;
         }
         .edit-button {
-            background-color: lightpink;
-            color: black;
+            background-color: orange;
+            color: white;
             border: none;
         }
         .edit-button:hover {
