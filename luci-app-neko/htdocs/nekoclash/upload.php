@@ -300,8 +300,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$proxyFiles = array_diff(scandir($uploadDir), array('.', '..'));
-$configFiles = array_diff(scandir($configDir), array('.', '..'));
+$proxyFiles = scandir($uploadDir);
+$configFiles = scandir($configDir);
+
+if ($proxyFiles !== false) {
+    $proxyFiles = array_diff($proxyFiles, array('.', '..'));
+} else {
+    $proxyFiles = []; 
+}
+
+if ($configFiles !== false) {
+    $configFiles = array_diff($configFiles, array('.', '..'));
+} else {
+    $configFiles = []; 
+}
 
 function formatSize($size) {
     $units = array('B', 'KB', 'MB', 'GB', 'TB');
