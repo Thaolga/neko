@@ -121,7 +121,7 @@ if ($lunar_day == 1) {
     </style>
 </head>
 <body>
-       <h1 style="color: #00FF7F;">简易文件管理器</h1>
+    <h1 style="color: #00FF7F;">简易文件管理器</h1>
     <div id="current-time"></div>
     <div>当前日期: <?php echo date('Y年m月d日'); ?></div>
     <div>农历日期: <?php echo $lunar_date_str; ?> <?php echo $chinese_weekdays[date('w')]; ?></div>
@@ -134,12 +134,25 @@ if ($lunar_day == 1) {
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const timeString = `${hours}:${minutes}:${seconds}`;
             document.getElementById('current-time').textContent = `北京时间: ${timeString}`;
+            
+            if (minutes === '00' && seconds === '00') {
+                speakTime(hours);
+            }
         }
+
+        function speakTime(hours) {
+            const speech = new SpeechSynthesisUtterance();
+            speech.lang = 'zh-CN';
+            speech.text = `整点播报现在是北京时间${hours}点整`;
+            window.speechSynthesis.speak(speech);
+        }
+
         setInterval(updateTime, 1000);
         updateTime();
     </script>
 </body>
 </html>
+
 
 <?php
 $uploadDir = '/etc/neko/proxy_provider/';
@@ -243,7 +256,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $contentToSave = $_POST['saveContent'];
         file_put_contents($fileToSave, $contentToSave);
         echo '<p>文件内容已更新：' . htmlspecialchars(basename($fileToSave)) . '</p>';
-
     }
 
     if (isset($_FILES['customFileInput']) && isset($_POST['customDir'])) {
@@ -267,6 +279,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '上传错误：' . $file['error'];
         }
     }
+
+    if (isset($_GET['customFile'])) {
+        $customDir = rtrim($_GET['customDir'], '/') . '/';
+        $customFilePath = $customDir . basename($_GET['customFile']);
+        if (file_exists($customFilePath)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . basename($customFilePath) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($customFilePath));
+            readfile($customFilePath);
+            exit;
+        } else {
+            echo '文件不存在！';
+        }
+    }
 }
 
 $proxyFiles = array_diff(scandir($uploadDir), array('.', '..'));
@@ -288,21 +318,32 @@ function formatSize($size) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>文档编辑</title>
-    <style>
+ <style>
         body {
             background-image: url('/nekoclash/assets/img/1.jpg');
             background-size: cover;
             background-repeat: no-repeat;
             color: white;
         }
+        .editor {
+            width: width: 100%;
+            height: 400px; 
+            background-color: #222; 
+            color: white;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-family: monospace; 
+        }
+        .delete-button, .rename-button, .edit-button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
         .delete-button {
             background-color: red;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
         }
         .delete-button:hover {
             background-color: darkred;
@@ -311,9 +352,6 @@ function formatSize($size) {
             background-color: lightgreen;
             color: black;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
         }
         .rename-button:hover {
             background-color: darkgreen;
@@ -322,27 +360,20 @@ function formatSize($size) {
             background-color: lightpink;
             color: black;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
         }
         .edit-button:hover {
             background-color: darkred;
         }
         .button-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+            display: inline-flex;
+            gap: 5px;
         }
+ 
     </style>
+
 </head>
 <body>
-  <h2 style="color: #00FF7F;">自定义目录文件上传</h2>
-    <form action="" method="post" enctype="multipart/form-data">
-        <input type="file" name="customFileInput" required>
-        <input type="text" name="customDir" placeholder="请输入自定义目录路径" required>
-        <input type="submit" value="上传到自定义目录">
-    </form>
+    <h1 style="color: #00FFFF;">文件上传和下载管理</h1>
 
     <h2 style="color: #00FF7F;">代理文件管理</h2>
     <form action="" method="post" enctype="multipart/form-data">
@@ -353,7 +384,7 @@ function formatSize($size) {
         <?php foreach ($proxyFiles as $file): ?>
             <?php $filePath = $uploadDir . $file; ?>
             <li>
-                <a href="<?php echo htmlspecialchars($filePath); ?>" download><?php echo htmlspecialchars($file); ?></a>
+                <a href="download.php?file=<?php echo urlencode($file); ?>"><?php echo htmlspecialchars($file); ?></a>
                 (大小: <?php echo file_exists($filePath) ? formatSize(filesize($filePath)) : '文件不存在'; ?>)
                 <div class="button-group">
                     <form action="" method="post" style="display:inline;">
@@ -386,7 +417,7 @@ function formatSize($size) {
         <?php foreach ($configFiles as $file): ?>
             <?php $filePath = $configDir . $file; ?>
             <li>
-                <a href="<?php echo htmlspecialchars($filePath); ?>" download><?php echo htmlspecialchars($file); ?></a>
+                <a href="download.php?file=<?php echo urlencode($file); ?>"><?php echo htmlspecialchars($file); ?></a>
                 (大小: <?php echo file_exists($filePath) ? formatSize(filesize($filePath)) : '文件不存在'; ?>)
                 <div class="button-group">
                     <form action="" method="post" style="display:inline;">
@@ -410,9 +441,40 @@ function formatSize($size) {
         <?php endforeach; ?>
     </ul>
 
+    <h2 style="color: #00FF7F;">自定义目录文件上传</h2>
+    <form action="" method="post" enctype="multipart/form-data">
+        <input type="text" name="customDir" placeholder="自定义目录" required>
+        <input type="file" name="customFileInput" required>
+        <input type="submit" value="上传到自定义目录">
+    </form>
+
+    <h2 style="color: #00FF7F;">自定义目录文件查看管理</h2>
+    <form action="" method="get">
+        <input type="text" name="customDir" placeholder="自定义目录" required>
+        <input type="submit" value="查看文件">
+    </form>
+
+    <?php
+    if (isset($_GET['customDir'])) {
+        $customDir = rtrim($_GET['customDir'], '/') . '/';
+        if (is_dir($customDir)) {
+            $customFiles = array_diff(scandir($customDir), array('.', '..'));
+            echo '<ul>';
+            foreach ($customFiles as $file) {
+                echo '<li>';
+                echo '<a href="?customDir=' . urlencode($customDir) . '&customFile=' . urlencode($file) . '">' . htmlspecialchars($file) . '</a>';
+                echo ' (大小: ' . formatSize(filesize($customDir . $file)) . ')';
+                echo '</li>';
+            }
+            echo '</ul>';
+        } else {
+            echo '目录不存在！';
+        }
+    }
+    ?>
+
     <?php if (isset($fileContent)): ?>
-        <h2>编辑文件内容</h2>
-        <p>正在编辑文件: <?php echo htmlspecialchars($_POST['editFile']); ?></p>
+        <h2 style="color: #00FF7F;">编辑文件</h2>
         <form action="" method="post">
             <textarea name="saveContent" rows="15" cols="150"><?php echo $fileContent; ?></textarea><br>
             <input type="hidden" name="fileName" value="<?php echo htmlspecialchars($_POST['editFile']); ?>">
@@ -420,16 +482,30 @@ function formatSize($size) {
             <input type="submit" value="保存内容">
         </form>
     <?php endif; ?>
-
     <br>
- <div style="display: flex; gap: 10px;">
-    <a href="javascript:history.back()" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回上一级菜单</a>
-    <a href="/nekoclash/upload.php" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回当前菜单</a>
-    <a href="/nekoclash" style="text-decoration: none; padding: 10px; background-color: lightblue; color: black; border: 1px solid #007bff; border-radius: 5px;">返回主菜单</a>
-</div>
+<style>
+    .button {
+        text-decoration: none;
+        padding: 10px;
+        background-color: lightblue;
+        color: black;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        transition: background-color 0.3s; 
+    }
+    .button:hover {
+        background-color: deepskyblue; 
+    }
+</style>
 
+<div style="display: flex; gap: 10px;">
+    <a href="javascript:history.back()" class="button">返回上一级菜单</a>
+    <a href="/nekoclash/upload.php" class="button">返回当前菜单</a>
+    <a href="/nekoclash" class="button">返回主菜单</a>
+</div>
 </body>
 </html>
+
 
 <?php
 $subscriptionPath = '/etc/neko/proxy_provider/';
@@ -527,7 +603,7 @@ if (isset($_POST['convert_base64'])) {
             font-family: Arial, sans-serif; 
         }
         h1, .help-text {
-            color: #FFA500;
+            color: rgb;
         }
         textarea.copyable {
             width: 50%; 

@@ -218,7 +218,7 @@ include './cfg.php';
            <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
     <h2 class="text-center p-2 mb-3">使用教程</h2>
     <div class="container text-center border border-3 rounded-4 col-10 mb-4">
-        <p style="color: #87CEEB; text-align: left;">代理文件路径/etc/neko/proxy_provider。想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。会手搓mihomo配置可以自行替换】播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。<br>
+        <p style="color: #87CEEB; text-align: left;">代理文件路径/etc/neko/proxy_provider。想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。【会手搓mihomo配置可以自行替换】播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。<br>
 		<?php error_reporting(E_ALL);
             ini_set('display_errors', 1);
             $routerIp = trim(exec('uci get network.lan.ipaddr 2>&1'));

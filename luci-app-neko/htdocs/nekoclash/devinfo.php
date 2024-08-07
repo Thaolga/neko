@@ -25,7 +25,7 @@ $seconds = $raw_uptime % 60;
 
 
 // CPU FREQUENCY
-/*  $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+/* $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
 $cpuFreq = round($cpuFreq / 1000, 1);
 
 // CPU TEMPERATURE
@@ -447,8 +447,12 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         async function getWeather() {
             const city = 'Beijing'; // 替换为您想要的城市
             const response = await fetch(`https://wttr.in/${city}?format=3&lang=zh`);
-            const weatherAnnouncement = await response.text();
-            return `当前天气：${weatherAnnouncement}`;
+            const currentWeather = await response.text();
+
+            const forecastResponse = await fetch(`https://wttr.in/${city}?format=%C+%t&lang=zh&n=3`); 
+            const forecast = await forecastResponse.text();
+
+            return `当前天气：${currentWeather}。未来天气预报：${forecast}`;
         }
 
         window.onload = async function() {

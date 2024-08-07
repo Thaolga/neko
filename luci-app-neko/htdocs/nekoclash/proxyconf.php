@@ -83,3 +83,5 @@ if (isset($_POST['newproxycfg'])) {
     </div>
   </body>
 </html>
+
+
