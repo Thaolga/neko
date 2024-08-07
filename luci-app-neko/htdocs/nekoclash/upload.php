@@ -12,7 +12,7 @@ $capital_numbers = ["初", "一", "二", "三", "四", "五", "六", "七", "八
 function convertSolarToLunar($year, $month, $day) {
     $lunar_year = 2024; 
     $lunar_month = 7;   
-    $lunar_day = 3;    
+    $lunar_day = 4;    
     $is_leap = false;   
 
     return [
@@ -534,7 +534,7 @@ if (!file_exists($subscriptionFile)) {
 
 $subscriptions = json_decode(file_get_contents($subscriptionFile), true);
 if (!$subscriptions) {
-    for ($i = 0; $i < 5; $i++) {
+    for ($i = 0; $i < 7; $i++) {
         $subscriptions[$i] = [
             'url' => '',
             'file_name' => "subscription_{$i}.yaml",
@@ -631,6 +631,17 @@ if (isset($_POST['convert_base64'])) {
             border-color: #ff79c6; 
             box-shadow: 0 0 5px rgba(255, 121, 198, 0.5); 
         }
+        #copyButton {
+            background-color: #00BFFF; 
+            color: white; 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+        }
+        #copyButton:hover {
+            background-color: #008CBA;
+        }
     </style>
 </head>
 <body>
@@ -644,7 +655,7 @@ if (isset($_POST['convert_base64'])) {
     document.getElementById('convertButton').onclick = function() {
         window.open('https://suburl.v1.mk', '_blank');
     }
-    </script>
+</script>
     <?php if ($message): ?>
         <p><?php echo nl2br(htmlspecialchars($message)); ?></p>
     <?php endif; ?>
@@ -652,12 +663,21 @@ if (isset($_POST['convert_base64'])) {
     <?php if (!empty($decodedContent)): ?>
         <h2>解码后的内容</h2>
         <textarea name="decoded_content" id="decoded_content" class="copyable" readonly><?php echo htmlspecialchars($decodedContent); ?></textarea>
+        <button id="copyButton" onclick="copyToClipboard()">复制到剪贴板</button>
         <script>
             document.querySelector('.copyable').style.display = 'block';
+
+            function copyToClipboard() {
+                var copyText = document.getElementById("decoded_content");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); 
+                document.execCommand("copy");
+                alert("内容已复制到剪贴板!");
+            }
         </script>
     <?php endif; ?>
 
-    <?php for ($i = 0; $i < 5; $i++): ?>
+    <?php for ($i = 0; $i < 7; $i++): ?>
         <form method="post">
             <div class="input-group">
                 <label for="subscription_url_<?php echo $i; ?>">订阅链接 <?php echo ($i + 1); ?>:</label>
@@ -682,4 +702,3 @@ if (isset($_POST['convert_base64'])) {
     </form>
 </body>
 </html>
-
