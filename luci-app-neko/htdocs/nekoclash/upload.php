@@ -237,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['editFile']) && isset($_POST['fileType'])) {
         $fileToEdit = ($_POST['fileType'] === 'proxy') ? $uploadDir . basename($_POST['editFile']) : $configDir . basename($_POST['editFile']);
         $fileContent = '';
+        $editingFileName = htmlspecialchars($_POST['editFile']); 
 
         if (file_exists($fileToEdit)) {
             $handle = fopen($fileToEdit, 'r');
@@ -318,7 +319,7 @@ function formatSize($size) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
- <style>
+    <style>
         body {
             background-image: url('/nekoclash/assets/img/1.jpg');
             background-size: cover;
@@ -326,7 +327,7 @@ function formatSize($size) {
             color: white;
         }
         .editor {
-            width: width: 100%;
+            width: 100%;
             height: 400px; 
             background-color: #222; 
             color: white;
@@ -335,7 +336,7 @@ function formatSize($size) {
             border-radius: 5px;
             font-family: monospace; 
         }
-        .delete-button, .rename-button, .edit-button {
+        .delete-button, .rename-button, .edit-button, .download-button {
             padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
@@ -364,13 +365,19 @@ function formatSize($size) {
         .edit-button:hover {
             background-color: darkred;
         }
+        .download-button {
+            background-color: lightblue;
+            color: black;
+            border: none;
+        }
+        .download-button:hover {
+            background-color: deepskyblue;
+        }
         .button-group {
             display: inline-flex;
             gap: 5px;
         }
- 
     </style>
-
 </head>
 <body>
     <h1 style="color: #00FFFF;">文件上传和下载管理</h1>
@@ -474,7 +481,7 @@ function formatSize($size) {
     ?>
 
     <?php if (isset($fileContent)): ?>
-        <h2 style="color: #00FF7F;">编辑文件</h2>
+        <h2 style="color: #00FF7F;">编辑文件: <?php echo $editingFileName; ?></h2> 
         <form action="" method="post">
             <textarea name="saveContent" rows="15" cols="150"><?php echo $fileContent; ?></textarea><br>
             <input type="hidden" name="fileName" value="<?php echo htmlspecialchars($_POST['editFile']); ?>">
@@ -483,28 +490,29 @@ function formatSize($size) {
         </form>
     <?php endif; ?>
     <br>
-<style>
-    .button {
-        text-decoration: none;
-        padding: 10px;
-        background-color: lightblue;
-        color: black;
-        border: 1px solid #007bff;
-        border-radius: 5px;
-        transition: background-color 0.3s; 
-    }
-    .button:hover {
-        background-color: deepskyblue; 
-    }
-</style>
+    <style>
+        .button {
+            text-decoration: none;
+            padding: 10px;
+            background-color: lightblue;
+            color: black;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s; 
+        }
+        .button:hover {
+            background-color: deepskyblue; 
+        }
+    </style>
 
-<div style="display: flex; gap: 10px;">
-    <a href="javascript:history.back()" class="button">返回上一级菜单</a>
-    <a href="/nekoclash/upload.php" class="button">返回当前菜单</a>
-    <a href="/nekoclash" class="button">返回主菜单</a>
-</div>
+    <div style="display: flex; gap: 10px;">
+        <a href="javascript:history.back()" class="button">返回上一级菜单</a>
+        <a href="/nekoclash/upload.php" class="button">返回当前菜单</a>
+        <a href="/nekoclash" class="button">返回主菜单</a>
+    </div>
 </body>
 </html>
+
 
 
 <?php

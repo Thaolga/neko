@@ -2,6 +2,7 @@
 if (isset($_GET['file'])) {
     $file = $_GET['file'];
     $filePath = '/etc/neko/proxy_provider/' . basename($file);
+    $filePath = '/etc/neko/config/' . basename($file);
 
     if (file_exists($filePath)) {
         header('Content-Description: File Transfer');
