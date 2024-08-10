@@ -1,25 +1,16 @@
 <?php
 date_default_timezone_set('Asia/Shanghai');
-$lunar_months = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"];
+
 $heavenly_stems = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
 $earthly_branches = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
 $zodiacs = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
-
-$chinese_weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-
+$chinese_weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]; 
 $capital_numbers = ["初", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
 
 function convertSolarToLunar($year, $month, $day) {
     $lunar_year = 2024; 
-    $lunar_month = 7;   
-    $lunar_day = 4;    
-    $is_leap = false;   
-
     return [
         'year' => $lunar_year,
-        'month' => $lunar_month,
-        'day' => $lunar_day,
-        'is_leap' => $is_leap
     ];
 }
 
@@ -29,50 +20,26 @@ $day = date('d');
 
 $lunar_date = convertSolarToLunar($year, $month, $day);
 
-if ($lunar_date === null || !isset($lunar_date['year'], $lunar_date['month'], $lunar_date['day'])) {
+if ($lunar_date === null || !isset($lunar_date['year'])) {
     echo "农历转换出错，请检查转换函数。\n";
     exit;
 }
 
 $lunar_year = $lunar_date['year'];
-$lunar_month = $lunar_date['month'];
-$lunar_day = $lunar_date['day'];
-$is_leap = $lunar_date['is_leap'];
 
-$base_year = 1900;
-$cycle_length = 60;
+$base_year = 1984; 
+$cycle_length = 60; 
 
 $year_index = ($lunar_year - $base_year) % $cycle_length;
+if ($year_index < 0) {
+    $year_index += $cycle_length; 
+}
+
 $heavenly_stem_year = $heavenly_stems[$year_index % 10];
 $earthly_branch_year = $earthly_branches[$year_index % 12];
 $zodiac = $zodiacs[$year_index % 12];
 
-$month_index = (($lunar_year - $base_year) * 12 + $lunar_month) % $cycle_length;
-$heavenly_stem_month = $heavenly_stems[$month_index % 10];
-$earthly_branch_month = $earthly_branches[$month_index % 12];
-
-$day_index = ((($lunar_year - $base_year) * 12 + $lunar_month) * 30 + $lunar_day) % $cycle_length;
-$heavenly_stem_day = $heavenly_stems[$day_index % 10];
-$earthly_branch_day = $earthly_branches[$day_index % 12];
-
-$lunar_date_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac . "年) ";
-$lunar_date_str .= ($is_leap ? "闰" : "") . $lunar_months[$lunar_month - 1];
-
-if ($lunar_day == 1) {
-    $lunar_date_str .= "初一";
-} elseif ($lunar_day <= 10) {
-    $lunar_date_str .= "初" . $capital_numbers[$lunar_day];
-} elseif ($lunar_day == 11) {
-    $lunar_date_str .= "十一";
-} elseif ($lunar_day <= 19) {
-    $lunar_date_str .= "十" . $capital_numbers[$lunar_day - 10];
-} elseif ($lunar_day == 20) {
-    $lunar_date_str .= "二十";
-} elseif ($lunar_day <= 29) {
-    $lunar_date_str .= "廿" . $capital_numbers[$lunar_day - 20];
-} elseif ($lunar_day == 30) {
-    $lunar_date_str .= "三十";
-}
+$lunar_year_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac . "年)";
 ?>
 
 <!DOCTYPE html>
@@ -123,9 +90,11 @@ if ($lunar_day == 1) {
 <body>
     <h1 style="color: #00FF7F;">简易文件管理器</h1>
     <div id="current-time"></div>
-    <div>当前日期: <?php echo date('Y年m月d日'); ?></div>
-    <div>农历日期: <?php echo $lunar_date_str; ?> <?php echo $chinese_weekdays[date('w')]; ?></div>
-
+    <div>当前日期: <?php echo $year; ?>年<?php echo $month; ?>月<?php echo $day; ?>日</div>
+    <div>农历年: <?php echo $lunar_year_str; ?></div>
+    <div>今天是: <?php echo $chinese_weekdays[date('w')]; ?></div> 
+</body>
+</html>
     <script>
         function updateTime() {
             const now = new Date();
@@ -152,8 +121,6 @@ if ($lunar_day == 1) {
     </script>
 </body>
 </html>
-
-
 <?php
 $uploadDir = '/etc/neko/proxy_provider/';
 $configDir = '/etc/neko/config/';
@@ -466,13 +433,6 @@ function formatSize($size) {
         <input type="file" name="customFileInput" required>
         <input type="submit" value="上传到自定义目录">
     </form>
-
-    <h2 style="color: #00FF7F;">自定义目录文件查看管理</h2>
-    <form action="" method="get">
-        <input type="text" name="customDir" placeholder="自定义目录" required>
-        <input type="submit" value="查看文件">
-    </form>
-
     <?php
     if (isset($_GET['customDir'])) {
         $customDir = rtrim($_GET['customDir'], '/') . '/';
@@ -524,9 +484,6 @@ function formatSize($size) {
     </div>
 </body>
 </html>
-
-
-
 <?php
 $subscriptionPath = '/etc/neko/proxy_provider/';
 $subscriptionFile = $subscriptionPath . 'subscriptions.json';
@@ -598,13 +555,12 @@ if (isset($_POST['convert_base64'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clash订阅程序</title>
+    <title>简易文件管理器</title>
     <style>
         .input-group {
             margin-bottom: 10px;
@@ -631,7 +587,7 @@ if (isset($_POST['convert_base64'])) {
             resize: none; 
             padding: 10px; 
             border: 1px solid #ccc; 
-            border-radius: 5px; 
+            border-radius: 5px;    
             background-color: #444; 
             color: white; 
             font-size: 14px; 
@@ -661,7 +617,7 @@ if (isset($_POST['convert_base64'])) {
     <p class="help-text">
         请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>只支持clash订阅，要支持Meta订阅可以修改配置文件找到机场订阅替换为你的机场通用链接。<button id="convertButton" style="background-color: #00BFFF; color: white;">访问订阅转换网站</button>
     <br>
-        在“Base64 转换节点信息”部分，您可以将 Base64 内容粘贴到文本框中，并点击“生成节点信息”按钮来转换内容。      
+        节点转换工具输入你的节点信息转换，会自动保存为代理，简化流程。      
     </p>
 <script>
     document.getElementById('convertButton').onclick = function() {
@@ -714,3 +670,259 @@ if (isset($_POST['convert_base64'])) {
     </form>
 </body>
 </html>
+
+    <h1 style="color: #00FF7F;">节点转换工具</h1>
+  <form method="post">
+        <textarea name="input" rows="10" cols="50" placeholder="粘贴 ss//vless//vmess//trojan//hysteria2 节点信息..."></textarea>
+
+        <button type="submit" name="convert">转换</button>
+    </form>
+
+<?php
+function parseVmess($base, $tmpdata) {
+    $decoded = base64_decode($base['host']);
+    $urlparsed = array();
+    $arrjs = json_decode($decoded, true);
+    if (!empty($arrjs['v'])) {
+        $urlparsed['cfgtype'] = isset($base['scheme']) ? $base['scheme'] : '';
+        $urlparsed['name'] = isset($arrjs['ps']) ? $arrjs['ps'] : '';
+        $urlparsed['host'] = isset($arrjs['add']) ? $arrjs['add'] : '';
+        $urlparsed['port'] = isset($arrjs['port']) ? $arrjs['port'] : '';
+        $urlparsed['uuid'] = isset($arrjs['id']) ? $arrjs['id'] : '';
+        $urlparsed['alterId'] = isset($arrjs['aid']) ? $arrjs['aid'] : '';
+        $urlparsed['type'] = isset($arrjs['net']) ? $arrjs['net'] : '';
+        $urlparsed['path'] = isset($arrjs['path']) ? $arrjs['path'] : '';
+        $urlparsed['security'] = isset($arrjs['type']) ? $arrjs['type'] : '';
+        $urlparsed['sni'] = isset($arrjs['host']) ? $arrjs['host'] : '';
+        $urlparsed['tls'] = isset($arrjs['tls']) ? $arrjs['tls'] : '';
+        return printcfg($urlparsed);
+    } else {
+        return "DECODING FAILED! PLEASE CHECK YOUR URL!";
+    }
+}
+
+function parseUrl($basebuff) {
+    $urlparsed = array();
+    $querybuff = array();
+    $urlparsed['cfgtype'] = isset($basebuff['scheme']) ? $basebuff['scheme'] : '';
+    $urlparsed['name'] = isset($basebuff['fragment']) ? $basebuff['fragment'] : '';
+    $urlparsed['host'] = isset($basebuff['host']) ? $basebuff['host'] : '';
+    $urlparsed['port'] = isset($basebuff['port']) ? $basebuff['port'] : '';
+
+    if ($urlparsed['cfgtype'] == "ss") {
+        $urlparsed['uuid'] = isset($basebuff['user']) ? $basebuff['user'] : '';
+        $basedata = explode(":", base64_decode($urlparsed['uuid']));
+        $urlparsed['cipher'] = $basedata[0];
+        $urlparsed['uuid'] = $basedata[1];
+    } else {
+        $urlparsed['uuid'] = isset($basebuff['user']) ? $basebuff['user'] : '';
+    }
+
+    // Ensure 'query' parameter exists before processing
+    $tmpquery = isset($basebuff['query']) ? $basebuff['query'] : '';
+    if ($urlparsed['cfgtype'] == "ss") {
+        $tmpbuff = array();
+        $tmpstr = "";
+        $tmpquery2 = explode(";", $tmpquery);
+        for ($x = 0; $x < count($tmpquery2); $x++) {
+            $tmpstr .= $tmpquery2[$x] . "&";
+        }
+        parse_str($tmpstr, $querybuff);
+        $urlparsed['mux'] = isset($querybuff['mux']) ? $querybuff['mux'] : '';
+        $urlparsed['host2'] = isset($querybuff['host2']) ? $querybuff['host2'] : '';
+    } else {
+        parse_str($tmpquery, $querybuff);
+    }
+
+    $urlparsed['type'] = isset($querybuff['type']) ? $querybuff['type'] : '';
+    $urlparsed['path'] = isset($querybuff['path']) ? $querybuff['path'] : '';
+    $urlparsed['mode'] = isset($querybuff['mode']) ? $querybuff['mode'] : '';
+    $urlparsed['plugin'] = isset($querybuff['plugin']) ? $querybuff['plugin'] : '';
+    $urlparsed['security'] = isset($querybuff['security']) ? $querybuff['security'] : '';
+    $urlparsed['encryption'] = isset($querybuff['encryption']) ? $querybuff['encryption'] : '';
+    $urlparsed['serviceName'] = isset($querybuff['serviceName']) ? $querybuff['serviceName'] : '';
+    $urlparsed['sni'] = isset($querybuff['sni']) ? $querybuff['sni'] : '';
+
+    return printcfg($urlparsed);
+}
+
+function printcfg($data) {
+    $outcfg = "";
+    if (empty($GLOBALS['isProxiesPrinted'])) {
+        $outcfg .= "proxies:\n";
+        $GLOBALS['isProxiesPrinted'] = true;
+    }
+    if ($data['cfgtype'] == "vless") {
+        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
+        else $outcfg .= "    - name: VLESS\n";
+        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
+        $outcfg .= "      server: " . $data['host'] . "\n";
+        $outcfg .= "      port: " . $data['port'] . "\n";
+        $outcfg .= "      uuid: " . $data['uuid'] . "\n";
+        $outcfg .= "      cipher: auto\n";
+        $outcfg .= "      tls: true\n";
+        if ($data['type'] == "ws") {
+            $outcfg .= "      network: " . $data['type'] . "\n";
+            $outcfg .= "      ws-opts: \n";
+            $outcfg .= "       path: " . $data['path'] . "\n";
+            $outcfg .= "       Headers: \n";
+            $outcfg .= "          Host: " . $data['host'] . "\n";
+            $outcfg .= "       flow:  \n";
+            $outcfg .= "          client-fingerprint: chrome\n"; 
+        } else if ($data['type'] == "grpc") {
+            $outcfg .= "      network: " . $data['type'] . "\n";
+            $outcfg .= "      grpc-opts: \n";
+            $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
+        }
+        $outcfg .= "      udp: true\n";
+        $outcfg .= "      skip-cert-verify: true \n";
+    } else if ($data['cfgtype'] == "trojan") {
+    if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
+    else $outcfg .= "    - name: TROJAN\n";
+    
+    $outcfg .= "      type: " . $data['cfgtype'] . "\n";
+    $outcfg .= "      server: " . $data['host'] . "\n";
+    $outcfg .= "      port: " . $data['port'] . "\n";
+    $outcfg .= "      password: " . $data['uuid'] . "\n";
+    
+    if (!empty($data['sni'])) {
+        $outcfg .= "      sni: " . $data['sni'] . "\n";
+    } else {
+        $outcfg .= "      sni: " . $data['host'] . "\n";
+    }
+
+    if ($data['type'] == "ws") {
+        $outcfg .= "      network: " . $data['type'] . "\n";
+        $outcfg .= "      ws-opts: \n";
+        $outcfg .= "       path: " . $data['path'] . "\n";
+        $outcfg .= "       Headers: \n";
+        $outcfg .= "          Host: " . (isset($data['sni']) && !empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+    } else if ($data['type'] == "grpc") {
+        $outcfg .= "      network: " . $data['type'] . "\n";
+        $outcfg .= "      grpc-opts: \n";
+        $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
+    }
+    
+    $outcfg .= "      udp: true\n";
+    $outcfg .= "      skip-cert-verify: true \n";
+    } else if ($data['cfgtype'] == "hysteria2" || $scheme == "hy2") {
+    if (!empty($data['name'])) {
+        $outcfg .= "    - name: " . $data['name'] . "\n";
+    } else {
+        $outcfg .= "    - name: HYSTERIA2\n";
+    }
+        $outcfg .= "      server: " . $data['host'] . "\n";
+        $outcfg .= "      port: " . $data['port'] . "\n";
+        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
+        $outcfg .= "      password: " . $data['uuid'] . "\n";
+        $outcfg .= "      udp: true\n";
+        $outcfg .= "      ports: 20000-55000\n";
+        $outcfg .= "      mport: 20000-55000\n";
+        $outcfg .= "      skip-cert-verify: true\n";
+        $outcfg .= "      sni: " . (isset($data['sni']) && !empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";  
+    } else if ($data['cfgtype'] == "ss") {
+        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
+        else $outcfg .= "    - name: SHADOWSOCKS\n";
+        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
+        $outcfg .= "      server: " . $data['host'] . "\n";
+        $outcfg .= "      port: " . $data['port'] . "\n";
+        $outcfg .= "      cipher: " . $data['cipher'] . "\n";
+        $outcfg .= "      password: " . $data['uuid'] . "\n";
+        if ($data['plugin'] == "v2ray-plugin" || $data['plugin'] == "xray-plugin") {
+            $outcfg .= "      plugin: " . $data['plugin'] . "\n";
+            $outcfg .= "      plugin-opts: \n";
+            $outcfg .= "       mode: websocket\n";
+            $outcfg .= "       # path: " . $data['path'] . "\n";
+            $outcfg .= "       mux: " . $data['mux'] . "\n";
+            $outcfg .= "       # tls: true \n";
+            $outcfg .= "       # skip-cert-verify: true \n";
+            $outcfg .= "       # headers: \n";
+            $outcfg .= "       #    custom: value\n";
+        } else if ($data['plugin'] == "obfs") {
+            $outcfg .= "      plugin: " . $data['plugin'] . "\n";
+            $outcfg .= "      plugin-opts: \n";
+            $outcfg .= "       mode: tls\n";
+            $outcfg .= "       # host: " . $data['host2'] . "\n";
+        }
+        $outcfg .= "      udp: true\n";
+        $outcfg .= "      skip-cert-verify: true \n";
+    } else if ($data['cfgtype'] == "vmess") {
+        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
+        else $outcfg .= "    - name: VMESS\n";
+        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
+        $outcfg .= "      server: " . $data['host'] . "\n";
+        $outcfg .= "      port: " . $data['port'] . "\n";
+        $outcfg .= "      uuid: " . $data['uuid'] . "\n";
+        $outcfg .= "      alterId: " . $data['alterId'] . "\n";
+        $outcfg .= "      cipher: auto\n";
+        $outcfg .= "      tls: " . ($data['tls'] == "tls" ? "true" : "false") . "\n";
+        $outcfg .= "      servername: " . (!empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+        $outcfg .= "      network: " . $data['type'] . "\n";
+        if ($data['type'] == "ws") {
+            $outcfg .= "      ws-opts: \n";
+            $outcfg .= "       path: " . $data['path'] . "\n";
+            $outcfg .= "       Headers: \n";
+            $outcfg .= "          Host: " . $data['sni'] . "\n";
+        } else if ($data['type'] == "grpc") {
+            $outcfg .= "      grpc-opts: \n";
+            $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
+        } else if ($data['type'] == "h2") {
+            $outcfg .= "      h2-opts: \n";
+            $outcfg .= "       host: \n";
+            $outcfg .= "         - google.com \n";
+            $outcfg .= "         - bing.com \n";
+            $outcfg .= "       path: " . $data['path'] . "\n";
+        } else if ($data['type'] == "http") {
+            $outcfg .= "      # http-opts: \n";
+            $outcfg .= "      #   method: \"GET\"\n";
+            $outcfg .= "      #   path: \n";
+            $outcfg .= "      #     - '/'\n";
+            $outcfg .= "      #   headers: \n";
+            $outcfg .= "      #     Connection: \n";
+            $outcfg .= "      #       - keep-alive\n";
+        }
+        $outcfg .= "      udp: true\n";
+        $outcfg .= "      skip-cert-verify: true \n";
+    }
+    return $outcfg;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = $_POST['input'] ?? ''; 
+    if (empty($input)) {
+        echo "Input is empty. Please provide the necessary information.";
+    } else {
+        $lines = explode("\n", trim($input));  
+        $allcfgs = "";  
+        $GLOBALS['isProxiesPrinted'] = false;  
+
+        foreach ($lines as $line) {
+            $base64url = parse_url($line);
+            $base64url = array_map('urldecode', $base64url);
+            $tmpdata = 'output.txt';  // Output file name
+
+            if (isset($base64url['scheme']) && $base64url['scheme'] === 'vmess') {
+                $allcfgs .= parseVmess($base64url, $tmpdata);
+            } else {
+                $allcfgs .= parseUrl($base64url);
+            }
+        }
+
+        $file_path = '/etc/neko/proxy_provider/subscription_7.json';
+        file_put_contents($file_path, $allcfgs);
+
+        echo "<h2 style=\"color: #00FFFF;\">转换完成</h2>";
+        echo "<p>配置文件已经成功保存到 <strong>$file_path</strong></p>";
+        echo "<textarea id='output' readonly style='width:100%;height:400px;'>$allcfgs</textarea>";
+        echo "<button onclick='copyToClipboard()'>复制</button>";
+        echo "<script>
+            function copyToClipboard() {
+                var output = document.getElementById('output');
+                output.select();
+                document.execCommand('copy');
+                alert('复制成功');
+            }
+        </script>";
+    }
+}
+?>
