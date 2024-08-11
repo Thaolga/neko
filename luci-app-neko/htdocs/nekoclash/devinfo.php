@@ -25,7 +25,7 @@ $seconds = $raw_uptime % 60;
 
 
 // CPU FREQUENCY
-/* $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+/*  $cpuFreq = file_get_contents("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
 $cpuFreq = round($cpuFreq / 1000, 1);
 
 // CPU TEMPERATURE
@@ -236,7 +236,6 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             player.style.cursor = 'grab';
         }); */
 
-  
        document.addEventListener('keydown', function(event) {
             switch(event.key) {
                 case 'ArrowLeft': 
@@ -332,7 +331,6 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         }
 
         setInterval(updateTime, 1000); 
-        // 页面加载时先调用一次更新
         window.onload = updateTime;
 
         var audioPlayer = document.getElementById('audioPlayer');
@@ -355,12 +353,15 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         })
         .catch(error => console.error('Error fetching songs:', error));
 
-    function loadSong(index) {
-        if (index >= 0 && index < songs.length) {
-            audioPlayer.src = songs[index];
-            audioPlayer.play();
+        function loadSong(index) {
+            if (index >= 0 && index < songs.length) {
+                audioPlayer.src = songs[index];
+                setTimeout(() => {
+                audioPlayer.play();
+            }, 7000); 
+          }
         }
-        }
+
         playButton.addEventListener('click', function() {
             if (audioPlayer.paused) {
                 audioPlayer.play();
@@ -401,67 +402,51 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 loadSong(currentSongIndex);
             }
         });
-    function initializePlayer() {
-        if (songs.length > 0) {
+        function initializePlayer() {
+            if (songs.length > 0) {
+            setTimeout(() => {
             loadSong(currentSongIndex);
-        }
+        }, 7000); 
     }
+}
 
 </script>
 </body>
 </html>
 
 
-<!doctype html>
-<html lang="zh">
+<?php
+date_default_timezone_set('Asia/Shanghai');
+
+$currentTime = date(' H点i分s秒');
+?>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>北京时间及天气播报</title>
-    <meta http-equiv="refresh" content="1800"> <!-- 每半小时刷新一次 -->
-    <script>
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                var utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-CN'; 
-                speechSynthesis.speak(utterance);
-            } else {
-                alert('抱歉，您的浏览器不支持语音播报功能。');
-            }
-        }
-
-        function getCurrentTime() {
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            var seconds = now.getSeconds();
-            var timeAnnouncement = `现在是北京时间 ${hours} 点 ${minutes} 分 ${seconds} 秒`;
-
-            if (minutes === 0 && seconds === 0) {
-                timeAnnouncement += `，整点播报：现在是 ${hours} 点整。`;
-            }
-
-            return timeAnnouncement;
-        }
-
-        async function getWeather() {
-            const city = 'Beijing'; // 替换为您想要的城市
-            const response = await fetch(`https://wttr.in/${city}?format=3&lang=zh`);
-            const currentWeather = await response.text();
-
-            const forecastResponse = await fetch(`https://wttr.in/${city}?format=%C+%t&lang=zh&n=3`); 
-            const forecast = await forecastResponse.text();
-
-            return `当前天气：${currentWeather}。未来天气预报：${forecast}`;
-        }
-
-        window.onload = async function() {
-            const timeAnnouncement = getCurrentTime();
-            const weatherAnnouncement = await getWeather();
-            speak(timeAnnouncement + ' ' + weatherAnnouncement); 
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京时间播报</title>
 </head>
 <body>
+    <script>
+        function speakCurrentTime() {
+            var message = '当前北京时间是: <?php echo $currentTime; ?>';
+            var utterance = new SpeechSynthesisUtterance(message);
+            speechSynthesis.speak(utterance);
+        }
+
+        function checkForFullHour() {
+            var now = new Date();
+            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
+                speakCurrentTime();
+            }
+        }
+
+        window.onload = function() {
+            speakCurrentTime();
+            setInterval(checkForFullHour, 1000);
+        };
+    </script>
 </body>
 </html>
