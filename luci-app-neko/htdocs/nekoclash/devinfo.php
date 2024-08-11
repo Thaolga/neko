@@ -358,7 +358,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 audioPlayer.src = songs[index];
                 setTimeout(() => {
                 audioPlayer.play();
-            }, 7000); 
+            }, 20000); 
           }
         }
 
@@ -406,7 +406,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             if (songs.length > 0) {
             setTimeout(() => {
             loadSong(currentSongIndex);
-        }, 7000); 
+        }, 20000); 
     }
 }
 
@@ -414,11 +414,8 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
 </body>
 </html>
 
-
 <?php
 date_default_timezone_set('Asia/Shanghai');
-
-$currentTime = date(' H点i分s秒');
 ?>
 
 <!DOCTYPE html>
@@ -426,26 +423,93 @@ $currentTime = date(' H点i分s秒');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北京时间播报</title>
+    <title>自动播报时间和天气</title>
 </head>
 <body>
     <script>
+        const city = 'Shanghai'; // 替换为你想要查询的城市
+
         function speakCurrentTime() {
-            var message = '当前北京时间是: <?php echo $currentTime; ?>';
+            var now = new Date();
+            var currentTime = now.getHours() + '点' + now.getMinutes() + '分' + now.getSeconds() + '秒';
+            var message = '现在是北京时间: ' + currentTime;
             var utterance = new SpeechSynthesisUtterance(message);
             speechSynthesis.speak(utterance);
         }
 
-        function checkForFullHour() {
-            var now = new Date();
-            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
-                speakCurrentTime();
-            }
+        function translateWeatherDescription(description) {
+            const translations = {
+                "clear sky": "晴天",
+                "few clouds": "少量云",
+                "scattered clouds": "散云",
+                "broken clouds": "多云",
+                "shower rain": "阵雨",
+                "rain": "雨",
+                "thunderstorm": "雷暴",
+                "snow": "雪",
+                "mist": "雾",
+                "haze": "霾",
+                "fog": "雾霾",
+                "sand": "沙尘",
+                "dust": "尘土",
+                "squall": "阵风",
+                "tornado": "龙卷风",
+                "ash": "火山灰",
+                "drizzle": "毛毛雨",
+                "light rain": "小雨",
+                "heavy rain": "大雨",
+                "very heavy rain": "特大暴雨",
+                "extreme rain": "极端降雨",
+                "light snow": "小雪",
+                "heavy snow": "大雪",
+                "very heavy snow": "特大暴雪",
+                "extreme snow": "极端降雪",
+            };
+            return translations[description] || description; 
+        }
+
+        function getDetailedWeatherDescription(weather) {
+            const descriptions = weather.weather.map(item => translateWeatherDescription(item.description)).join('，');
+            return descriptions;
+        }
+
+        function speakWeather(weather) {
+            var weatherDescription = getDetailedWeatherDescription(weather);
+            var temperature = weather.main.temp; 
+            var humidity = weather.main.humidity; 
+            var windSpeed = weather.wind.speed; 
+            var pressure = weather.main.pressure; 
+
+            var message = `当前${city}的天气是: ${weatherDescription}，温度为: ${temperature}摄氏度，湿度: ${humidity}%，风速: ${windSpeed}米每秒，气压: ${pressure}帕。`;
+            var utterance = new SpeechSynthesisUtterance(message);
+            speechSynthesis.speak(utterance);
+        }
+
+        function fetchWeather() {
+            const apiKey = 'fc8bd2637768c286c6f1ed5f1915eb22'; 
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`; 
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应不正常：' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); 
+                    if (data && data.weather && data.main) {
+                        speakWeather(data);
+                    } else {
+                        console.error('无法获取天气数据');
+                    }
+                })
+                .catch(error => console.error('获取天气数据时出错:', error));
         }
 
         window.onload = function() {
             speakCurrentTime();
-            setInterval(checkForFullHour, 1000);
+            fetchWeather();
         };
     </script>
 </body>
