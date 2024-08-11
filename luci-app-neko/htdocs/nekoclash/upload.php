@@ -615,7 +615,7 @@ if (isset($_POST['convert_base64'])) {
 <body>
     <h1 style="color: #00FF7F;">Clash订阅程序</h1>
     <p class="help-text">
-        请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>只支持clash订阅，要支持Meta订阅可以修改配置文件找到机场订阅替换为你的机场通用链接。<button id="convertButton" style="background-color: #00BFFF; color: white;">访问订阅转换网站</button>
+        请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>clash订阅支持通用订阅内容为Base64节点，如需解码请用订阅转换。<button id="convertButton" style="background-color: #00BFFF; color: white;">访问订阅转换网站</button>
     <br>
         节点转换工具输入你的节点信息转换，会自动保存为代理，简化流程。      
     </p>
