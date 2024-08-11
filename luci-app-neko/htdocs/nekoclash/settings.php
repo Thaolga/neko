@@ -124,35 +124,61 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
             </form>
         </tr>
         <tr>
-            <td class="col-2">客户版本</td>
-            <td class="col-4">
-                <div class="form-control text-center" style="display: flex; align-items: center; justify-content: center;">
-                    <div style="font-family: monospace; padding-right: 10px; margin-left: -130px; ">
-                        <?php
-                        $package_name = "luci-app-neko"; 
-                        $installed_version = trim(shell_exec("opkg list-installed | grep $package_name | awk '{print $3}'"));
-                        echo htmlspecialchars($installed_version ?: '-'); 
-                        ?>
-                    </div>
-                    <button id="updateButton" class="button" style="background-color: blue; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">更新到最新版本</button>
-                </div>
-                <div id="logOutput"></div>
-            </td>
-        </tr>
-        <tr>
-            <td class="col-2">核心版本</td>
-            <td class="col-4">
-                <div class="form-control text-center" style="display: flex; align-items: center; justify-content: center;">
-                    <div style="font-family: monospace; padding-right: 10px; ">
-                        <div id="corever">-</div>
-                    </div>
-                    <button id="updateCoreButton" class="button" style="background-color: blue; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">切换Mihomo内核</button>
-                    <button id="updateNekoButton" class="button" style="background-color: blue; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">切换NeKo内核</button>
-                </div>
-            </td>
-        </tr>
-    </tbody>
+<td class="col-2">客户端版本</td>
+<td class="col-4">
+    <div class="form-control text-center" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-family: monospace;">
+            <?php
+            $package_name = "luci-app-neko"; 
+            $installed_version = trim(shell_exec("opkg list-installed | grep $package_name | awk '{print $3}'"));
+            echo htmlspecialchars($installed_version ?: '-'); 
+            ?>
+        </div>
+        <button id="updateButton" class="button">更新到最新版本</button>
+    </div>
+    <div id="logOutput"></div>
+</td>
+</tr>
+<tr>
+    <td class="col-2">核心版本</td>
+    <td class="col-4">
+        <div class="form-control text-center" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-family: monospace;" id="corever">-</div>
+            <div style="display: flex; gap: 10px;">              
+                <button id="updateNekoButton" class="button">切换NeKo内核</button>
+                <button id="updateCoreButton" class="button">切换Mihomo内核</button>
+            </div>
+        </div>
+    </td>
+</tr>
+</tbody>
 </table>
+
+<style>
+    .button {
+        background-color: #4169E1; 
+        color: white; 
+        border: none; 
+        height: 40px; 
+        padding: 10px 20px; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        transition: background-color 0.3s; 
+        text-align: center; 
+    }
+
+    .button:hover {
+        background-color: #FF00FF; 
+    }
+
+    #updateCoreButton:hover {
+        background-color: darkgreen; 
+    }
+
+    #updateNekoButton:hover {
+        background-color: darkorange; 
+    }
+</style>
 
 <script>
     document.getElementById('updateButton').addEventListener('click', function() {
