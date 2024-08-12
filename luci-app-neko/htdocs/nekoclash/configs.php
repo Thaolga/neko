@@ -200,46 +200,270 @@ include './cfg.php';
                          </div>
                 </div>
                     <div id="upload" class="tab-pane fade">
-                  <h2 class="text-center p-2 mb-5">上传</h2>
-                    <div class="container h-100 mb-5">
-                    <form action="./upload.php" method="post" enctype="multipart/form-data" class="text-center">
-                 <div class="mb-3">
-                    <label for="fileInput" class="form-label">选择文件</label>
-                <input type="file" class="form-control" id="fileInput" name="fileInput" required>
-            </div>
-            <button type="submit" class="btn btn-primary">上传</button>  
-             <h2 class="text-center p-2" >订阅管理器</h2>
-                    <button type="submit" class="btn btn-primary"  onclick="window.location.href='/nekoclash/upload.php'">打开订阅管理器</button> 
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-           <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-    <h2 class="text-center p-2 mb-3">使用教程</h2>
-    <div class="container text-center border border-3 rounded-4 col-10 mb-4">
-        <p style="color: #87CEEB; text-align: left;">代理文件路径/etc/neko/proxy_provider。想要订阅的小伙伴可以直接修改《配置》里面的配置文件.yaml 在里面找到机场订阅替换为你的机场链接。【会手搓mihomo配置可以自行替换】播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。<br>
-		<?php error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-            $routerIp = trim(exec('uci get network.lan.ipaddr 2>&1'));
-            if (preg_match('/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/', $routerIp) && !in_array($routerIp, ['0.0.0.0', '255.255.255.255'])) {
-            $controlPanelUrl = "http://$routerIp/nekoclash";
-        echo "独立控制面板地址: $controlPanelUrl<br>";
-        } else {
-        echo "无法获取路由器的 IP 地址。错误信息: $routerIp";
-        }
-?>
-</p>
-    </div>
-</div>
-      </div>
-        </div>
-            </div>
-        </div>
-    </div>
-    <footer class="text-center">
-        <p><?php echo $footer ?></p>
-    </footer>
-  </body>
-</html>
+    <?php
+    $subscriptionPath = '/etc/neko/proxy_provider/';
+    $subscriptionFile = $subscriptionPath . 'subscriptions.json';
+    $autoUpdateConfigFile = $subscriptionPath . 'auto_update_config.json';
 
+    $message = "";
+    $subscriptions = [];
+    $autoUpdateConfig = ['auto_update_enabled' => false, 'update_time' => '00:00'];
+
+    if (!file_exists($subscriptionPath)) {
+        mkdir($subscriptionPath, 0755, true);
+    }
+
+    if (!file_exists($subscriptionFile)) {
+        file_put_contents($subscriptionFile, json_encode([]));
+    }
+
+    if (!file_exists($autoUpdateConfigFile)) {
+        file_put_contents($autoUpdateConfigFile, json_encode($autoUpdateConfig));
+    }
+
+    $subscriptions = json_decode(file_get_contents($subscriptionFile), true);
+    if (!$subscriptions) {
+        for ($i = 0; $i < 7; $i++) {
+            $subscriptions[$i] = [
+                'url' => '',
+                'file_name' => "subscription_{$i}.yaml",
+            ];
+        }
+    }
+
+    $autoUpdateConfig = json_decode(file_get_contents($autoUpdateConfigFile), true);
+
+    if (isset($_POST['update'])) {
+        $index = intval($_POST['index']);
+        $url = $_POST['subscription_url'] ?? '';
+        $customFileName = $_POST['custom_file_name'] ?? "subscription_{$index}.yaml";
+
+        $subscriptions[$index]['url'] = $url;
+        $subscriptions[$index]['file_name'] = $customFileName;
+
+        if (!empty($url)) {
+            $finalPath = $subscriptionPath . $customFileName;
+            $command = "curl -fsSL -o {$finalPath} {$url}";
+            exec($command . ' 2>&1', $output, $return_var);
+
+            if ($return_var === 0) {
+                $message = "订阅链接 {$url} 更新成功！文件已保存到: {$finalPath}";
+            } else {
+                $message = "配置更新失败！错误信息: " . implode("\n", $output);
+            }
+        } else {
+            $message = "第" . ($index + 1) . "个订阅链接为空！";
+        }
+
+        file_put_contents($subscriptionFile, json_encode($subscriptions));
+    }
+
+    if (isset($_POST['set_auto_update'])) {
+        $updateTime = $_POST['update_time'] ?? '00:00';
+        $autoUpdateEnabled = isset($_POST['auto_update_enabled']);
+
+        $autoUpdateConfig = [
+            'auto_update_enabled' => $autoUpdateEnabled,
+            'update_time' => $updateTime
+        ];
+
+        file_put_contents($autoUpdateConfigFile, json_encode($autoUpdateConfig));
+        $message = "自动更新设置已保存！";
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mihomo订阅程序</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: transparent; 
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                padding: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+                background-color: transparent; 
+            }
+            .text-center {
+                text-align: center;
+            }
+            .input-group {
+                margin-bottom: 15px;
+            }
+            .input-group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+            .input-group input,
+            .input-group textarea,
+            .input-group select {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+            .btn {
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+                color: white;
+                border-radius: 4px;
+                text-align: center;
+                display: inline-block;
+                text-decoration: none;
+            }
+            .btn-primary {
+                background-color: #007bff; 
+            }
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+            footer {
+                background-color: transparent; 
+                color: white;
+                padding: 10px;
+                text-align: center;
+            }
+            .container-bg {
+                background-color: transparent; 
+            }
+            .border {
+                border: 1px solid #ccc;
+            }
+            .rounded-4 {
+                border-radius: 4px;
+            }
+            .form-spacing {
+                margin: 20px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="text-center" style="color: #00FF7F;">Mihomo订阅程序</h1>
+            <p class="help-text text-center">
+                Mihomo订阅支持所有格式《Base64/clash格式/节点链接》，如需解码请用订阅转换。
+                <br><br>
+                <a href="/nekoclash/upload.php" class="btn btn-primary">打开订阅管理器</a>
+                <button id="convertButton" class="btn btn-primary">访问订阅转换网站</button>
+                <br><br>     
+            </p>
+
+            <h2 class="text-center" style="color: #00FF7F;">自动更新设置</h2>
+            <form method="post" class="text-center">
+                <div class="input-group">
+                    <label for="update_time">设置更新时间:</label>
+                    <select name="update_time" id="update_time" required>
+                        <?php
+                        for ($h = 0; $h < 24; $h++) {
+                            $time = sprintf('%02d:00', $h);
+                            $selected = ($time == $autoUpdateConfig['update_time']) ? 'selected' : '';
+                            echo "<option value='$time' $selected>$time</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="auto_update_enabled">启用自动更新:</label>
+                    <input type="checkbox" name="auto_update_enabled" id="auto_update_enabled" <?php echo $autoUpdateConfig['auto_update_enabled'] ? 'checked' : ''; ?>>
+                </div>
+                <button type="submit" name="set_auto_update" class="btn btn-primary">保存设置</button>
+            </form>
+
+            <div class="form-spacing"></div> 
+
+            <?php if ($message): ?>
+                <p class="text-center"><?php echo nl2br(htmlspecialchars($message)); ?></p>
+            <?php endif; ?>
+
+            <h2 class="text-center" style="color: #00FF7F;">订阅管理</h2>
+            <?php for ($i = 0; $i < 7; $i++): ?>
+                <form method="post" class="text-center">
+                    <div class="input-group">
+                        <label for="subscription_url_<?php echo $i; ?>">订阅链接 <?php echo ($i + 1); ?>:</label>
+                        <input type="text" name="subscription_url" id="subscription_url_<?php echo $i; ?>" value="<?php echo htmlspecialchars($subscriptions[$i]['url']); ?>" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="custom_file_name_<?php echo $i; ?>">自定义文件名:</label>
+                        <input type="text" name="custom_file_name" id="custom_file_name_<?php echo $i; ?>" value="<?php echo htmlspecialchars($subscriptions[$i]['file_name']); ?>">
+                        <input type="hidden" name="index" value="<?php echo $i; ?>">
+                        <button type="submit" name="update" class="btn btn-primary">更新配置</button>
+                    </div>
+                </form>
+            <?php endfor; ?>
+
+            <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+                <h2 class="text-center p-2 mb-3">小技巧</h2>
+                <div class="container text-center border border-3 rounded-4 col-10 mb-4">
+                    <p style="color: #87CEEB; text-align: left;">
+                        播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。<br>
+                        <?php
+                        error_reporting(E_ALL);
+                        ini_set('display_errors', 1);
+                        $routerIp = trim(exec('uci get network.lan.ipaddr 2>&1'));
+                        if (preg_match('/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/', $routerIp) && !in_array($routerIp, ['0.0.0.0', '255.255.255.255'])) {
+                            $controlPanelUrl = "http://$routerIp/nekoclash";
+                            echo "独立控制面板地址: $controlPanelUrl<br>";
+                        } else {
+                            echo "无法获取路由器的 IP 地址。错误信息: $routerIp";
+                        }
+                        ?>
+                    </p>
+                </div>
+            </div>
+
+            <footer class="text-center">
+                <p><?php echo $footer ?></p>
+            </footer>
+        </div>
+
+        <script>
+             document.getElementById('convertButton').onclick = function() {
+                 window.open('https://suburl.v1.mk', '_blank');
+             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const autoUpdateEnabled = <?php echo json_encode($autoUpdateConfig['auto_update_enabled']); ?>;
+                const updateTime = <?php echo json_encode($autoUpdateConfig['update_time']); ?>;
+
+                if (autoUpdateEnabled) {
+                    const now = new Date();
+                    const updateParts = updateTime.split(':');
+                    const updateHour = parseInt(updateParts[0], 10);
+                    const updateMoment = new Date(now.getFullYear(), now.getMonth(), now.getDate(), updateHour, 0, 0, 0);
+
+                    if (now > updateMoment) {
+                        updateMoment.setDate(updateMoment.getDate() + 1);
+                    }
+
+                    const timeUntilUpdate = updateMoment - now;
+
+                    function triggerUpdate() {
+                        fetch(window.location.href, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'update': true
+                            })
+                        }).then(response => response.text())
+                        .then(data => console.log('自动更新完成', data))
+                        .catch(error => console.error('自动更新错误:', error));
+                    }
+
+                    setTimeout(function() {
+                        triggerUpdate();
+                        setInterval(triggerUpdate, 24 * 60 * 60 * 1000); 
+                    }, timeUntilUpdate);
+                }
+            });
+        </script>
+    </body>
+    </html>
+</div>

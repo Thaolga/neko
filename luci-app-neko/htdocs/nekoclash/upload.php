@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['editFile']) && isset($_POST['fileType'])) {
         $fileToEdit = ($_POST['fileType'] === 'proxy') ? $uploadDir . basename($_POST['editFile']) : $configDir . basename($_POST['editFile']);
         $fileContent = '';
-        $editingFileName = htmlspecialchars($_POST['editFile']); 
+        $editingFileName = htmlspecialchars($_POST['editFile']);
 
         if (file_exists($fileToEdit)) {
             $handle = fopen($fileToEdit, 'r');
@@ -453,9 +453,11 @@ function formatSize($size) {
     ?>
 
     <?php if (isset($fileContent)): ?>
-        <h2 style="color: #00FF7F;">编辑文件: <?php echo $editingFileName; ?></h2> 
+        <?php $fileToEdit = ($_POST['fileType'] === 'proxy') ? $uploadDir . basename($_POST['editFile']) : $configDir . basename($_POST['editFile']); ?>
+        <h2 style="color: #00FF7F;">编辑文件: <?php echo $editingFileName; ?></h2>
+        <p>最后更新日期: <?php echo date('Y-m-d H:i:s', filemtime($fileToEdit)); ?></p>
         <form action="" method="post">
-            <textarea name="saveContent" rows="15" cols="150"><?php echo $fileContent; ?></textarea><br>
+            <textarea name="saveContent" rows="15" cols="150" class="editor"><?php echo $fileContent; ?></textarea><br>
             <input type="hidden" name="fileName" value="<?php echo htmlspecialchars($_POST['editFile']); ?>">
             <input type="hidden" name="fileType" value="<?php echo htmlspecialchars($_POST['fileType']); ?>">
             <input type="submit" value="保存内容">
@@ -480,6 +482,7 @@ function formatSize($size) {
     <div style="display: flex; gap: 10px;">
         <a href="javascript:history.back()" class="button">返回上一级菜单</a>
         <a href="/nekoclash/upload.php" class="button">返回当前菜单</a>
+        <a href="/nekoclash/configs.php" class="button">返回配置菜单</a>
         <a href="/nekoclash" class="button">返回主菜单</a>
     </div>
 </body>
@@ -488,10 +491,12 @@ function formatSize($size) {
 $subscriptionPath = '/etc/neko/proxy_provider/';
 $subscriptionFile = $subscriptionPath . 'subscriptions.json';
 $clashFile = $subscriptionPath . 'clash_config.yaml';
+$autoUpdateConfigFile = $subscriptionPath . 'auto_update_config.json';
 
 $message = "";
 $decodedContent = ""; 
 $subscriptions = [];
+$autoUpdateConfig = ['auto_update_enabled' => false, 'update_time' => '00:00'];
 
 if (!file_exists($subscriptionPath)) {
     mkdir($subscriptionPath, 0755, true);
@@ -499,6 +504,10 @@ if (!file_exists($subscriptionPath)) {
 
 if (!file_exists($subscriptionFile)) {
     file_put_contents($subscriptionFile, json_encode([]));
+}
+
+if (!file_exists($autoUpdateConfigFile)) {
+    file_put_contents($autoUpdateConfigFile, json_encode($autoUpdateConfig));
 }
 
 $subscriptions = json_decode(file_get_contents($subscriptionFile), true);
@@ -510,6 +519,8 @@ if (!$subscriptions) {
         ];
     }
 }
+
+$autoUpdateConfig = json_decode(file_get_contents($autoUpdateConfigFile), true);
 
 if (isset($_POST['update'])) {
     $index = intval($_POST['index']);
@@ -553,6 +564,19 @@ if (isset($_POST['convert_base64'])) {
     } else {
         $message = "Base64 内容为空！";
     }
+}
+
+if (isset($_POST['set_auto_update'])) {
+    $updateTime = $_POST['update_time'] ?? '00:00';
+    $autoUpdateEnabled = isset($_POST['auto_update_enabled']);
+
+    $autoUpdateConfig = [
+        'auto_update_enabled' => $autoUpdateEnabled,
+        'update_time' => $updateTime
+    ];
+
+    file_put_contents($autoUpdateConfigFile, json_encode($autoUpdateConfig));
+    $message = "自动更新设置已保存！";
 }
 ?>
 <!DOCTYPE html>
@@ -618,11 +642,10 @@ if (isset($_POST['convert_base64'])) {
             border-radius: 5px; 
             cursor: pointer; 
         }
-
         button[name="update"]:hover {
             background-color: darkgreen; 
         }
-      #convertButton,
+        #convertButton,
         button[name="convert_base64"] {
             background-color: #00BFFF;
             color: white; 
@@ -632,10 +655,24 @@ if (isset($_POST['convert_base64'])) {
             cursor: pointer; 
             font-size: 14px; 
         }
-
         #convertButton:hover,
         button[name="convert_base64"]:hover {
             background-color: #008CBA; 
+        }
+        button[name="set_auto_update"] {
+            background-color: #32CD32; 
+            color: white; 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+        }
+        button[name="set_auto_update"]:hover {
+            background-color: #228B22; 
+        }
+        .form-spacing {
+            margin-bottom: 30px; 
         }
     </style>
 </head>
@@ -646,30 +683,32 @@ if (isset($_POST['convert_base64'])) {
     <br>
         节点转换工具输入你的节点信息转换，会自动保存为代理，简化流程。      
     </p>
-<script>
-    document.getElementById('convertButton').onclick = function() {
-        window.open('https://suburl.v1.mk', '_blank');
-    }
-</script>
+
+    <h2 style="color: #00FF7F;">自动更新设置</h2>
+    <form method="post">
+        <div class="input-group">
+            <label for="update_time">设置更新时间:</label>
+            <select name="update_time" id="update_time" required>
+                <?php
+                for ($h = 0; $h < 24; $h++) {
+                    $time = sprintf('%02d:00', $h);
+                    $selected = ($time == $autoUpdateConfig['update_time']) ? 'selected' : '';
+                    echo "<option value='$time' $selected>$time</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="auto_update_enabled">启用自动更新:</label>
+            <input type="checkbox" name="auto_update_enabled" id="auto_update_enabled" <?php echo $autoUpdateConfig['auto_update_enabled'] ? 'checked' : ''; ?>>
+        </div>
+        <button type="submit" name="set_auto_update">保存设置</button>
+    </form>
+
+    <div class="form-spacing"></div> 
+
     <?php if ($message): ?>
         <p><?php echo nl2br(htmlspecialchars($message)); ?></p>
-    <?php endif; ?>
-
-    <?php if (!empty($decodedContent)): ?>
-        <h2>解码后的内容</h2>
-        <textarea name="decoded_content" id="decoded_content" class="copyable" readonly><?php echo htmlspecialchars($decodedContent); ?></textarea>
-        <button id="copyButton" onclick="copyToClipboard()">复制到剪贴板</button>
-        <script>
-            document.querySelector('.copyable').style.display = 'block';
-
-            function copyToClipboard() {
-                var copyText = document.getElementById("decoded_content");
-                copyText.select();
-                copyText.setSelectionRange(0, 99999); 
-                document.execCommand("copy");
-                alert("内容已复制到剪贴板!");
-            }
-        </script>
     <?php endif; ?>
 
     <?php for ($i = 0; $i < 7; $i++): ?>
@@ -695,9 +734,60 @@ if (isset($_POST['convert_base64'])) {
         </div>
         <button type="submit" name="convert_base64">生成节点信息</button>
     </form>
+
+    <script>
+        document.getElementById('convertButton').onclick = function() {
+            window.open('https://suburl.v1.mk', '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const autoUpdateEnabled = <?php echo json_encode($autoUpdateConfig['auto_update_enabled']); ?>;
+            const updateTime = <?php echo json_encode($autoUpdateConfig['update_time']); ?>;
+
+            if (autoUpdateEnabled) {
+                const now = new Date();
+                const updateParts = updateTime.split(':');
+                const updateHour = parseInt(updateParts[0], 10);
+                const updateMoment = new Date(now.getFullYear(), now.getMonth(), now.getDate(), updateHour, 0, 0, 0);
+
+                if (now > updateMoment) {
+                    updateMoment.setDate(updateMoment.getDate() + 1);
+                }
+
+                const timeUntilUpdate = updateMoment - now;
+
+                setTimeout(function() {
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            'update': true
+                        })
+                    }).then(response => response.text())
+                    .then(data => console.log('自动更新完成', data))
+                    .catch(error => console.error('自动更新错误:', error));
+                    
+                    setInterval(function() {
+                        fetch(window.location.href, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'update': true
+                            })
+                        }).then(response => response.text())
+                        .then(data => console.log('自动更新完成', data))
+                        .catch(error => console.error('自动更新错误:', error));
+                    }, 24 * 60 * 60 * 1000); 
+                }, timeUntilUpdate);
+            }
+        });
+    </script>
 </body>
 </html>
-
     <style>
         button[name="convert"] {
             background-color: #00BFFF; 
