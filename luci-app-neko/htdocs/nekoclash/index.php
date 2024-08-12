@@ -104,110 +104,195 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
     <div class="container text-left p-3">
        
         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-        <h2 class="text-center p-2">运行状况</h2>
-            <table class="table table-borderless mb-2">
-                <tbody>
-                    <tr>
-                        <td>状态</td>
-                        <td class="d-grid">
-                            <div class="btn-group col" role="group" aria-label="ctrl">            
-                                <?php
-                                    if($neko_status==1) echo "<button type=\"button\" class=\"btn btn-success\">运行中</button>\n";
-                                    else echo "<button type=\"button\" class=\"btn btn-outline-danger\">未运行</button>\n";
-                                    echo "<button type=\"button\" class=\"btn btn-warning d-grid\">$str_cfg</button>\n";
-                                ?>
-                            </div>
-                        </td>
-                    </tr>
-                        <td>控制</td>
-                        <form action="index.php" method="post">
-                            <td class="d-grid">
-                                <div class="btn-group col" role="group" aria-label="ctrl">
-                                    <button type="submit" name="neko" value="start" class="btn btn<?php if($neko_status==1) echo "-outline" ?>-success <?php if($neko_status==1) echo "disabled" ?> d-grid">启用</button>
-                                    <button type="submit" name="neko" value="disable" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-danger <?php if($neko_status==0) echo "disabled" ?> d-grid">停用</button>
-                                    <button type="submit" name="neko" value="restart" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-warning <?php if($neko_status==0) echo "disabled" ?> d-grid">重启</button>
-                                </div>
-                            </td>
-                        </form>
-                    </tr>
-                    <tr>
-                        <td>运行模式</td>
-                        <td class="d-grid">
-                            <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $neko_cfg['echanced']." | ".$neko_cfg['mode'] ?>" disabled>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-           
-            <h2 class="text-center p-2">NekoClash</h2>
-            <table class="table table-borderless mb-2">
-                <tbody>
-                    <tr>
-                           <td>型号</td>
-                        <td class="col-7"><?php echo $devices ?></td>
-                    </tr>
-                    <tr>
-                        <td>内存</td>
-                        <td class="col-7"><?php echo "$ramUsage/$ramTotal MB" ?></td>
-                    </tr>
-                    <tr>
-                        <td>固件版本</td>
-                        <td class="col-7"><?php echo $OSVer ?></td>
-                    </tr>
-                    <tr>
-                        <td>内核版本</td>
-                        <td class="col-7"><?php echo $kernelv ?></td>
-                    </tr>
-                    <tr>
-                         <td>平均负载</td>
-                        <td class="col-7"><?php echo "$cpuLoadAvg1Min $cpuLoadAvg5Min $cpuLoadAvg15Min"  ?></td>
-                    </tr>
-                    <tr>
-                        <td>运行时间</td>
-                        <td class="col-7"><?php echo "{$days}天 {$hours}小时 {$minutes}分钟 {$seconds}秒"?></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-        <table class="table table-borderless mb-0">
-            <tbody>
-                <tr class="text-center">
-                    <td class="col-2">下载-总计</td>
-                    <td class="col-2">上传-总计</td>
-                </tr>
-                <tr class="text-center">
-                    <td class="col-2"><class id="downtotal">-</class></td>
-                    <td class="col-2"><class id="uptotal">-</class></td>
-                </tr>
-                <tr>
-            </tbody>
-        </table>
-    </div>
+    <h2 class="text-center p-2">运行状况</h2>
+    <table class="table table-borderless mb-2">
+        <tbody>
+            <tr>
+                <td>状态</td>
+                <td class="d-grid">
+                    <div class="btn-group col" role="group" aria-label="ctrl">            
+                        <?php
+                            if($neko_status==1) 
+                                echo "<button type=\"button\" class=\"btn btn-success\">运行中</button>\n";
+                            else 
+                                echo "<button type=\"button\" class=\"btn btn-outline-danger\">未运行</button>\n";
+                            echo "<button type=\"button\" class=\"btn btn-warning d-grid\">$str_cfg</button>\n";
+                        ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>控制</td>
+                <form action="index.php" method="post">
+                    <td class="d-grid">
+                        <div class="btn-group col" role="group" aria-label="ctrl">
+                            <button type="submit" name="neko" value="start" class="btn btn<?php if($neko_status==1) echo "-outline" ?>-success <?php if($neko_status==1) echo "disabled" ?> d-grid">启用</button>
+                            <button type="submit" name="neko" value="disable" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-danger <?php if($neko_status==0) echo "disabled" ?> d-grid">停用</button>
+                            <button type="submit" name="neko" value="restart" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-warning <?php if($neko_status==0) echo "disabled" ?> d-grid">重启</button>
+                        </div>
+                    </td>
+                </form>
+            </tr>
+            <tr>
+                <td>运行模式</td>
+                <td class="d-grid">
+                    <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $neko_cfg['echanced']." | ".$neko_cfg['mode'] ?>" disabled>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
+<div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+    <h2 class="text-center p-2">NekoClash</h2>
+    <table class="table table-borderless mb-2">
+        <tbody>
+            <tr>
+                <td>型号</td>
+                <td class="col-7"><?php echo $devices ?></td>
+            </tr>
+            <tr>
+                <td>内存</td>
+                <td class="col-7"><?php echo "$ramUsage/$ramTotal MB" ?></td>
+            </tr>
+            <tr>
+                <td>固件版本</td>
+                <td class="col-7"><?php echo $OSVer ?></td>
+            </tr>
+            <tr>
+                <td>内核版本</td>
+                <td class="col-7"><?php echo $kernelv ?></td>
+            </tr>
+            <tr>
+                <td>平均负载</td>
+                <td class="col-7"><?php echo "$cpuLoadAvg1Min $cpuLoadAvg5Min $cpuLoadAvg15Min" ?></td>
+            </tr>
+            <tr>
+                <td>运行时间</td>
+                <td class="col-7"><?php echo "{$days}天 {$hours}小时 {$minutes}分钟 {$seconds}秒" ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+    <table class="table table-borderless mb-0">
+        <tbody>
+            <tr class="text-center">
+                <td class="col-2">下载-总计</td>
+                <td class="col-2">上传-总计</td>
+            </tr>
+            <tr class="text-center">
+                <td class="col-2"><class id="downtotal">-</class></td>
+                <td class="col-2"><class id="uptotal">-</class></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<?php
+function checkConnectivity($url) {
+    $host = parse_url($url, PHP_URL_HOST);
+    $port = parse_url($url, PHP_URL_SCHEME) === 'https' ? 443 : 80;
+
+    $connection = @fsockopen($host, $port, $errno, $errstr, 5);
+
+    if ($connection) {
+        fclose($connection);
+        return '连接正常';
+    } else {
+        return '连接失败 (' . htmlspecialchars($errstr) . ')';
+    }
+}
+
+$sites = [
+    '百度搜索' => 'https://www.baidu.com',
+    'Google' => 'https://www.google.com',
+    'GitHub' => 'https://github.com',
+    'YouTube' => 'https://www.youtube.com'
+];
+
+$results = [];
+foreach ($sites as $name => $url) {
+    $results[$name] = checkConnectivity($url);
+}
+?>
+
+<div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+    <h2 class="text-center">网站访问检查结果</h2>
+    <table class="table table-borderless mb-0">
+        <tbody>
+            <tr class="text-center">
+                <td class="col-6">网站名称</td>
+                <td class="col-6">连接状态</td>
+            </tr>
+            <?php foreach ($results as $name => $status): ?>
+                <tr class="text-center">
+                    <td class="col-6" style="color: lightblue;"><?= htmlspecialchars($name) ?></td>
+                    <td class="col-6" style="color: <?= strpos($status, '正常') !== false ? 'green' : 'red'; ?>"><?= htmlspecialchars($status) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php
+$logDir = '/etc/neko/tmp/';
+$logFile = $logDir . 'log.txt';
+$kernelLogFile = $logDir . 'neko_log.txt';
+
+if (isset($_POST['clear_plugin_log'])) {
+    file_put_contents($logFile, ''); 
+    $message = '插件日志已清空';
+}
+
+if (isset($_POST['clear_kernel_log'])) {
+    file_put_contents($kernelLogFile, ''); 
+    $message = '内核日志已清空';
+}
+
+function readLogFile($filePath) {
+    if (file_exists($filePath)) {
+        return nl2br(htmlspecialchars(file_get_contents($filePath)));
+    } else {
+        return '日志文件不存在';
+    }
+}
+
+$logContent = readLogFile($logFile);
+$kernelLogContent = readLogFile($kernelLogFile);
+?>
+
+<!DOCTYPE html>
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日志清理</title>
-    
+    <title>日志查看器</title>
 </head>
 <body>
-<div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+    <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
         <h2 class="text-center p-2">插件日志</h2>
         <div class="mb-3">
-            <textarea class="form-control" id="logs" rows="10" readonly></textarea>
+            <textarea class="form-control" id="logs" rows="10" readonly><?php echo $logContent; ?></textarea>
+            <form method="post" class="text-center mt-2">
+                <button type="submit" name="clear_plugin_log" class="btn btn-danger">清空插件日志</button>
+            </form>
         </div>
-     
+
         <h2 class="text-center p-2">内核日志</h2>
         <div class="mb-3">
-            <textarea class="form-control" id="bin_logs" rows="10" readonly></textarea>
-           </div>
+            <textarea class="form-control" id="bin_logs" rows="10" readonly><?php echo $kernelLogContent; ?></textarea>
+            <form method="post" class="text-center mt-2">
+                <button type="submit" name="clear_kernel_log" class="btn btn-danger">清空内核日志</button>
+            </form>
         </div>
     </div>
     <footer class="text-center">
-        <p><?php echo $footer ?></p>
+        <p><?php echo isset($message) ? $message : ''; ?></p>
+        <p><?php echo $footer; ?></p>
     </footer>
 </body>
 </html>
+

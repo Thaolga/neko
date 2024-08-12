@@ -610,12 +610,39 @@ if (isset($_POST['convert_base64'])) {
         #copyButton:hover {
             background-color: #008CBA;
         }
+        button[name="update"] {
+            background-color: #FF6347; 
+            color: white; 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+
+        button[name="update"]:hover {
+            background-color: darkgreen; 
+        }
+      #convertButton,
+        button[name="convert_base64"] {
+            background-color: #00BFFF;
+            color: white; 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 14px; 
+        }
+
+        #convertButton:hover,
+        button[name="convert_base64"]:hover {
+            background-color: #008CBA; 
+        }
     </style>
 </head>
 <body>
-    <h1 style="color: #00FF7F;">Clash订阅程序</h1>
+    <h1 style="color: #00FF7F;">Mihomo订阅程序</h1>
     <p class="help-text">
-        请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>clash订阅支持通用订阅内容为Base64节点，如需解码请用订阅转换。<button id="convertButton" style="background-color: #00BFFF; color: white;">访问订阅转换网站</button>
+        请在下方输入框中填写您的订阅链接，删除上方subscriptions.json文件可以清空订阅信息。<br>Mihomo订阅支持所有格式《Base64/clash格式/节点链接》，如需解码请用订阅转换。<button id="convertButton">访问订阅转换网站</button>
     <br>
         节点转换工具输入你的节点信息转换，会自动保存为代理，简化流程。      
     </p>
@@ -670,6 +697,23 @@ if (isset($_POST['convert_base64'])) {
     </form>
 </body>
 </html>
+
+    <style>
+        button[name="convert"] {
+            background-color: #00BFFF; 
+            color: white; 
+            padding: 5px 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            margin-top: 10px; 
+        }
+
+        button[name="convert"]:hover {
+            background-color: #008CBA; 
+        }
+    </style>
 
     <h1 style="color: #00FF7F;">节点转换工具</h1>
   <form method="post">
@@ -926,3 +970,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
+

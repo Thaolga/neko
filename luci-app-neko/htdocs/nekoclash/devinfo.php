@@ -269,7 +269,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 player.style.animationPlayState = 'paused'; 
             }
         }
-        function createPetal() {
+      /*    function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
             petal.style.left = Math.random() * 100 + 'vw';
@@ -288,7 +288,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         }
 
         setTimeout(clearAllPetals, 10000);
-
+        */
         function updateTime() {
             var now = new Date();
             var hours = now.getHours().toString().padStart(2, '0');

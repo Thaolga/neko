@@ -1,0 +1,73 @@
+[data-bs-theme=transparent] {
+  color-scheme: dark;
+}
+
+body {
+  background-image: url("/nekoclash/assets/img/4.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  perspective: 1000px;
+  color: white !important; 
+  background-color: transparent; 
+}
+
+.table, .form-control, .card, button, label, li, td, th, blockquote, q, code, pre {
+  background-color: transparent; 
+  color: white !important; 
+}
+
+.form-control {
+  background-color: transparent; 
+  border-color: black;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: black !important; 
+}
+
+.table {
+  --bs-table-bg: transparent; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+  transform: translateZ(0);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: white !important; 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); 
+}
+
+p, a, span, div {
+  color: white !important; 
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.3); 
+}
+
+button {
+  color: white !important; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transform: translateY(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateZ(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+::placeholder {
+  color: white !important; 
+}
+
+* {
+  background-color: transparent; 
+}
