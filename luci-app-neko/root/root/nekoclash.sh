@@ -3,13 +3,17 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' 
+NC='\033[0m'
 
 log_message() {
     local message=$1
     local log_file='/var/log/neko_update.log'
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     echo "[$timestamp] $message" >> "$log_file"
+}
+
+get_router_ip() {
+    ip addr show br-lan | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
 }
 
 install_ipk() {
@@ -65,6 +69,11 @@ install_ipk() {
     if [ $? -eq 0 ]; then
         log_message "IPK 包安装完成。"
         echo -e "${GREEN}IPK 包安装完成。${NC}"
+
+        router_ip=$(get_router_ip)
+        echo -e "${GREEN}NeKo 面板已安装，可以通过以下地址访问:${NC}"
+        echo -e "${GREEN}http://$router_ip/nekoclash${NC}"
+        log_message "NeKo 面板已安装，可以通过 http://$router_ip/nekoclash 访问。"
     else
         log_message "IPK 包安装失败。"
         echo -e "${RED}IPK 包安装失败。${NC}"
