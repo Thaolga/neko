@@ -523,8 +523,15 @@ date_default_timezone_set('Asia/Shanghai');
             }
 
             message += `西南风速为每小时${windSpeed}米。` +
-                       `湿度为${humidity}%，紫外线指数适中，如果外出，请记得涂防晒霜。` +
-                       `能见度为${visibility}公里。` +
+                       `湿度为${humidity}%，`;
+
+            if (weatherDescription.includes('晴') || weatherDescription.includes('阳光明媚')) {
+                message += `紫外线指数适中，如果外出，请记得涂防晒霜。`;
+            } else if (weatherDescription.includes('雨') || weatherDescription.includes('阵雨') || weatherDescription.includes('雷暴')) {
+                message += `建议您外出时携带雨伞。`;
+            }
+
+            message += `能见度为${visibility}公里。` +
                        `注意安全，祝您有美好的一天！`;
 
             speakMessage(message);
