@@ -358,7 +358,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 audioPlayer.src = songs[index];
                 setTimeout(() => {
                 audioPlayer.play();
-            }, 47000); 
+            }, 50000); 
           }
         }
 
@@ -406,7 +406,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             if (songs.length > 0) {
             setTimeout(() => {
             loadSong(currentSongIndex);
-        }, 47000); 
+        }, 50000); 
     }
 }
 
@@ -453,13 +453,29 @@ date_default_timezone_set('Asia/Shanghai');
             speechSynthesis.speak(utterance);
         }
 
+        function getRandomPoem() {
+            const poems = [
+                '红豆生南国，春来发几枝。',
+                '独在异乡为异客，每逢佳节倍思亲。',
+                '海上生明月，天涯共此时。',
+                '但愿人长久，千里共婵娟。',
+                '江南好，风景旧曾谙。',
+                '君不见黄河之水天上来，奔流到海不复回。',
+                '露从今夜白，月是故乡明。',
+                '春眠不觉晓，处处闻啼鸟。'
+            ];
+            const randomIndex = Math.floor(Math.random() * poems.length);
+            return poems[randomIndex];
+        }
+
         function speakCurrentTime() {
             var now = new Date();
             var hours = now.getHours();
             var minutes = now.getMinutes();
             var currentTime = hours + '点' + (minutes < 10 ? '0' : '') + minutes + '分';
             var greeting = getGreeting();
-            var message = greeting + '现在是北京时间: ' + currentTime;
+            var poem = getRandomPoem(); 
+            var message = poem + ' ' + greeting + '现在是北京时间: ' + currentTime;
             speakMessage(message);
         }
 
