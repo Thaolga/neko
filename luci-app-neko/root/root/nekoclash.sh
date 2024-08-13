@@ -245,7 +245,7 @@ install_ui() {
 while true; do
     echo -e "${YELLOW}=================================${NC}"
     echo -e "${YELLOW}|   请选择操作:                 |${NC}"
-    echo -e "${YELLOW}|   1. 安装 NeKoClash IPK 包    |${NC}"
+    echo -e "${YELLOW}|   1. 安装 NeKoClash           |${NC}"
     echo -e "${YELLOW}|   2. 安装 Mihomo 核心         |${NC}"
     echo -e "${YELLOW}|   3. 安装 UI 控制面板         |${NC}"
     echo -e "${YELLOW}|   0. 退出                     |${NC}"
