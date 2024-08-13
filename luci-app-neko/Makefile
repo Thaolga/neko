@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_MAINTAINER:=nosignal <https://github.com/nosignals/neko>
 PKG_NAME:=luci-app-neko
-PKG_VERSION:=1.1.24-beta
+PKG_VERSION:=1.1.25-beta
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -29,6 +29,7 @@ define Build/Prepare
 	$(CP) $(CURDIR)/root $(PKG_BUILD_DIR)
 	$(CP) $(CURDIR)/luasrc $(PKG_BUILD_DIR)
 	$(CP) $(CURDIR)/htdocs $(PKG_BUILD_DIR)
+	chmod 0755 $(PKG_BUILD_DIR)/root/root/nekoclash.sh
 	chmod 0755 $(PKG_BUILD_DIR)/root/etc/init.d/neko
 	chmod 0755 $(PKG_BUILD_DIR)/root/etc/neko/core/*
 	chmod 0755 $(PKG_BUILD_DIR)/root/etc/uci-defaults/99_neko

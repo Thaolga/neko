@@ -813,232 +813,244 @@ if (isset($_POST['set_auto_update'])) {
     </form>
 
 <?php
-function parseVmess($base, $tmpdata) {
+
+function parseVmess($base) {
     $decoded = base64_decode($base['host']);
-    $urlparsed = array();
     $arrjs = json_decode($decoded, true);
-    if (!empty($arrjs['v'])) {
-        $urlparsed['cfgtype'] = isset($base['scheme']) ? $base['scheme'] : '';
-        $urlparsed['name'] = isset($arrjs['ps']) ? $arrjs['ps'] : '';
-        $urlparsed['host'] = isset($arrjs['add']) ? $arrjs['add'] : '';
-        $urlparsed['port'] = isset($arrjs['port']) ? $arrjs['port'] : '';
-        $urlparsed['uuid'] = isset($arrjs['id']) ? $arrjs['id'] : '';
-        $urlparsed['alterId'] = isset($arrjs['aid']) ? $arrjs['aid'] : '';
-        $urlparsed['type'] = isset($arrjs['net']) ? $arrjs['net'] : '';
-        $urlparsed['path'] = isset($arrjs['path']) ? $arrjs['path'] : '';
-        $urlparsed['security'] = isset($arrjs['type']) ? $arrjs['type'] : '';
-        $urlparsed['sni'] = isset($arrjs['host']) ? $arrjs['host'] : '';
-        $urlparsed['tls'] = isset($arrjs['tls']) ? $arrjs['tls'] : '';
-        return printcfg($urlparsed);
-    } else {
+
+    if (json_last_error() !== JSON_ERROR_NONE || empty($arrjs['v'])) {
         return "DECODING FAILED! PLEASE CHECK YOUR URL!";
+    }
+
+    return [
+        'cfgtype' => $base['scheme'] ?? '',
+        'name' => $arrjs['ps'] ?? '',
+        'host' => $arrjs['add'] ?? '',
+        'port' => $arrjs['port'] ?? '',
+        'uuid' => $arrjs['id'] ?? '',
+        'alterId' => $arrjs['aid'] ?? '',
+        'type' => $arrjs['net'] ?? '',
+        'path' => $arrjs['path'] ?? '',
+        'security' => $arrjs['type'] ?? '',
+        'sni' => $arrjs['host'] ?? '',
+        'tls' => $arrjs['tls'] ?? ''
+    ];
+}
+
+function parseShadowsocks($basebuff, &$urlparsed) {
+    $urlparsed['uuid'] = $basebuff['user'] ?? '';
+    $basedata = explode(":", base64_decode($urlparsed['uuid']));
+    if (count($basedata) == 2) {
+        $urlparsed['cipher'] = $basedata[0];
+        $urlparsed['uuid'] = $basedata[1];
     }
 }
 
 function parseUrl($basebuff) {
-    $urlparsed = array();
-    $querybuff = array();
-    $urlparsed['cfgtype'] = isset($basebuff['scheme']) ? $basebuff['scheme'] : '';
-    $urlparsed['name'] = isset($basebuff['fragment']) ? $basebuff['fragment'] : '';
-    $urlparsed['host'] = isset($basebuff['host']) ? $basebuff['host'] : '';
-    $urlparsed['port'] = isset($basebuff['port']) ? $basebuff['port'] : '';
+    $urlparsed = [
+        'cfgtype' => $basebuff['scheme'] ?? '',
+        'name' => $basebuff['fragment'] ?? '',
+        'host' => $basebuff['host'] ?? '',
+        'port' => $basebuff['port'] ?? ''
+    ];
 
-    if ($urlparsed['cfgtype'] == "ss") {
-        $urlparsed['uuid'] = isset($basebuff['user']) ? $basebuff['user'] : '';
-        $basedata = explode(":", base64_decode($urlparsed['uuid']));
-        $urlparsed['cipher'] = $basedata[0];
-        $urlparsed['uuid'] = $basedata[1];
+    if ($urlparsed['cfgtype'] == 'ss') {
+        parseShadowsocks($basebuff, $urlparsed);
     } else {
-        $urlparsed['uuid'] = isset($basebuff['user']) ? $basebuff['user'] : '';
+        $urlparsed['uuid'] = $basebuff['user'] ?? '';
     }
 
-    // Ensure 'query' parameter exists before processing
-    $tmpquery = isset($basebuff['query']) ? $basebuff['query'] : '';
-    if ($urlparsed['cfgtype'] == "ss") {
-        $tmpbuff = array();
-        $tmpstr = "";
-        $tmpquery2 = explode(";", $tmpquery);
-        for ($x = 0; $x < count($tmpquery2); $x++) {
-            $tmpstr .= $tmpquery2[$x] . "&";
-        }
-        parse_str($tmpstr, $querybuff);
-        $urlparsed['mux'] = isset($querybuff['mux']) ? $querybuff['mux'] : '';
-        $urlparsed['host2'] = isset($querybuff['host2']) ? $querybuff['host2'] : '';
+    $querybuff = [];
+    $tmpquery = $basebuff['query'] ?? '';
+
+    if ($urlparsed['cfgtype'] == 'ss') {
+        parse_str(str_replace(";", "&", $tmpquery), $querybuff);
+        $urlparsed['mux'] = $querybuff['mux'] ?? '';
+        $urlparsed['host2'] = $querybuff['host2'] ?? '';
     } else {
         parse_str($tmpquery, $querybuff);
     }
 
-    $urlparsed['type'] = isset($querybuff['type']) ? $querybuff['type'] : '';
-    $urlparsed['path'] = isset($querybuff['path']) ? $querybuff['path'] : '';
-    $urlparsed['mode'] = isset($querybuff['mode']) ? $querybuff['mode'] : '';
-    $urlparsed['plugin'] = isset($querybuff['plugin']) ? $querybuff['plugin'] : '';
-    $urlparsed['security'] = isset($querybuff['security']) ? $querybuff['security'] : '';
-    $urlparsed['encryption'] = isset($querybuff['encryption']) ? $querybuff['encryption'] : '';
-    $urlparsed['serviceName'] = isset($querybuff['serviceName']) ? $querybuff['serviceName'] : '';
-    $urlparsed['sni'] = isset($querybuff['sni']) ? $querybuff['sni'] : '';
+    $urlparsed['type'] = $querybuff['type'] ?? '';
+    $urlparsed['path'] = $querybuff['path'] ?? '';
+    $urlparsed['mode'] = $querybuff['mode'] ?? '';
+    $urlparsed['plugin'] = $querybuff['plugin'] ?? '';
+    $urlparsed['security'] = $querybuff['security'] ?? '';
+    $urlparsed['encryption'] = $querybuff['encryption'] ?? '';
+    $urlparsed['serviceName'] = $querybuff['serviceName'] ?? '';
+    $urlparsed['sni'] = $querybuff['sni'] ?? '';
 
-    return printcfg($urlparsed);
+    return $urlparsed;
 }
 
-function printcfg($data) {
+function generateConfig($data) {
     $outcfg = "";
+
     if (empty($GLOBALS['isProxiesPrinted'])) {
         $outcfg .= "proxies:\n";
         $GLOBALS['isProxiesPrinted'] = true;
     }
-    if ($data['cfgtype'] == "vless") {
-        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
-        else $outcfg .= "    - name: VLESS\n";
-        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
-        $outcfg .= "      server: " . $data['host'] . "\n";
-        $outcfg .= "      port: " . $data['port'] . "\n";
-        $outcfg .= "      uuid: " . $data['uuid'] . "\n";
-        $outcfg .= "      cipher: auto\n";
-        $outcfg .= "      tls: true\n";
-        if ($data['type'] == "ws") {
-            $outcfg .= "      network: " . $data['type'] . "\n";
-            $outcfg .= "      ws-opts: \n";
-            $outcfg .= "       path: " . $data['path'] . "\n";
-            $outcfg .= "       Headers: \n";
-            $outcfg .= "          Host: " . $data['host'] . "\n";
-            $outcfg .= "       flow:  \n";
-            $outcfg .= "          client-fingerprint: chrome\n"; 
-        } else if ($data['type'] == "grpc") {
-            $outcfg .= "      network: " . $data['type'] . "\n";
-            $outcfg .= "      grpc-opts: \n";
-            $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
-        }
-        $outcfg .= "      udp: true\n";
-        $outcfg .= "      skip-cert-verify: true \n";
-    } else if ($data['cfgtype'] == "trojan") {
-    if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
-    else $outcfg .= "    - name: TROJAN\n";
-    
-    $outcfg .= "      type: " . $data['cfgtype'] . "\n";
-    $outcfg .= "      server: " . $data['host'] . "\n";
-    $outcfg .= "      port: " . $data['port'] . "\n";
-    $outcfg .= "      password: " . $data['uuid'] . "\n";
-    
-    if (!empty($data['sni'])) {
-        $outcfg .= "      sni: " . $data['sni'] . "\n";
-    } else {
-        $outcfg .= "      sni: " . $data['host'] . "\n";
+
+    switch ($data['cfgtype']) {
+        case 'vless':
+            $outcfg .= generateVlessConfig($data);
+            break;
+        case 'trojan':
+            $outcfg .= generateTrojanConfig($data);
+            break;
+        case 'hysteria2':
+        case 'hy2':
+            $outcfg .= generateHysteria2Config($data);
+            break;
+        case 'ss':
+            $outcfg .= generateShadowsocksConfig($data);
+            break;
+        case 'vmess':
+            $outcfg .= generateVmessConfig($data);
+            break;
     }
 
-    if ($data['type'] == "ws") {
-        $outcfg .= "      network: " . $data['type'] . "\n";
-        $outcfg .= "      ws-opts: \n";
-        $outcfg .= "       path: " . $data['path'] . "\n";
-        $outcfg .= "       Headers: \n";
-        $outcfg .= "          Host: " . (isset($data['sni']) && !empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
-    } else if ($data['type'] == "grpc") {
-        $outcfg .= "      network: " . $data['type'] . "\n";
-        $outcfg .= "      grpc-opts: \n";
-        $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
-    }
-    
-    $outcfg .= "      udp: true\n";
-    $outcfg .= "      skip-cert-verify: true \n";
-    } else if ($data['cfgtype'] == "hysteria2" || $scheme == "hy2") {
-    if (!empty($data['name'])) {
-        $outcfg .= "    - name: " . $data['name'] . "\n";
-    } else {
-        $outcfg .= "    - name: HYSTERIA2\n";
-    }
-        $outcfg .= "      server: " . $data['host'] . "\n";
-        $outcfg .= "      port: " . $data['port'] . "\n";
-        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
-        $outcfg .= "      password: " . $data['uuid'] . "\n";
-        $outcfg .= "      udp: true\n";
-        $outcfg .= "      ports: 20000-55000\n";
-        $outcfg .= "      mport: 20000-55000\n";
-        $outcfg .= "      skip-cert-verify: true\n";
-        $outcfg .= "      sni: " . (isset($data['sni']) && !empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";  
-    } else if ($data['cfgtype'] == "ss") {
-        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
-        else $outcfg .= "    - name: SHADOWSOCKS\n";
-        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
-        $outcfg .= "      server: " . $data['host'] . "\n";
-        $outcfg .= "      port: " . $data['port'] . "\n";
-        $outcfg .= "      cipher: " . $data['cipher'] . "\n";
-        $outcfg .= "      password: " . $data['uuid'] . "\n";
-        if ($data['plugin'] == "v2ray-plugin" || $data['plugin'] == "xray-plugin") {
-            $outcfg .= "      plugin: " . $data['plugin'] . "\n";
-            $outcfg .= "      plugin-opts: \n";
-            $outcfg .= "       mode: websocket\n";
-            $outcfg .= "       # path: " . $data['path'] . "\n";
-            $outcfg .= "       mux: " . $data['mux'] . "\n";
-            $outcfg .= "       # tls: true \n";
-            $outcfg .= "       # skip-cert-verify: true \n";
-            $outcfg .= "       # headers: \n";
-            $outcfg .= "       #    custom: value\n";
-        } else if ($data['plugin'] == "obfs") {
-            $outcfg .= "      plugin: " . $data['plugin'] . "\n";
-            $outcfg .= "      plugin-opts: \n";
-            $outcfg .= "       mode: tls\n";
-            $outcfg .= "       # host: " . $data['host2'] . "\n";
-        }
-        $outcfg .= "      udp: true\n";
-        $outcfg .= "      skip-cert-verify: true \n";
-    } else if ($data['cfgtype'] == "vmess") {
-        if (!empty($data['name'])) $outcfg .= "    - name: " . $data['name'] . "\n";
-        else $outcfg .= "    - name: VMESS\n";
-        $outcfg .= "      type: " . $data['cfgtype'] . "\n";
-        $outcfg .= "      server: " . $data['host'] . "\n";
-        $outcfg .= "      port: " . $data['port'] . "\n";
-        $outcfg .= "      uuid: " . $data['uuid'] . "\n";
-        $outcfg .= "      alterId: " . $data['alterId'] . "\n";
-        $outcfg .= "      cipher: auto\n";
-        $outcfg .= "      tls: " . ($data['tls'] == "tls" ? "true" : "false") . "\n";
-        $outcfg .= "      servername: " . (!empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
-        $outcfg .= "      network: " . $data['type'] . "\n";
-        if ($data['type'] == "ws") {
-            $outcfg .= "      ws-opts: \n";
-            $outcfg .= "       path: " . $data['path'] . "\n";
-            $outcfg .= "       Headers: \n";
-            $outcfg .= "          Host: " . $data['sni'] . "\n";
-        } else if ($data['type'] == "grpc") {
-            $outcfg .= "      grpc-opts: \n";
-            $outcfg .= "       grpc-service-name: " . $data['serviceName'] . "\n";
-        } else if ($data['type'] == "h2") {
-            $outcfg .= "      h2-opts: \n";
-            $outcfg .= "       host: \n";
-            $outcfg .= "         - google.com \n";
-            $outcfg .= "         - bing.com \n";
-            $outcfg .= "       path: " . $data['path'] . "\n";
-        } else if ($data['type'] == "http") {
-            $outcfg .= "      # http-opts: \n";
-            $outcfg .= "      #   method: \"GET\"\n";
-            $outcfg .= "      #   path: \n";
-            $outcfg .= "      #     - '/'\n";
-            $outcfg .= "      #   headers: \n";
-            $outcfg .= "      #     Connection: \n";
-            $outcfg .= "      #       - keep-alive\n";
-        }
-        $outcfg .= "      udp: true\n";
-        $outcfg .= "      skip-cert-verify: true \n";
-    }
     return $outcfg;
 }
 
+function generateVlessConfig($data) {
+    $config = "    - name: " . ($data['name'] ?: "VLESS") . "\n";
+    $config .= "      type: {$data['cfgtype']}\n";
+    $config .= "      server: {$data['host']}\n";
+    $config .= "      port: {$data['port']}\n";
+    $config .= "      uuid: {$data['uuid']}\n";
+    $config .= "      cipher: auto\n";
+    $config .= "      tls: true\n";
+    if ($data['type'] == "ws") {
+        $config .= "      network: ws\n";
+        $config .= "      ws-opts:\n";
+        $config .= "        path: {$data['path']}\n";
+        $config .= "        Headers:\n";
+        $config .= "          Host: {$data['host']}\n";
+        $config .= "        flow:\n";
+        $config .= "          client-fingerprint: chrome\n";
+    } elseif ($data['type'] == "grpc") {
+        $config .= "      network: grpc\n";
+        $config .= "      grpc-opts:\n";
+        $config .= "        grpc-service-name: {$data['serviceName']}\n";
+    }
+    $config .= "      udp: true\n";
+    $config .= "      skip-cert-verify: true\n";
+    return $config;
+}
+
+function generateTrojanConfig($data) {
+    $config = "    - name: " . ($data['name'] ?: "TROJAN") . "\n";
+    $config .= "      type: {$data['cfgtype']}\n";
+    $config .= "      server: {$data['host']}\n";
+    $config .= "      port: {$data['port']}\n";
+    $config .= "      password: {$data['uuid']}\n";
+    $config .= "      sni: " . (!empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+    if ($data['type'] == "ws") {
+        $config .= "      network: ws\n";
+        $config .= "      ws-opts:\n";
+        $config .= "        path: {$data['path']}\n";
+        $config .= "        Headers:\n";
+        $config .= "          Host: {$data['sni']}\n";
+    } elseif ($data['type'] == "grpc") {
+        $config .= "      network: grpc\n";
+        $config .= "      grpc-opts:\n";
+        $config .= "        grpc-service-name: {$data['serviceName']}\n";
+    }
+    $config .= "      udp: true\n";
+    $config .= "      skip-cert-verify: true\n";
+    return $config;
+}
+
+function generateHysteria2Config($data) {
+    return "    - name: " . ($data['name'] ?: "HYSTERIA2") . "\n" .
+           "      server: {$data['host']}\n" .
+           "      port: {$data['port']}\n" .
+           "      type: {$data['cfgtype']}\n" .
+           "      password: {$data['uuid']}\n" .
+           "      udp: true\n" .
+           "      ports: 20000-55000\n" .
+           "      mport: 20000-55000\n" .
+           "      skip-cert-verify: true\n" .
+           "      sni: " . (!empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+}
+
+function generateShadowsocksConfig($data) {
+    $config = "    - name: " . ($data['name'] ?: "SHADOWSOCKS") . "\n";
+    $config .= "      type: {$data['cfgtype']}\n";
+    $config .= "      server: {$data['host']}\n";
+    $config .= "      port: {$data['port']}\n";
+    $config .= "      cipher: {$data['cipher']}\n";
+    $config .= "      password: {$data['uuid']}\n";
+    if (!empty($data['plugin'])) {
+        $config .= "      plugin: {$data['plugin']}\n";
+        $config .= "      plugin-opts:\n";
+        if ($data['plugin'] == "v2ray-plugin" || $data['plugin'] == "xray-plugin") {
+            $config .= "        mode: websocket\n";
+            $config .= "        mux: {$data['mux']}\n";
+        } elseif ($data['plugin'] == "obfs") {
+            $config .= "        mode: tls\n";
+        }
+    }
+    $config .= "      udp: true\n";
+    $config .= "      skip-cert-verify: true\n";
+    return $config;
+}
+
+function generateVmessConfig($data) {
+    $config = "    - name: " . ($data['name'] ?: "VMESS") . "\n";
+    $config .= "      type: {$data['cfgtype']}\n";
+    $config .= "      server: {$data['host']}\n";
+    $config .= "      port: {$data['port']}\n";
+    $config .= "      uuid: {$data['uuid']}\n";
+    $config .= "      alterId: {$data['alterId']}\n";
+    $config .= "      cipher: auto\n";
+    $config .= "      tls: " . ($data['tls'] === "tls" ? "true" : "false") . "\n";
+    $config .= "      servername: " . (!empty($data['sni']) ? $data['sni'] : $data['host']) . "\n";
+    $config .= "      network: {$data['type']}\n";
+    if ($data['type'] == "ws") {
+        $config .= "      ws-opts:\n";
+        $config .= "        path: {$data['path']}\n";
+        $config .= "        Headers:\n";
+        $config .= "          Host: {$data['sni']}\n";
+    } elseif ($data['type'] == "grpc") {
+        $config .= "      grpc-opts:\n";
+        $config .= "        grpc-service-name: {$data['serviceName']}\n";
+    }
+    $config .= "      udp: true\n";
+    $config .= "      skip-cert-verify: true\n";
+    return $config;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = $_POST['input'] ?? ''; 
+    $input = $_POST['input'] ?? '';
+
     if (empty($input)) {
         echo "Input is empty. Please provide the necessary information.";
     } else {
-        $lines = explode("\n", trim($input));  
-        $allcfgs = "";  
-        $GLOBALS['isProxiesPrinted'] = false;  
+        $lines = explode("\n", trim($input));
+        $allcfgs = "";
+        $GLOBALS['isProxiesPrinted'] = false;
 
         foreach ($lines as $line) {
             $base64url = parse_url($line);
+            if ($base64url === false) {
+                $allcfgs .= "Invalid URL provided.\n";
+                continue;
+            }
+
             $base64url = array_map('urldecode', $base64url);
-            $tmpdata = 'output.txt';  // Output file name
 
             if (isset($base64url['scheme']) && $base64url['scheme'] === 'vmess') {
-                $allcfgs .= parseVmess($base64url, $tmpdata);
+                $parsedData = parseVmess($base64url);
             } else {
-                $allcfgs .= parseUrl($base64url);
+                $parsedData = parseUrl($base64url);
+            }
+
+            if (is_array($parsedData)) {
+                $allcfgs .= generateConfig($parsedData);
+            } else {
+                $allcfgs .= $parsedData . "\n";
             }
         }
 
@@ -1060,5 +1072,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-
