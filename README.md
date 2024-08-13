@@ -32,6 +32,14 @@ nosignal is gone
 Credit
 ---
 - nosignals
+# openwrt安装
+---
+
+```bash
+wget -O /root/nekoclash.sh https://raw.githubusercontent.com/Thaolga/neko/main/nekoclash.sh && chmod 0755 /root/nekoclash.sh
+
+./nekoclash.sh
+```
 
 # openwrt编译
 ---
