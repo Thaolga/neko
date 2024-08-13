@@ -358,7 +358,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 audioPlayer.src = songs[index];
                 setTimeout(() => {
                 audioPlayer.play();
-            }, 20000); 
+            }, 47000); 
           }
         }
 
@@ -406,7 +406,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             if (songs.length > 0) {
             setTimeout(() => {
             loadSong(currentSongIndex);
-        }, 20000); 
+        }, 47000); 
     }
 }
 
@@ -429,19 +429,49 @@ date_default_timezone_set('Asia/Shanghai');
     <script>
         const city = 'Shanghai'; // 替换为你想要查询的城市
 
+        function getGreeting() {
+            var now = new Date();
+            var hours = now.getHours();
+            var greeting;
+
+            if (hours >= 5 && hours < 12) {
+                greeting = '早上好！';
+            } else if (hours >= 12 && hours < 18) {
+                greeting = '下午好！';
+            } else if (hours >= 18 && hours < 22) {
+                greeting = '晚上好！';
+            } else {
+                greeting = '夜深了，注意休息！';
+            }
+
+            return greeting;
+        }
+
+        function speakMessage(message) {
+            var utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'zh-CN';
+            speechSynthesis.speak(utterance);
+        }
+
         function speakCurrentTime() {
             var now = new Date();
-            var currentTime = now.getHours() + '点' + now.getMinutes() + '分' + now.getSeconds() + '秒';
-            var message = '现在是北京时间: ' + currentTime;
-            var utterance = new SpeechSynthesisUtterance(message);
-            speechSynthesis.speak(utterance);
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var currentTime = hours + '点' + (minutes < 10 ? '0' : '') + minutes + '分';
+            var greeting = getGreeting();
+            var message = greeting + '现在是北京时间: ' + currentTime;
+            speakMessage(message);
         }
 
         function translateWeatherDescription(description) {
             const translations = {
+                "Partly Cloudy": "局部多云",
+                "Overcast": "阴天",
+                "Cloudy": "多云",
+                "Sunny": "阳光明媚",
                 "clear sky": "晴天",
                 "few clouds": "少量云",
-                "scattered clouds": "散云",
+                "scattered clouds": "多云",
                 "broken clouds": "多云",
                 "shower rain": "阵雨",
                 "rain": "雨",
@@ -465,29 +495,44 @@ date_default_timezone_set('Asia/Shanghai');
                 "very heavy snow": "特大暴雪",
                 "extreme snow": "极端降雪",
             };
-            return translations[description] || description; 
-        }
-
-        function getDetailedWeatherDescription(weather) {
-            const descriptions = weather.weather.map(item => translateWeatherDescription(item.description)).join('，');
-            return descriptions;
+            return translations[description.toLowerCase()] || description;
         }
 
         function speakWeather(weather) {
-            var weatherDescription = getDetailedWeatherDescription(weather);
-            var temperature = weather.main.temp; 
-            var humidity = weather.main.humidity; 
-            var windSpeed = weather.wind.speed; 
-            var pressure = weather.main.pressure; 
+            var weatherDescription = translateWeatherDescription(weather.weather[0].description);
+            var temperature = weather.main.temp;
+            var tempMax = weather.main.temp_max;
+            var tempMin = weather.main.temp_min;
+            var humidity = weather.main.humidity;
+            var windSpeed = weather.wind.speed;
+            var uvIndex = 5; 
+            var visibility = weather.visibility / 1000; 
 
-            var message = `当前${city}的天气是: ${weatherDescription}，温度为: ${temperature}摄氏度，湿度: ${humidity}%，风速: ${windSpeed}米每秒，气压: ${pressure}帕。`;
-            var utterance = new SpeechSynthesisUtterance(message);
-            speechSynthesis.speak(utterance);
+            var message = `以下是今天${city}的天气预报：` +
+                          `当前气温为${temperature}摄氏度，${weatherDescription}。` +
+                          `预计今天的最高气温为${tempMax}摄氏度，今晚的最低气温为${tempMin}摄氏度。`;
+
+            if (weather.rain && weather.rain['1h']) {
+                var rainProbability = weather.rain['1h'];
+                message += ` 接下来一小时有${rainProbability * 100}%的降雨概率。`;
+            } else if (weather.rain && weather.rain['3h']) {
+                var rainProbability = weather.rain['3h'];
+                message += ` 接下来三小时有${rainProbability * 100}%的降雨概率。`;
+            } else {
+                message += ' 今天降雨概率较低。';
+            }
+
+            message += `西南风速为每小时${windSpeed}米。` +
+                       `湿度为${humidity}%，紫外线指数适中，如果外出，请记得涂防晒霜。` +
+                       `能见度为${visibility}公里。` +
+                       `注意安全，祝您有美好的一天！`;
+
+            speakMessage(message);
         }
 
         function fetchWeather() {
             const apiKey = 'fc8bd2637768c286c6f1ed5f1915eb22'; 
-            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`; 
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=zh_cn`; 
 
             fetch(apiUrl)
                 .then(response => {
@@ -497,7 +542,6 @@ date_default_timezone_set('Asia/Shanghai');
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data); 
                     if (data && data.weather && data.main) {
                         speakWeather(data);
                     } else {
