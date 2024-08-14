@@ -189,53 +189,6 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
         </tbody>
     </table>
 </div>
-
-<?php
-function checkConnectivity($url) {
-    $host = parse_url($url, PHP_URL_HOST);
-    $port = parse_url($url, PHP_URL_SCHEME) === 'https' ? 443 : 80;
-
-    $connection = @fsockopen($host, $port, $errno, $errstr, 5);
-
-    if ($connection) {
-        fclose($connection);
-        return '连接正常';
-    } else {
-        return '连接失败 (' . htmlspecialchars($errstr) . ')';
-    }
-}
-
-$sites = [
-    '百度搜索' => 'https://www.baidu.com',
-    'Google' => 'https://www.google.com',
-    'GitHub' => 'https://github.com',
-    'YouTube' => 'https://www.youtube.com'
-];
-
-$results = [];
-foreach ($sites as $name => $url) {
-    $results[$name] = checkConnectivity($url);
-}
-?>
-
-<div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-    <h2 class="text-center">网站访问检查结果</h2>
-    <table class="table table-borderless mb-0">
-        <tbody>
-            <tr class="text-center">
-                <td class="col-6">网站名称</td>
-                <td class="col-6">连接状态</td>
-            </tr>
-            <?php foreach ($results as $name => $status): ?>
-                <tr class="text-center">
-                    <td class="col-6" style="color: lightblue;"><?= htmlspecialchars($name) ?></td>
-                    <td class="col-6" style="color: <?= strpos($status, '正常') !== false ? 'green' : 'red'; ?>"><?= htmlspecialchars($status) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
-
 <?php
 $logDir = '/etc/neko/tmp/';
 $logFile = $logDir . 'log.txt';
