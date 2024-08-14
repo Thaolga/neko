@@ -323,53 +323,42 @@ install_ui() {
 }
 
 install_php() {
-    if opkg list-installed | grep -q 'php8'; then
-        echo -e "${GREEN}php8 已安装。${NC}"
+    GREEN="\033[32m"
+    RED="\033[31m"
+    RESET="\033[0m"
+
+    ARCH=$(uname -m)
+
+    if [ "$ARCH" == "aarch64" ]; then
+        PHP_CGI_URL="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_aarch64_generic.ipk"
+        PHP_URL="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_aarch64_generic.ipk"
+    elif [ "$ARCH" == "x86_64" ]; then
+        PHP_CGI_URL="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_x86_64.ipk"
+        PHP_URL="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_x86_64.ipk"
     else
-        echo -e "${CYAN}正在安装 php8...${NC}"
-        case "$(uname -m)" in
-            aarch64)
-                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_aarch64_generic.ipk"
-                ;;
-            x86_64)
-                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_x86_64.ipk"
-                ;;
-            *)
-                echo -e "${RED}不支持的架构: $(uname -m)${NC}"
-                return 1
-                ;;
-        esac
-        opkg install --force-reinstall "$pkg_url"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}php8 安装成功。${NC}"
-        else
-            echo -e "${RED}php8 安装失败。${NC}"
-        fi
+        echo -e "${RED}不支持的架构: $ARCH${RESET}"
+        exit 1
     fi
 
-    if opkg list-installed | grep -q 'php8-cgi'; then
-        echo -e "${GREEN}php8-cgi 已安装。${NC}"
+    echo -e "${GREEN}正在下载并安装 PHP CGI...${RESET}"
+    wget "$PHP_CGI_URL" -O /tmp/php8-cgi.ipk
+    if opkg install --force-reinstall --force-overwrite /tmp/php8-cgi.ipk; then
+        echo -e "${GREEN}PHP CGI 安装成功。${RESET}"
     else
-        echo -e "${CYAN}正在安装 php8-cgi...${NC}"
-        case "$(uname -m)" in
-            aarch64)
-                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_aarch64_generic.ipk"
-                ;;
-            x86_64)
-                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_x86_64.ipk"
-                ;;
-            *)
-                echo -e "${RED}不支持的架构: $(uname -m)${NC}"
-                return 1
-                ;;
-        esac
-        opkg install --force-reinstall "$pkg_url"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}php8-cgi 安装成功。${NC}"
-        else
-            echo -e "${RED}php8-cgi 安装失败。${NC}"
-        fi
+        echo -e "${RED}PHP CGI 安装失败。${RESET}"
     fi
+
+    echo -e "${GREEN}正在下载并安装 PHP...${RESET}"
+    wget "$PHP_URL" -O /tmp/php8.ipk
+    if opkg install --force-reinstall --force-overwrite /tmp/php8.ipk; then
+        echo -e "${GREEN}PHP 安装成功。${RESET}"
+    else
+        echo -e "${RED}PHP 安装失败。${RESET}"
+    fi
+
+    rm -f /tmp/php8-cgi.ipk /tmp/php8.ipk
+
+    echo -e "${GREEN}安装完成。${RESET}"
 }
 
 while true; do
