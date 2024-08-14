@@ -358,7 +358,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 audioPlayer.src = songs[index];
                 setTimeout(() => {
                 audioPlayer.play();
-            }, 50000); 
+            }, 60000); 
           }
         }
 
@@ -406,7 +406,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             if (songs.length > 0) {
             setTimeout(() => {
             loadSong(currentSongIndex);
-        }, 50000); 
+        }, 60000); 
     }
 }
 
@@ -427,105 +427,87 @@ date_default_timezone_set('Asia/Shanghai');
 </head>
 <body>
     <script>
-        const city = 'Shanghai'; // 替换为你想要查询的城市
+        const city = 'Beijing'; // 替换为你想要查询的城市名
+        const apiKey = 'fc8bd2637768c286c6f1ed5f1915eb22'; 
 
         function getGreeting() {
-            var now = new Date();
-            var hours = now.getHours();
-            var greeting;
-
-            if (hours >= 5 && hours < 12) {
-                greeting = '早上好！';
-            } else if (hours >= 12 && hours < 18) {
-                greeting = '下午好！';
-            } else if (hours >= 18 && hours < 22) {
-                greeting = '晚上好！';
-            } else {
-                greeting = '夜深了，注意休息！';
-            }
-
-            return greeting;
+            const hours = new Date().getHours();
+            if (hours >= 5 && hours < 12) return '早上好！';
+            if (hours >= 12 && hours < 18) return '下午好！';
+            if (hours >= 18 && hours < 22) return '晚上好！';
+            return '夜深了，注意休息！';
         }
 
         function speakMessage(message) {
-            var utterance = new SpeechSynthesisUtterance(message);
+            const utterance = new SpeechSynthesisUtterance(message);
             utterance.lang = 'zh-CN';
             speechSynthesis.speak(utterance);
         }
 
         function getRandomPoem() {
             const poems = [
-                '红豆生南国，春来发几枝。',
-                '独在异乡为异客，每逢佳节倍思亲。',
-                '海上生明月，天涯共此时。',
-                '但愿人长久，千里共婵娟。',
-                '江南好，风景旧曾谙。',
-                '君不见黄河之水天上来，奔流到海不复回。',
-                '露从今夜白，月是故乡明。',
-                '春眠不觉晓，处处闻啼鸟。'
+                '红豆生南国，春来发几枝。', '独在异乡为异客，每逢佳节倍思亲。',
+                '海上生明月，天涯共此时。', '但愿人长久，千里共婵娟。',
+                '江南好，风景旧曾谙。', '君不见黄河之水天上来，奔流到海不复回。',
+                '露从今夜白，月是故乡明。', '自古逢秋悲寂寥，我言秋日胜春朝。',
+                '两岸猿声啼不住，轻舟已过万重山。', '一去二三里，烟村四五家。',
+                '问君何为别，心逐青云行。', '风急天高猿啸哀，渚清沙白鸟飞回。',
+                '锦城虽云乐，不如早还家。', '白下驿穷冬望，红楼隔雨弄晴寒。',
+                '夜泊牛渚怀古，牛渚西江夜。', '空山新雨后，天气晚来秋。',
+                '山中相送罢，日暮掩柴扉。', '寒蝉凄切，对长亭晚，骤雨初歇。',
+                '湖上初晴后雨，水面晕开清晖。', '孤舟蓑笠翁，独钓寒江雪。',
+                '黄河远上白云间，一片孤城万仞山。', '松下问童子，言师采药去。',
+                '白云深处有人家，黄鹤楼中吹玉笛。', '枯藤老树昏鸦，小桥流水人家。',
+                '寒山转苍翠，秋水共长天一色。', '年年岁岁花相似，岁岁年年人不同。',
+                '锦江春色来天地，玉垒浮云变古今。', '天街小雨润如酥，草色遥看近却无。',
+                '长江绕郭知鱼美，苏堤春晓胜地宜。'
             ];
-            const randomIndex = Math.floor(Math.random() * poems.length);
-            return poems[randomIndex];
+            return poems[Math.floor(Math.random() * poems.length)];
         }
 
         function speakCurrentTime() {
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            var currentTime = hours + '点' + (minutes < 10 ? '0' : '') + minutes + '分';
-            var greeting = getGreeting();
-            var poem = getRandomPoem(); 
-            var message = poem + ' ' + greeting + '现在是北京时间: ' + currentTime;
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const currentTime = `${hours}点${minutes}分`;
+
+            let timeOfDay;
+            if (hours >= 5 && hours < 9) timeOfDay = '上午';
+            else if (hours >= 9 && hours < 12) timeOfDay = '中午';
+            else if (hours >= 12 && hours < 18) timeOfDay = '下午';
+            else if (hours >= 18 && hours < 22) timeOfDay = '晚上';
+            else timeOfDay = '凌晨';
+
+            const message = `${getRandomPoem()} ${getGreeting()} 现在是北京时间: ${timeOfDay}${currentTime}`;
             speakMessage(message);
         }
 
-        function translateWeatherDescription(description) {
-            const translations = {
-                "Partly Cloudy": "局部多云",
-                "Overcast": "阴天",
-                "Cloudy": "多云",
-                "Sunny": "阳光明媚",
-                "clear sky": "晴天",
-                "few clouds": "少量云",
-                "scattered clouds": "多云",
-                "broken clouds": "多云",
-                "shower rain": "阵雨",
-                "rain": "雨",
-                "thunderstorm": "雷暴",
-                "snow": "雪",
-                "mist": "雾",
-                "haze": "霾",
-                "fog": "雾霾",
-                "sand": "沙尘",
-                "dust": "尘土",
-                "squall": "阵风",
-                "tornado": "龙卷风",
-                "ash": "火山灰",
-                "drizzle": "毛毛雨",
-                "light rain": "小雨",
-                "heavy rain": "大雨",
-                "very heavy rain": "特大暴雨",
-                "extreme rain": "极端降雨",
-                "light snow": "小雪",
-                "heavy snow": "大雪",
-                "very heavy snow": "特大暴雪",
-                "extreme snow": "极端降雪",
-            };
-            return translations[description.toLowerCase()] || description;
-        }
-
         function speakWeather(weather) {
-            var weatherDescription = translateWeatherDescription(weather.weather[0].description);
-            var temperature = weather.main.temp;
-            var tempMax = weather.main.temp_max;
-            var tempMin = weather.main.temp_min;
-            var humidity = weather.main.humidity;
-            var windSpeed = weather.wind.speed;
-            var uvIndex = 5; 
-            var visibility = weather.visibility / 1000; 
+            const descriptions = {
+                "clear sky": "晴天", "few clouds": "少量云", "scattered clouds": "多云",
+                "broken clouds": "多云", "shower rain": "阵雨", "rain": "雨", 
+                "light rain": "小雨", "moderate rain": "中雨", "heavy rain": "大雨",
+                "very heavy rain": "特大暴雨", "extreme rain": "极端降雨",
+                "thunderstorm": "雷暴", "thunderstorm with light rain": "雷阵雨", "thunderstorm with heavy rain": "强雷雨",
+                "snow": "雪", "light snow": "小雪", "moderate snow": "中雪", "heavy snow": "大雪",
+                "very heavy snow": "特大暴雪", "extreme snow": "极端降雪",
+                "sleet": "雨夹雪", "freezing rain": "冻雨", "mist": "薄雾",
+                "fog": "雾", "haze": "霾", "sand": "沙尘", "dust": "扬尘", "squall": "阵风",
+                "tornado": "龙卷风", "ash": "火山灰", "drizzle": "毛毛雨",
+                "overcast": "阴天", "partly cloudy": "局部多云", "cloudy": "多云",
+                "tropical storm": "热带风暴", "hurricane": "飓风", "cold": "寒冷", 
+                "hot": "炎热", "windy": "大风", "breezy": "微风", "blizzard": "暴风雪"
+            };
+            
+            const weatherDescription = descriptions[weather.weather[0].description.toLowerCase()] || weather.weather[0].description;
+            const temperature = weather.main.temp;
+            const tempMax = weather.main.temp_max;
+            const tempMin = weather.main.temp_min;
+            const humidity = weather.main.humidity;
+            const windSpeed = weather.wind.speed;
+            const visibility = weather.visibility / 1000;
 
-            var message = `以下是今天${city}的天气预报：` +
-                          `当前气温为${temperature}摄氏度，${weatherDescription}。` +
+            let message = `以下是今天${city}的天气预报：当前气温为${temperature}摄氏度，${weatherDescription}。` +
                           `预计今天的最高气温为${tempMax}摄氏度，今晚的最低气温为${tempMin}摄氏度。`;
 
             if (weather.rain && weather.rain['1h']) {
@@ -538,45 +520,42 @@ date_default_timezone_set('Asia/Shanghai');
                 message += ' 今天降雨概率较低。';
             }
 
-            message += `西南风速为每小时${windSpeed}米。` +
-                       `湿度为${humidity}%，`;
+            message += ` 西南风速为每小时${windSpeed}米。` +
+                       ` 湿度为${humidity}%。`;
 
             if (weatherDescription.includes('晴') || weatherDescription.includes('阳光明媚')) {
-                message += `紫外线指数适中，如果外出，请记得涂防晒霜。`;
+                message += ` 紫外线指数适中，如果外出，请记得涂防晒霜。`;
             } else if (weatherDescription.includes('雨') || weatherDescription.includes('阵雨') || weatherDescription.includes('雷暴')) {
-                message += `建议您外出时携带雨伞。`;
+                message += ` 建议您外出时携带雨伞。`;
             }
 
-            message += `能见度为${visibility}公里。` +
-                       `注意安全，祝您有美好的一天！`;
-
+            message += ` 能见度为${visibility}公里。` +
+                        `请注意安全，保持好心情，祝您有美好的一天！`;
+                     
             speakMessage(message);
         }
 
         function fetchWeather() {
-            const apiKey = 'fc8bd2637768c286c6f1ed5f1915eb22'; 
             const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=zh_cn`; 
-
             fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('网络响应不正常：' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.weather && data.main) {
-                        speakWeather(data);
-                    } else {
-                        console.error('无法获取天气数据');
-                    }
-                })
+                .then(response => response.ok ? response.json() : Promise.reject('网络响应不正常'))
+                .then(data => data.weather && data.main ? speakWeather(data) : console.error('无法获取天气数据'))
                 .catch(error => console.error('获取天气数据时出错:', error));
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const [hours, minutes, seconds] = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => n.toString().padStart(2, '0'));
+
+            if (minutes === '00' && seconds === '00') {
+                speakMessage(`整点播报，现在是北京时间${hours}点整`);
+            }
         }
 
         window.onload = function() {
             speakCurrentTime();
             fetchWeather();
+            setInterval(updateTime, 1000);
         };
     </script>
 </body>
