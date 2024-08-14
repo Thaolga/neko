@@ -30,7 +30,7 @@ get_version_info() {
             releases_url="https://api.github.com/repos/$repo_owner/$repo_name/releases/latest"
             ;;
         "core")
-            version_file='/etc/neko/core/mihomo/version.txt'
+            version_file='/etc/neko/version_mihomo.txt'
             releases_url="https://api.github.com/repos/MetaCubeX/mihomo/releases/latest"
             ;;
         "ui")
@@ -49,12 +49,15 @@ get_version_info() {
         current_version="未安装"
     fi
 
+    echo -e "${CYAN}当前版本: $current_version${NC}"
+
     latest_version=$(curl -s "$releases_url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    
     if [ -z "$latest_version" ]; then
+        echo -e "${RED}获取最新版本失败。请检查网络连接或 GitHub API 状态。${NC}"
         latest_version="获取失败"
     fi
 
-    echo -e "${CYAN}当前版本: $current_version${NC}"
     echo -e "${CYAN}最新版本: $latest_version${NC}"
 }
 
@@ -74,6 +77,8 @@ install_ipk() {
         echo -e "${RED}无法访问 GitHub releases 页面。${NC}"
         return 1
     fi
+
+    echo "$response" > /tmp/releases_response.json
 
     new_version=$(echo "$response" | awk -F'/tag/' '/\/releases\/tag\// {print $2}' | awk -F'"' '{print $1}' | head -n 1)
 
@@ -109,8 +114,8 @@ install_ipk() {
 
     opkg install --force-reinstall "$local_file"
     if [ $? -eq 0 ]; then
-        log_message "IPK 包安装完成。"
-        echo -e "${GREEN}IPK 包安装完成。${NC}"
+        log_message "NeKoClash安装完成。"
+        echo -e "${GREEN}NeKoClash安装完成。${NC}"
 
         echo "$new_version" > /etc/neko/version_neko.txt
 
@@ -120,8 +125,8 @@ install_ipk() {
 
         get_version_info "neko"
     else
-        log_message "IPK 包安装失败。"
-        echo -e "${RED}IPK 包安装失败。${NC}"
+        log_message "NeKoClash安装失败。"
+        echo -e "${RED}NeKoClash安装失败。${NC}"
         return 1
     fi
 
@@ -199,7 +204,7 @@ install_core() {
             log_message "设置权限返回值: $return_var"
 
             if [ $return_var -eq 0 ]; then
-                echo "$latest_version" > "$install_path/version.txt"
+                echo "$latest_version" > "/etc/neko/version_mihomo.txt"
                 log_message "核心更新完成！当前版本: $latest_version"
                 echo -e "${GREEN}核心更新完成！当前版本: $latest_version${NC}"
             else
@@ -222,10 +227,13 @@ install_core() {
         rm "$temp_file"
         log_message "清理临时文件: $temp_file"
     fi
-    if [ -d "$temp_extract_path" ]; then
-        rm -r "$temp_extract_path"
-        log_message "清理临时解压目录: $temp_extract_path"
+
+    if [ -e "$temp_extract_path" ]; then
+        rm -rf "$temp_extract_path"
+        log_message "清理临时文件夹: $temp_extract_path"
     fi
+
+    log_message "操作完成，返回主菜单..."
 }
 
 install_ui() {
@@ -240,7 +248,8 @@ install_ui() {
 
     current_version=''
     install_path='/etc/neko/ui/metacubexd'
-    temp_file='/tmp/compressed-dist.tgz'
+    temp_file='/tmp/metacubexd.tgz'
+    temp_extract_path='/tmp/metacubexd_temp'
 
     if [ -e "$install_path/version.txt" ]; then
         current_version=$(cat "$install_path/version.txt" 2>/dev/null)
@@ -267,17 +276,28 @@ install_ui() {
     log_message "wget 返回值: $return_var"
 
     if [ $return_var -eq 0 ]; then
-        mkdir -p "$install_path"
-        log_message "解压命令: tar -xzf '$temp_file' -C '$install_path'"
-        tar -xzf "$temp_file" -C "$install_path"
+        mkdir -p "$temp_extract_path"
+        log_message "解压命令: tar -xzf '$temp_file' -C '$temp_extract_path'"
+        tar -xzf "$temp_file" -C "$temp_extract_path"
         return_var=$?
 
         log_message "解压返回值: $return_var"
 
         if [ $return_var -eq 0 ]; then
-            echo "$latest_version" > "$install_path/version.txt"
-            log_message "UI 更新完成！当前版本: $latest_version"
-            echo -e "${GREEN}UI 更新完成！当前版本: $latest_version${NC}"
+            mkdir -p "$install_path"
+            cp -r "$temp_extract_path/"* "$install_path/"
+            return_var=$?
+            log_message "拷贝文件返回值: $return_var"
+
+            if [ $return_var -eq 0 ]; then
+                echo "$latest_version" > "$install_path/version.txt"
+                log_message "UI 更新完成！当前版本: $latest_version"
+                echo -e "${GREEN}UI 更新完成！当前版本: $latest_version${NC}"
+            else
+                log_message "拷贝文件失败！"
+                echo -e "${RED}拷贝文件失败！${NC}"
+                return 1
+            fi
         else
             log_message "解压失败，返回值: $return_var"
             echo -e "${RED}解压失败！${NC}"
@@ -293,6 +313,63 @@ install_ui() {
         rm "$temp_file"
         log_message "清理临时文件: $temp_file"
     fi
+
+    if [ -e "$temp_extract_path" ]; then
+        rm -rf "$temp_extract_path"
+        log_message "清理临时文件夹: $temp_extract_path"
+    fi
+
+    log_message "操作完成，返回主菜单..."
+}
+
+install_php() {
+    if opkg list-installed | grep -q 'php8'; then
+        echo -e "${GREEN}php8 已安装。${NC}"
+    else
+        echo -e "${CYAN}正在安装 php8...${NC}"
+        case "$(uname -m)" in
+            aarch64)
+                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_aarch64_generic.ipk"
+                ;;
+            x86_64)
+                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8_8.2.2-1_x86_64.ipk"
+                ;;
+            *)
+                echo -e "${RED}不支持的架构: $(uname -m)${NC}"
+                return 1
+                ;;
+        esac
+        opkg install --force-reinstall "$pkg_url"
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}php8 安装成功。${NC}"
+        else
+            echo -e "${RED}php8 安装失败。${NC}"
+        fi
+    fi
+
+    if opkg list-installed | grep -q 'php8-cgi'; then
+        echo -e "${GREEN}php8-cgi 已安装。${NC}"
+    else
+        echo -e "${CYAN}正在安装 php8-cgi...${NC}"
+        case "$(uname -m)" in
+            aarch64)
+                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_aarch64_generic.ipk"
+                ;;
+            x86_64)
+                pkg_url="https://github.com/Thaolga/neko/releases/download/core_neko/php8-cgi_8.2.2-1_x86_64.ipk"
+                ;;
+            *)
+                echo -e "${RED}不支持的架构: $(uname -m)${NC}"
+                return 1
+                ;;
+        esac
+        opkg install --force-reinstall "$pkg_url"
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}php8-cgi 安装成功。${NC}"
+        else
+            echo -e "${RED}php8-cgi 安装失败。${NC}"
+        fi
+    fi
 }
 
 while true; do
@@ -301,6 +378,7 @@ while true; do
     echo -e "${YELLOW}|   1. 安装 NeKoClash           |${NC}"
     echo -e "${YELLOW}|   2. 安装 Mihomo 核心         |${NC}"
     echo -e "${YELLOW}|   3. 安装 UI 控制面板         |${NC}"
+    echo -e "${YELLOW}|   4. 安装 PHP8 和 PHP8-CGI    |${NC}"
     echo -e "${YELLOW}|   0. 退出                     |${NC}"
     echo -e "${YELLOW}=================================${NC}"
     read -p "请输入选项: " option
@@ -315,12 +393,15 @@ while true; do
         3)
             install_ui
             ;;
+        4)
+            install_php
+            ;;
         0)
-            echo -e "${CYAN}退出。${NC}"
-            break
+            echo -e "${GREEN}退出程序。${NC}"
+            exit 0
             ;;
         *)
-            echo -e "${RED}无效的选项，请重新选择。${NC}"
+            echo -e "${RED}无效选项，请重新输入。${NC}"
             ;;
     esac
 done
