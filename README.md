@@ -31,7 +31,8 @@ nosignal is gone
 
 Credit
 ---
-- nosignals
+- nosignals - [原作者地址](https://github.com/nosignals/neko)
+  
 # openwrt安装
 ---
 
