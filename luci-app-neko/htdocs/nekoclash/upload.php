@@ -1,46 +1,3 @@
-<?php
-date_default_timezone_set('Asia/Shanghai');
-
-$heavenly_stems = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
-$earthly_branches = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
-$zodiacs = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
-$chinese_weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]; 
-$capital_numbers = ["初", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-
-function convertSolarToLunar($year, $month, $day) {
-    $lunar_year = 2024; 
-    return [
-        'year' => $lunar_year,
-    ];
-}
-
-$year = date('Y');
-$month = date('m');
-$day = date('d');
-
-$lunar_date = convertSolarToLunar($year, $month, $day);
-
-if ($lunar_date === null || !isset($lunar_date['year'])) {
-    echo "农历转换出错，请检查转换函数。\n";
-    exit;
-}
-
-$lunar_year = $lunar_date['year'];
-
-$base_year = 1984; 
-$cycle_length = 60; 
-
-$year_index = ($lunar_year - $base_year) % $cycle_length;
-if ($year_index < 0) {
-    $year_index += $cycle_length; 
-}
-
-$heavenly_stem_year = $heavenly_stems[$year_index % 10];
-$earthly_branch_year = $earthly_branches[$year_index % 12];
-$zodiac = $zodiacs[$year_index % 12];
-
-$lunar_year_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac . "年)";
-?>
 
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -53,7 +10,6 @@ $lunar_year_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac
             flex-direction: column;
             margin: 0;
             min-height: 100vh; 
-            overflow: auto; 
             background-color: #f0f0f0;
             align-items: center; 
             justify-content: flex-start; 
@@ -68,7 +24,7 @@ $lunar_year_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac
             text-align: center; 
         }
         h1 {
-            color: white; 
+            color: #00FF7F;
         }
         h2 {
             color: #333;
@@ -88,39 +44,10 @@ $lunar_year_str = $heavenly_stem_year . $earthly_branch_year . "年 (" . $zodiac
     </style>
 </head>
 <body>
-    <h1 style="color: #00FF7F;">简易文件管理器</h1>
-    <div id="current-time"></div>
-    <div>当前日期: <?php echo $year; ?>年<?php echo $month; ?>月<?php echo $day; ?>日</div>
-    <div>农历年: <?php echo $lunar_year_str; ?></div>
-    <div>今天是: <?php echo $chinese_weekdays[date('w')]; ?></div> 
+    <h1>简易文件管理器</h1>
 </body>
 </html>
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('current-time').textContent = `北京时间: ${timeString}`;
-            
-            if (minutes === '00' && seconds === '00') {
-                speakTime(hours);
-            }
-        }
 
-        function speakTime(hours) {
-            const speech = new SpeechSynthesisUtterance();
-            speech.lang = 'zh-CN';
-            speech.text = `整点播报现在是北京时间${hours}点整`;
-            window.speechSynthesis.speak(speech);
-        }
-
-        setInterval(updateTime, 1000);
-        updateTime();
-    </script>
-</body>
-</html>
 <?php
 $uploadDir = '/etc/neko/proxy_provider/';
 $configDir = '/etc/neko/config/';

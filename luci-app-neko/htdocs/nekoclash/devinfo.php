@@ -38,19 +38,8 @@ if ($cpuTemp >= 60) {
 } else {
     $color = "white";
 }
-// 设置时区为北京时间
-date_default_timezone_set('Asia/Shanghai');
-// 获取当前日期和时间
-$currentDateTime = new DateTime();
-$formattedDateTime = $currentDateTime->format('Y年m月d日 H时i分s秒');
+
 */
-// OP Processor Architecture
-$processorArch = shell_exec("uname -m");
-
-$cpuModel = shell_exec("cat /proc/cpuinfo | grep 'model name' | uniq");
-$cpuModel = trim(preg_replace('/.*: /', '', $cpuModel));
-
-$cpuThreads = shell_exec("nproc");
 
 // CPU LOAD AVERAGE
 $cpuLoad = shell_exec("cat /proc/loadavg");

@@ -2,13 +2,23 @@
 
 include './cfg.php';
 
-$neko_cfg['ctrl_host']=$_SERVER['SERVER_NAME'];
-$neko_cfg['ctrl_port']=preg_replace('/\s+/', '', (shell_exec("cat $selected_config | grep external-c | awk '{print $2}' | cut -d: -f2")));
-$yacd_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/meta?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
-$meta_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/metacubexd?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
-$dashboard_link=$neko_cfg['ctrl_host'].':'.$neko_cfg['ctrl_port'].'/ui/dashboard?hostname='.$neko_cfg['ctrl_host'].'&port='.$neko_cfg['ctrl_port'].'&secret='.$neko_cfg['secret'];
+$neko_cfg['ctrl_host'] = $_SERVER['SERVER_NAME'];
+
+$command = "cat $selected_config | grep external-c | awk '{print $2}' | cut -d: -f2";
+$port_output = shell_exec($command);
+
+if ($port_output === null) {
+    $neko_cfg['ctrl_port'] = 'default_port'; 
+} else {
+    $neko_cfg['ctrl_port'] = trim($port_output);
+}
+
+$yacd_link = $neko_cfg['ctrl_host'] . ':' . $neko_cfg['ctrl_port'] . '/ui/meta?hostname=' . $neko_cfg['ctrl_host'] . '&port=' . $neko_cfg['ctrl_port'] . '&secret=' . $neko_cfg['secret'];
+$meta_link = $neko_cfg['ctrl_host'] . ':' . $neko_cfg['ctrl_port'] . '/ui/metacubexd?hostname=' . $neko_cfg['ctrl_host'] . '&port=' . $neko_cfg['ctrl_port'] . '&secret=' . $neko_cfg['secret'];
+$dashboard_link = $neko_cfg['ctrl_host'] . ':' . $neko_cfg['ctrl_port'] . '/ui/dashboard?hostname=' . $neko_cfg['ctrl_host'] . '&port=' . $neko_cfg['ctrl_port'] . '&secret=' . $neko_cfg['secret'];
 
 ?>
+
 <!doctype html>
 <html lang="en" data-bs-theme="<?php echo substr($neko_theme,0,-4) ?>">
   <head>
