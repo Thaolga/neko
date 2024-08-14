@@ -398,25 +398,38 @@ include './cfg.php';
             <?php endfor; ?>
 
             <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-                <h2 class="text-center p-2 mb-3">小提示</h2>
-                <div class="container text-center border border-3 rounded-4 col-10 mb-4">
-                    <p style="color: #87CEEB; text-align: left;">
-                        播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。终端输入./nekoclash.sh可以更新客户端和核心<br>
-                        <?php
-                        error_reporting(E_ALL);
-                        ini_set('display_errors', 1);
-                        $routerIp = trim(exec('uci get network.lan.ipaddr 2>&1'));
-                        if (preg_match('/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/', $routerIp) && !in_array($routerIp, ['0.0.0.0', '255.255.255.255'])) {
-                            $controlPanelUrl = "http://$routerIp/nekoclash";
-                            echo "独立控制面板地址: $controlPanelUrl<br>";
-                        } else {
-                            echo "无法获取路由器的 IP 地址。错误信息: $routerIp";
-                        }
-                        ?>
-                    </p>
-                </div>
-            </div>
+              <h2 class="text-center p-2 mb-3">小提示</h2>
+              <div class="container text-center border border-3 rounded-4 col-10 mb-4">
+                <p style="color: #87CEEB; text-align: left;">
+                  播放器采用github歌单推送歌曲，键盘方向键可以控制切换歌曲。终端输入./nekoclash.sh可以更新客户端和核心<br>
+                  <?php
+                  error_reporting(E_ALL);
+                  ini_set('display_errors', 1);
 
+                  $output = [];
+                  $return_var = 0;
+                  exec('uci get network.lan.ipaddr 2>&1', $output, $return_var);
+                  $routerIp = trim(implode("\n", $output));
+
+                  function isValidIp($ip) {
+                  $parts = explode('.', $ip);
+                  if (count($parts) !== 4) return false;
+                  foreach ($parts as $part) {
+                      if (!is_numeric($part) || (int)$part < 0 || (int)$part > 255) return false;
+                  }
+                  return true;
+                  }
+
+                  if (isValidIp($routerIp) && !in_array($routerIp, ['0.0.0.0', '255.255.255.255'])) {
+                  $controlPanelUrl = "http://$routerIp/nekoclash";
+                  echo "独立控制面板地址: $controlPanelUrl<br>";
+                  } else {
+                  echo "无法获取路由器的 IP 地址。错误信息: $routerIp";
+                  }
+                 ?>
+              </p>
+          </div>
+        </div>
             <footer class="text-center">
                 <p><?php echo $footer ?></p>
             </footer>
