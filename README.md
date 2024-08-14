@@ -33,7 +33,7 @@ Credit
 ---
 - nosignals - [原作者地址](https://github.com/nosignals/neko)
   
-# openwrt安装
+# openwrt一键安装脚本
 ---
 
 ```bash
