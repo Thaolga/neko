@@ -84,7 +84,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
             <a href="./" class="col btn btn-lg">首页</a>
-            <a href="./dashboard.php" class="col btn btn-lg">仪表板</a>
+            <a href="./dashboard.php" class="col btn btn-lg">面板</a>
             <a href="./configs.php" class="col btn btn-lg">配置</a>
             <a href="#" class="col btn btn-lg">设定</a>
         </div>
@@ -276,11 +276,11 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
 <table class="table table-borderless callout mb-5">
     <tbody>
         <tr class="text-center">
-            <td>Discord</td>
+            <td>Github</td>
             <td>Github</td>
         </tr>
         <tr class="text-center callout">
-            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://discord.gg/vtV5QSq6D6">DBAI</a></td>
+            <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/nosignals/neko">nosignals</a></td>
             <td><a class="btn btn-outline-secondary col-10" target="_blank" href="https://github.com/Thaolga/neko">Thaolga</a></td>
         </tr>
         <tr class="text-center">

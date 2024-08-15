@@ -77,7 +77,7 @@ $dashboard_link = $neko_cfg['ctrl_host'] . ':' . $neko_cfg['ctrl_port'] . '/ui/d
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
             <a href="./" class="col btn btn-lg">首页</a>
-            <a href="#" class="col btn btn-lg">仪表板</a>
+            <a href="#" class="col btn btn-lg">面板</a>
             <a href="./configs.php" class="col btn btn-lg">配置</a>
             <a href="./settings.php" class="col btn btn-lg">设定</a>
         </div>
@@ -89,7 +89,7 @@ $dashboard_link = $neko_cfg['ctrl_host'] . ':' . $neko_cfg['ctrl_port'] . '/ui/d
             <table class="table table-borderless callout mb-2">
                 <tbody>
                     <tr class="text-center callout">
-                        <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$yacd_link ?>">META - YACD</a></td>
+                        <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$yacd_link ?>">YACD</a></td>
                         <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$dashboard_link ?>">DASHBOARD</a></td>
                         <td><a class="btn btn-outline-info" target="_blank" href="http://<?=$meta_link ?>">METACUBEXD</a></td>
                     </tr>

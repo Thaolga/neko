@@ -73,7 +73,7 @@ include './cfg.php';
     <div class="container-sm container-bg text-center callout border border-3 rounded-4 col-11">
         <div class="row">
             <a href="./" class="col btn btn-lg">首页</a>
-            <a href="./dashboard.php" class="col btn btn-lg">仪表板</a>
+            <a href="./dashboard.php" class="col btn btn-lg">面板</a>
             <a href="#" class="col btn btn-lg">配置</a>
             <a href="./settings.php" class="col btn btn-lg">设定</a>
         </div>
