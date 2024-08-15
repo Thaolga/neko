@@ -187,7 +187,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
 </head>
 <body>
     <div id="player" onclick="toggleAnimation()"> 
-     <p id="hidePlayer" >隐藏播放</p>
+     <p id="hidePlayer" >.</p>
             <p id="timeDisplay">00:00 </p>
         <audio id="audioPlayer" controls autoplay >  
             <source src="" type="audio/mpeg">
@@ -461,10 +461,12 @@ date_default_timezone_set('Asia/Shanghai');
             const currentTime = `${hours}点${minutes}分`;
 
             let timeOfDay;
-            if (hours >= 5 && hours < 9) timeOfDay = '上午';
-            else if (hours >= 9 && hours < 12) timeOfDay = '中午';
-            else if (hours >= 12 && hours < 18) timeOfDay = '下午';
-            else if (hours >= 18 && hours < 22) timeOfDay = '晚上';
+            if (hours >= 5 && hours < 8) timeOfDay = '清晨';
+            else if (hours >= 8 && hours < 11) timeOfDay = '早上';
+            else if (hours >= 11 && hours < 13) timeOfDay = '中午'; 
+            else if (hours >= 13 && hours < 18) timeOfDay = '下午'; 
+            else if (hours >= 18 && hours < 20) timeOfDay = '傍晚'; 
+            else if (hours >= 20 && hours < 24) timeOfDay = '晚上';
             else timeOfDay = '凌晨';
 
             const message = `${getRandomPoem()} ${getGreeting()} 现在是北京时间: ${timeOfDay}${currentTime}`;
