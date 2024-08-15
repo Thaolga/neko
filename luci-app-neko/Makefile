@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_MAINTAINER:=nosignal <https://github.com/nosignals/neko>
 PKG_NAME:=luci-app-neko
-PKG_VERSION:=1.1.28-beta
+PKG_VERSION:=1.1.29-beta
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 

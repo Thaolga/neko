@@ -106,6 +106,263 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
         <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
     <h2 class="text-center p-2">运行状况</h2>
     <table class="table table-borderless mb-2">
+        <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
+   <br>
+<?php
+$translate = [
+    'United States' => '美国',
+    'China' => '中国',
+    'ISP' => '互联网服务提供商',
+    'Japan' => '日本',
+    'South Korea' => '韩国',
+    'Germany' => '德国',
+    'France' => '法国',
+    'United Kingdom' => '英国',
+    'Canada' => '加拿大',
+    'Australia' => '澳大利亚',
+    'Russia' => '俄罗斯',
+    'India' => '印度',
+    'Brazil' => '巴西',
+    'Netherlands' => '荷兰',
+    'Singapore' => '新加坡',
+    'Hong Kong' => '香港',
+    'Taiwan' => '台湾',
+    'Saudi Arabia' => '沙特阿拉伯',
+    'Turkey' => '土耳其',
+    'Italy' => '意大利',
+    'Spain' => '西班牙',
+    'Thailand' => '泰国',
+    'Malaysia' => '马来西亚',
+    'Indonesia' => '印度尼西亚',
+    'South Africa' => '南非',
+    'Mexico' => '墨西哥',
+    'Israel' => '以色列',
+    'Sweden' => '瑞典',
+    'Switzerland' => '瑞士',
+    'Norway' => '挪威',
+    'Denmark' => '丹麦',
+    'Belgium' => '比利时',
+    'Finland' => '芬兰',
+    'Poland' => '波兰',
+    'Austria' => '奥地利',
+    'Greece' => '希腊',
+    'Portugal' => '葡萄牙',
+    'Ireland' => '爱尔兰',
+    'New Zealand' => '新西兰',
+    'United Arab Emirates' => '阿拉伯联合酋长国',
+    'Argentina' => '阿根廷',
+    'Chile' => '智利',
+    'Colombia' => '哥伦比亚',
+    'Philippines' => '菲律宾',
+    'Vietnam' => '越南',
+    'Pakistan' => '巴基斯坦',
+    'Egypt' => '埃及',
+    'Nigeria' => '尼日利亚',
+    'Kenya' => '肯尼亚',
+    'Morocco' => '摩洛哥',
+    'Google' => '谷歌',
+    'Amazon' => '亚马逊',
+    'Microsoft' => '微软',
+    'Facebook' => '脸书',
+    'Apple' => '苹果',
+    'IBM' => 'IBM',
+    'Alibaba' => '阿里巴巴',
+    'Tencent' => '腾讯',
+    'Baidu' => '百度',
+    'Verizon' => '威瑞森',
+    'AT&T' => '美国电话电报公司',
+    'T-Mobile' => 'T-移动',
+    'Vodafone' => '沃达丰',
+    'China Telecom' => '中国电信',
+    'China Unicom' => '中国联通',
+    'China Mobile' => '中国移动',  
+    'Amazon Web Services (AWS)' => '亚马逊网络服务 (AWS)',
+    'Google Cloud Platform (GCP)' => '谷歌云平台 (GCP)',
+    'Microsoft Azure' => '微软Azure',
+    'DigitalOcean' => '数字海洋',
+    'Linode' => '林诺德',
+    'Vultr' => '沃尔特',
+    'OVH' => 'OVH',
+    'DreamHost' => '梦想主机',
+    'InMotion Hosting' => '动态主机',
+    'HostGator' => '主机鳄鱼',
+    'Bluehost' => '蓝主机',
+    'A2 Hosting' => 'A2主机',
+    'SiteGround' => '站点地',
+    'Liquid Web' => '液态网络',
+    'Kamatera' => '卡玛特拉',
+    'IONOS' => 'IONOS',
+    'InterServer' => '互联服务器',
+    'Hostwinds' => '主机之风',
+    'ScalaHosting' => '斯卡拉主机',
+    'GreenGeeks' => '绿色极客'
+];
+$lang = $_GET['lang'] ?? 'en';
+?>
+
+<!DOCTYPE html>
+<html lang="<?php echo htmlspecialchars($lang); ?>">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//whois.pconline.com.cn">
+    <link rel="dns-prefetch" href="//forge.speedtest.cn">
+    <link rel="dns-prefetch" href="//api-ipv4.ip.sb">
+    <link rel="dns-prefetch" href="//api.ipify.org">
+    <link rel="dns-prefetch" href="//api.ttt.sh">
+    <link rel="dns-prefetch" href="//qqwry.api.skk.moe">
+    <link rel="dns-prefetch" href="//d.skk.moe">
+    <link rel="preconnect" href="https://forge.speedtest.cn">
+    <link rel="preconnect" href="https://whois.pconline.com.cn">
+    <link rel="preconnect" href="https://api-ipv4.ip.sb">
+    <link rel="preconnect" href="https://api.ipify.org">
+    <link rel="preconnect" href="https://api.ttt.sh">
+    <link rel="preconnect" href="https://qqwry.api.skk.moe">
+    <link rel="preconnect" href="https://d.skk.moe">
+    <style>
+        .status {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            flex-direction: column; 
+        }
+
+        .img-con {
+            margin-bottom: 1rem; 
+        }
+
+        .img-con img {
+            width: 58px; 
+            height: auto; 
+        }
+
+        .green {
+            font-size: .9rem; 
+            color: #2dce89; 
+        }
+
+        .red {
+            font-size: .9rem; 
+            color: #fb6340; 
+        }
+
+        .yellow {
+            font-size: .9rem; 
+            color: #fb9a05; 
+        }
+
+        .block {
+            font-size: .8125rem; 
+            font-weight: 600; 
+            color: #8898aa; 
+            line-height: 1.8em; 
+            margin: 0; 
+        }
+
+        .ip-address {
+            color: #2dce89; 
+            margin-bottom: 0.5rem; 
+        }
+
+        .info {
+            color: #fb6340; 
+        }
+    </style>
+</head>
+<body>
+<?php if (in_array($lang, ['zh-cn', 'en', 'auto'])): ?>
+    <fieldset class="cbi-section">
+        <div class="status">
+            <div class="img-con">
+                <img src="/nekoclash/assets/neko/img/loading.svg" id="flag" class="pure-img" title="国旗">
+            </div>
+            <div class="block">
+                <p id="d-ip" class="green ip-address">Checking...</p>
+                <p id="ipip" class="info"></p>
+            </div>
+        </div>
+    </fieldset>
+<?php endif; ?>
+
+<script src="/nekoclash/assets/neko/js/jquery.min.js"></script>
+<script type="text/javascript">
+    const _IMG = '/nekoclash/assets/neko/';
+    const translate = <?php echo json_encode($translate, JSON_UNESCAPED_UNICODE); ?>;
+
+    let cachedIP = null;
+    let cachedInfo = null;
+
+    let random = parseInt(Math.random() * 100000000);
+    let IP = {
+        get: (url, type) =>
+            fetch(url, { method: 'GET' }).then((resp) => {
+                if (type === 'text')
+                    return Promise.all([resp.ok, resp.status, resp.text(), resp.headers]);
+                else {
+                    return Promise.all([resp.ok, resp.status, resp.json(), resp.headers]);
+                }
+            }).then(([ok, status, data, headers]) => {
+                if (ok) {
+                    let json = {
+                        ok,
+                        status,
+                        data,
+                        headers
+                    }
+                    return json;
+                } else {
+                    throw new Error(JSON.stringify(data.error));
+                }
+            }).catch(error => {
+                console.error("Error fetching data:", error);
+                throw error;
+            }),
+        Ipip: (ip, elID) => {
+            if (ip === cachedIP && cachedInfo) {  
+                console.log("Using cached IP info");
+                IP.updateUI(cachedInfo, elID);
+            } else {
+                IP.get(`http://ip-api.com/json/${ip}`, 'json')
+                    .then(resp => {
+                        cachedIP = ip;  
+                        cachedInfo = resp.data;  
+                        IP.updateUI(resp.data, elID);
+                    })
+                    .catch(error => {
+                        console.error("Error in Ipip function:", error);
+                    });
+            }
+        },
+        updateUI: (data, elID) => {
+            const country = translate[data.country] || data.country;
+            const isp = translate[data.isp] || data.isp;
+            const asnOrganization = translate[data.asn_organization] || data.asn_organization;
+
+            document.getElementById(elID).innerHTML = `${country} ${isp} ${asnOrganization}`;
+            $("#flag").attr("src", _IMG + "flags/" + data.country + ".png");
+            document.getElementById(elID).style.color = '#FF00FF';
+        },
+        getIpipnetIP: () => {
+            IP.get('https://api.ipify.org?format=json', 'json')
+                .then((resp) => {
+                    let data = resp.data.ip;
+                    document.getElementById('d-ip').innerHTML = `${data}`;
+                    return data;
+                })
+                .then(ip => {
+                    IP.Ipip(ip, 'ipip');
+                })
+                .catch(error => {
+                    console.error("Error in getIpipnetIP function:", error);
+                });
+        }
+    }
+    setInterval(IP.getIpipnetIP, 5000);
+</script>
+</body>
+</html>
         <tbody>
             <tr>
                 <td>状态</td>
@@ -146,6 +403,7 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
 <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
     <h2 class="text-center p-2">NekoClash</h2>
     <table class="table table-borderless mb-2">
+
         <tbody>
             <tr>
                 <td>型号</td>
@@ -189,6 +447,9 @@ $neko_status=exec("uci -q get neko.cfg.enabled");
         </tbody>
     </table>
 </div>
+
+
+
 <?php
 $logDir = '/etc/neko/tmp/';
 $logFile = $logDir . 'log.txt';

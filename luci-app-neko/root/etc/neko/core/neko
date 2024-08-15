@@ -28,7 +28,7 @@ url_core="https://github.com/nosignals/neko/releases/download/core_neko"
 url_geo="https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest"
 
 neko_ver(){
-    neko_version="1.1.28-beta"
+    neko_version="1.1.29-beta"
 }
 
 logs() {
