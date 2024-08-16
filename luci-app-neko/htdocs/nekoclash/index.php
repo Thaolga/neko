@@ -126,7 +126,6 @@ $translate = [
     'Netherlands' => '荷兰',
     'Singapore' => '新加坡',
     'Hong Kong' => '香港',
-    'Taiwan' => '台湾',
     'Saudi Arabia' => '沙特阿拉伯',
     'Turkey' => '土耳其',
     'Italy' => '意大利',
@@ -175,12 +174,18 @@ $translate = [
     'Vodafone' => '沃达丰',
     'China Telecom' => '中国电信',
     'China Unicom' => '中国联通',
-    'China Mobile' => '中国移动',  
+    'China Mobile' => '中国移动', 
+    'Chunghwa Telecom' => '中华电信',   
     'Amazon Web Services (AWS)' => '亚马逊网络服务 (AWS)',
     'Google Cloud Platform (GCP)' => '谷歌云平台 (GCP)',
     'Microsoft Azure' => '微软Azure',
+    'Oracle Cloud' => '甲骨文云',
+    'Alibaba Cloud' => '阿里云',
+    'Tencent Cloud' => '腾讯云',
     'DigitalOcean' => '数字海洋',
     'Linode' => '林诺德',
+    'OVHcloud' => 'OVH 云',
+    'Hetzner' => '赫兹纳',
     'Vultr' => '沃尔特',
     'OVH' => 'OVH',
     'DreamHost' => '梦想主机',
@@ -195,6 +200,8 @@ $translate = [
     'InterServer' => '互联服务器',
     'Hostwinds' => '主机之风',
     'ScalaHosting' => '斯卡拉主机',
+    'Networks' => '网络',
+    'Psychz Networks' => 'Psychz网络',
     'GreenGeeks' => '绿色极客'
 ];
 $lang = $_GET['lang'] ?? 'en';
@@ -290,28 +297,20 @@ $lang = $_GET['lang'] ?? 'en';
 <script type="text/javascript">
     const _IMG = '/nekoclash/assets/neko/';
     const translate = <?php echo json_encode($translate, JSON_UNESCAPED_UNICODE); ?>;
-
     let cachedIP = null;
     let cachedInfo = null;
-
     let random = parseInt(Math.random() * 100000000);
+
     let IP = {
         get: (url, type) =>
             fetch(url, { method: 'GET' }).then((resp) => {
                 if (type === 'text')
                     return Promise.all([resp.ok, resp.status, resp.text(), resp.headers]);
-                else {
+                else
                     return Promise.all([resp.ok, resp.status, resp.json(), resp.headers]);
-                }
             }).then(([ok, status, data, headers]) => {
                 if (ok) {
-                    let json = {
-                        ok,
-                        status,
-                        data,
-                        headers
-                    }
-                    return json;
+                    return { ok, status, data, headers };
                 } else {
                     throw new Error(JSON.stringify(data.error));
                 }
@@ -320,11 +319,11 @@ $lang = $_GET['lang'] ?? 'en';
                 throw error;
             }),
         Ipip: (ip, elID) => {
-            if (ip === cachedIP && cachedInfo) {  
+            if (ip === cachedIP && cachedInfo) {
                 console.log("Using cached IP info");
                 IP.updateUI(cachedInfo, elID);
             } else {
-                IP.get(`http://ip-api.com/json/${ip}`, 'json')
+                IP.get(`https://api.ip.sb/geoip/${ip}`, 'json')
                     .then(resp => {
                         cachedIP = ip;  
                         cachedInfo = resp.data;  
@@ -336,31 +335,45 @@ $lang = $_GET['lang'] ?? 'en';
             }
         },
         updateUI: (data, elID) => {
-            const country = translate[data.country] || data.country;
-            const isp = translate[data.isp] || data.isp;
-            const asnOrganization = translate[data.asn_organization] || data.asn_organization;
+            let country = translate[data.country] || data.country;
+            let isp = translate[data.isp] || data.isp;
+            let asnOrganization = translate[data.asn_organization] || data.asn_organization;
+
+            // Check system language
+            if (data.country === 'Taiwan') {
+                country = (navigator.language === 'en') ? 'China Taiwan' : '中国台湾省';
+            }
 
             document.getElementById(elID).innerHTML = `${country} ${isp} ${asnOrganization}`;
             $("#flag").attr("src", _IMG + "flags/" + data.country + ".png");
             document.getElementById(elID).style.color = '#FF00FF';
         },
         getIpipnetIP: () => {
-            IP.get('https://api.ipify.org?format=json', 'json')
-                .then((resp) => {
-                    let data = resp.data.ip;
-                    document.getElementById('d-ip').innerHTML = `${data}`;
-                    return data;
-                })
-                .then(ip => {
-                    IP.Ipip(ip, 'ipip');
-                })
-                .catch(error => {
-                    console.error("Error in getIpipnetIP function:", error);
-                });
+            if (cachedIP) {
+                document.getElementById('d-ip').innerHTML = cachedIP;
+                IP.updateUI(cachedInfo, 'ipip');
+            } else {
+                IP.get(`https://api.ipify.org?format=json&z=${random}`, 'json')
+                    .then((resp) => {
+                        let ip = resp.data.ip;
+                        cachedIP = ip; 
+                        document.getElementById('d-ip').innerHTML = ip;
+                        return ip;
+                    })
+                    .then(ip => {
+                        IP.Ipip(ip, 'ipip');
+                    })
+                    .catch(error => {
+                        console.error("Error in getIpipnetIP function:", error);
+                    });
+            }
         }
     }
+
+    IP.getIpipnetIP();
     setInterval(IP.getIpipnetIP, 5000);
 </script>
+
 </body>
 </html>
         <tbody>
