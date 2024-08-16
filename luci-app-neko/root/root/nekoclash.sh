@@ -359,15 +359,16 @@ install_php() {
     rm -f /tmp/php8-cgi.ipk /tmp/php8.ipk
 
     echo -e "${GREEN}安装完成。${RESET}"
+    echo -e "${YELLOW}请重启服务器以应用更改。${RESET}"
 }
 
 while true; do
     echo -e "${YELLOW}=================================${NC}"
-    echo -e "${YELLOW}|   请选择操作:                 |${NC}"
     echo -e "${YELLOW}|   1. 安装 NeKoClash           |${NC}"
     echo -e "${YELLOW}|   2. 安装 Mihomo 核心         |${NC}"
     echo -e "${YELLOW}|   3. 安装 UI 控制面板         |${NC}"
     echo -e "${YELLOW}|   4. 安装 PHP8 和 PHP8-CGI    |${NC}"
+    echo -e "${YELLOW}|   5. 重启路由器               |${NC}"  
     echo -e "${YELLOW}|   0. 退出                     |${NC}"
     echo -e "${YELLOW}=================================${NC}"
     read -p "请输入选项: " option
@@ -385,6 +386,9 @@ while true; do
         4)
             install_php
             ;;
+        5)  
+            reboot_router
+            ;;
         0)
             echo -e "${GREEN}退出程序。${NC}"
             exit 0
@@ -394,3 +398,8 @@ while true; do
             ;;
     esac
 done
+
+reboot_router() {
+    echo -e "${YELLOW}路由器正在重启...${NC}"
+    reboot
+}
