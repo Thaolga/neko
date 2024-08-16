@@ -359,6 +359,7 @@ install_php() {
     rm -f /tmp/php8-cgi.ipk /tmp/php8.ipk
 
     echo -e "${GREEN}安装完成。${RESET}"
+    echo -e "${YELLOW}请重启服务器以应用更改。${RESET}"
 }
 
 while true; do
