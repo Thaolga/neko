@@ -241,7 +241,7 @@ $lang = $_GET['lang'] ?? 'en';
         }
 
         .img-con img {
-            width: 58px; 
+            width: 65px; 
             height: auto; 
         }
 

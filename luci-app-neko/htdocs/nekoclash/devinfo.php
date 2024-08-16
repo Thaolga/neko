@@ -65,12 +65,10 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
     <title>GitHub Music Player</title>
 
 <style>
-    #timeDisplay {
-        font-size: 30px;
-        font-weight: bold;
-         color: #4CAF50; 
+     #container {
+          text-align: center;
+          margin-top: 50px;
     }
-
     body {
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
@@ -170,24 +168,25 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             animation: fall linear;
         }
 
-       #hidePlayer {
-        font-size: 20px;
-        ont-weight: bold;
-        color: red; 
-        text-align: center;
-        margin-bottom: 20px; 
-        
-    }
+        #hidePlayer, #timeDisplay {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #9400D3);
+            -webkit-background-clip: text;
+            color: transparent;
+            transition: background 1s ease;
+        }
+
 	.rounded-button {
             border-radius: 30px 15px;
-        }
-		
+        }		
 </style>
 
 </head>
 <body>
     <div id="player" onclick="toggleAnimation()"> 
-     <p id="hidePlayer" >.</p>
+     <p id="hidePlayer" >Mihomo</p>
             <p id="timeDisplay">00:00 </p>
         <audio id="audioPlayer" controls autoplay >  
             <source src="" type="audio/mpeg">
@@ -200,7 +199,38 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
         <button id="play" class="rounded-button">⏸️</button>
         <button id="next" class="rounded-button">⏭️</button>        
     </div>  
+    <script>
+        let colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
 
+        function applyGradient(text, elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = ''; 
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                span.style.color = colors[i % colors.length];
+                element.appendChild(span);
+            }
+
+            const firstColor = colors.shift();
+            colors.push(firstColor);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { hour12: false });
+            applyGradient(timeString, 'timeDisplay');
+        }
+
+        applyGradient('Mihomo', 'hidePlayer');
+        updateTime();
+    
+        setInterval(() => {
+            updateTime();
+            applyGradient('Mihomo', 'hidePlayer');
+        }, 1000);
+
+    </script>
     <script>
        
         /* var player = document.getElementById('player');

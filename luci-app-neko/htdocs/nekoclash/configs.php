@@ -277,71 +277,68 @@ include './cfg.php';
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mihomo订阅程序</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: transparent; 
-                margin: 0;
-                padding: 0;
-            }
-            .container {
-                padding: 20px;
-                max-width: 1200px;
-                margin: 0 auto;
-                background-color: transparent; 
-            }
-            .text-center {
-                text-align: center;
-            }
-            .input-group {
-                margin-bottom: 15px;
-            }
-            .input-group label {
-                display: block;
-                margin-bottom: 5px;
-            }
-            .input-group input,
-            .input-group textarea,
-            .input-group select {
-                width: 100%;
-                padding: 8px;
-                box-sizing: border-box;
-            }
-            .btn {
-                padding: 10px 20px;
-                border: none;
-                cursor: pointer;
-                color: white;
-                border-radius: 4px;
-                text-align: center;
-                display: inline-block;
-                text-decoration: none;
-            }
-            .btn-primary {
-                background-color: #007bff; 
-            }
-            .btn-primary:hover {
-                background-color: #0056b3;
-            }
-            footer {
-                background-color: transparent; 
-                color: white;
-                padding: 10px;
-                text-align: center;
-            }
-            .container-bg {
-                background-color: transparent; 
-            }
-            .border {
-                border: 1px solid #ccc;
-            }
-            .rounded-4 {
-                border-radius: 4px;
-            }
-            .form-spacing {
-                margin: 20px 0;
-            }
-        </style>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .text-center {
+        text-align: center;
+    }
+    .input-group {
+        margin-bottom: 15px;
+    }
+    .input-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        border-radius: 4px;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+    }
+    .btn-primary {
+        background-color: #007bff; 
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    footer {
+        color: white;
+        padding: 10px;
+        text-align: center;
+    }
+    .container-bg {
+    }
+    .border {
+        border: 1px solid #ccc;
+    }
+    .rounded-4 {
+        border-radius: 4px;
+    }
+    .form-spacing {
+        margin: 20px 0;
+    }
+</style>
+
     </head>
     <body>
         <div class="container">
