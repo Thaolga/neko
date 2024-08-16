@@ -367,7 +367,7 @@ while true; do
     echo -e "${YELLOW}|   2. 安装 Mihomo 核心         |${NC}"
     echo -e "${YELLOW}|   3. 安装 UI 控制面板         |${NC}"
     echo -e "${YELLOW}|   4. 安装 PHP8 和 PHP8-CGI    |${NC}"
-    echo -e "${YELLOW}|   5. 重启路由器               |${NC}"  # 添加重启路由器选项
+    echo -e "${YELLOW}|   5. 重启路由器               |${NC}"  
     echo -e "${YELLOW}|   0. 退出                     |${NC}"
     echo -e "${YELLOW}=================================${NC}"
     read -p "请输入选项: " option
