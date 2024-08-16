@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         arch:
-          - aarch64
+          - arm64
           - x86_64
           
     steps:
