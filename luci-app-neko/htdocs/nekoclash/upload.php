@@ -622,6 +622,20 @@ if (isset($_POST['set_auto_update'])) {
         节点转换工具输入你的节点信息转换，会自动保存为代理，简化流程。      
     </p>
 
+</script>
+    <?php if ($message): ?>
+        <p><?php echo nl2br(htmlspecialchars($message)); ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($decodedContent)): ?>
+        <h2>解码后的内容</h2>
+        <textarea name="decoded_content" id="decoded_content" class="copyable" readonly><?php echo htmlspecialchars($decodedContent); ?></textarea>
+        <button id="copyButton" onclick="copyToClipboard()">复制到剪贴板</button>
+        <script>
+            document.querySelector('.copyable').style.display = 'block';
+          </script>
+     <?php endif; ?>
+
     <h2 style="color: #00FF7F;">自动更新设置</h2>
     <form method="post">
         <div class="input-group">
