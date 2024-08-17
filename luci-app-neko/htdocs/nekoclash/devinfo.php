@@ -288,7 +288,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 player.style.animationPlayState = 'paused'; 
             }
         }
-      /*    function createPetal() {
+       /*  function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
             petal.style.left = Math.random() * 100 + 'vw';
@@ -377,7 +377,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
                 audioPlayer.src = songs[index];
                 setTimeout(() => {
                 audioPlayer.play();
-            }, 60000); 
+            }, 65000); 
           }
         }
 
@@ -425,7 +425,7 @@ $cpuFamily = preg_match('/^CPU family:\s+(.+)/m', $cpuInfo, $matches);
             if (songs.length > 0) {
             setTimeout(() => {
             loadSong(currentSongIndex);
-        }, 60000); 
+        }, 65000); 
     }
 }
 
@@ -442,12 +442,18 @@ date_default_timezone_set('Asia/Shanghai');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动播报时间和天气</title>
+    <title>语音播报系统</title>
 </head>
 <body>
     <script>
-        const city = 'Beijing'; // 替换为你想要查询的城市名
+        const city = 'Beijing'; // 替换为您的城市名
         const apiKey = 'fc8bd2637768c286c6f1ed5f1915eb22'; 
+
+        function speakMessage(message) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'zh-CN';
+            speechSynthesis.speak(utterance);
+        }
 
         function getGreeting() {
             const hours = new Date().getHours();
@@ -457,10 +463,88 @@ date_default_timezone_set('Asia/Shanghai');
             return '夜深了，注意休息！';
         }
 
-        function speakMessage(message) {
-            const utterance = new SpeechSynthesisUtterance(message);
-            utterance.lang = 'zh-CN';
-            speechSynthesis.speak(utterance);
+        function speakCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const currentTime = `${hours}点${minutes}分${seconds}秒`;
+
+            const timeOfDay = (hours >= 5 && hours < 8) ? '清晨'
+                              : (hours >= 8 && hours < 11) ? '早上'
+                              : (hours >= 11 && hours < 13) ? '中午'
+                              : (hours >= 13 && hours < 18) ? '下午'
+                              : (hours >= 18 && hours < 20) ? '傍晚'
+                              : (hours >= 20 && hours < 24) ? '晚上'
+                              : '凌晨';
+
+            speakMessage(`${getGreeting()} 现在是北京时间: ${timeOfDay}${currentTime}`);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const timeOfDay = (hours >= 5 && hours < 8) ? '清晨'
+                              : (hours >= 8 && hours < 11) ? '早上'
+                              : (hours >= 11 && hours < 13) ? '中午'
+                              : (hours >= 13 && hours < 18) ? '下午'
+                              : (hours >= 18 && hours < 20) ? '傍晚'
+                              : (hours >= 20 && hours < 24) ? '晚上'
+                              : '凌晨';
+
+            if (now.getMinutes() === 0 && now.getSeconds() === 0) {
+                speakMessage(`整点播报，现在是北京时间 ${timeOfDay} ${hours}点`);
+            }
+        }
+
+        const websites = [
+            'https://www.youtube.com/',
+            'https://www.google.com/',
+            'https://www.facebook.com/',
+            'https://www.twitter.com/',
+            'https://www.github.com/'
+        ];
+
+        function getWebsiteStatusMessage(url, status) {
+            const statusMessages = {
+                'https://www.youtube.com/': status ? 'YouTube 网站访问正常。' : '无法访问 YouTube 网站，请检查网络连接。',
+                'https://www.google.com/': status ? 'Google 网站访问正常。' : '无法访问 Google 网站，请检查网络连接。',
+                'https://www.facebook.com/': status ? 'Facebook 网站访问正常。' : '无法访问 Facebook 网站，请检查网络连接。',
+                'https://www.twitter.com/': status ? 'Twitter 网站访问正常。' : '无法访问 Twitter 网站，请检查网络连接。',
+                'https://www.github.com/': status ? 'GitHub 网站访问正常。' : '无法访问 GitHub 网站，请检查网络连接。',
+            };
+
+            return statusMessages[url] || (status ? `${url} 网站访问正常。` : `无法访问 ${url} 网站，请检查网络连接。`);
+        }
+
+        function checkWebsiteAccess(urls) {
+            const statusMessages = [];
+            let requestsCompleted = 0;
+
+            urls.forEach(url => {
+                fetch(url, { mode: 'no-cors' })
+                    .then(response => {
+                        const isAccessible = response.type === 'opaque';
+                        statusMessages.push(getWebsiteStatusMessage(url, isAccessible));
+                        
+                        if (!isAccessible && url === 'https://www.youtube.com/') {
+                            speakMessage('无法访问 YouTube 网站，请检查网络连接。');
+                        }
+                    })
+                    .catch(() => {
+                        statusMessages.push(getWebsiteStatusMessage(url, false));
+                        
+                        if (url === 'https://www.youtube.com/') {
+                            speakMessage('无法访问 YouTube 网站，请检查网络连接。');
+                        }
+                    })
+                    .finally(() => {
+                        requestsCompleted++;
+                        if (requestsCompleted === urls.length) {
+                            speakMessage(statusMessages.join(' '));
+                        }
+                    });
+            });
         }
 
         function getRandomPoem() {
@@ -484,23 +568,9 @@ date_default_timezone_set('Asia/Shanghai');
             return poems[Math.floor(Math.random() * poems.length)];
         }
 
-        function speakCurrentTime() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const currentTime = `${hours}点${minutes}分`;
-
-            let timeOfDay;
-            if (hours >= 5 && hours < 8) timeOfDay = '清晨';
-            else if (hours >= 8 && hours < 11) timeOfDay = '早上';
-            else if (hours >= 11 && hours < 13) timeOfDay = '中午'; 
-            else if (hours >= 13 && hours < 18) timeOfDay = '下午'; 
-            else if (hours >= 18 && hours < 20) timeOfDay = '傍晚'; 
-            else if (hours >= 20 && hours < 24) timeOfDay = '晚上';
-            else timeOfDay = '凌晨';
-
-            const message = `${getRandomPoem()} ${getGreeting()} 现在是北京时间: ${timeOfDay}${currentTime}`;
-            speakMessage(message);
+        function speakRandomPoem() {
+            const poem = getRandomPoem();
+            speakMessage(`${poem}`);
         }
 
         function speakWeather(weather) {
@@ -519,7 +589,7 @@ date_default_timezone_set('Asia/Shanghai');
                 "tropical storm": "热带风暴", "hurricane": "飓风", "cold": "寒冷", 
                 "hot": "炎热", "windy": "大风", "breezy": "微风", "blizzard": "暴风雪"
             };
-            
+
             const weatherDescription = descriptions[weather.weather[0].description.toLowerCase()] || weather.weather[0].description;
             const temperature = weather.main.temp;
             const tempMax = weather.main.temp_max;
@@ -551,8 +621,8 @@ date_default_timezone_set('Asia/Shanghai');
             }
 
             message += ` 能见度为${visibility}公里。` +
-                        `请注意安全，保持好心情，祝您有美好的一天！`;
-                     
+                       `请注意安全，保持好心情，祝您有美好的一天！`;
+
             speakMessage(message);
         }
 
@@ -560,22 +630,22 @@ date_default_timezone_set('Asia/Shanghai');
             const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=zh_cn`; 
             fetch(apiUrl)
                 .then(response => response.ok ? response.json() : Promise.reject('网络响应不正常'))
-                .then(data => data.weather && data.main ? speakWeather(data) : console.error('无法获取天气数据'))
+                .then(data => {
+                    if (data.weather && data.main) {
+                        speakWeather(data);
+                    } else {
+                        console.error('无法获取天气数据');
+                    }
+                })
                 .catch(error => console.error('获取天气数据时出错:', error));
         }
 
-        function updateTime() {
-            const now = new Date();
-            const [hours, minutes, seconds] = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => n.toString().padStart(2, '0'));
-
-            if (minutes === '00' && seconds === '00') {
-                speakMessage(`整点播报，现在是北京时间${hours}点整`);
-            }
-        }
-
         window.onload = function() {
+            speakMessage('欢迎使用语音播报系统！');
+            checkWebsiteAccess(websites);
             speakCurrentTime();
             fetchWeather();
+            speakRandomPoem(); 
             setInterval(updateTime, 1000);
         };
     </script>
