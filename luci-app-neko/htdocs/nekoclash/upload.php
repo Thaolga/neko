@@ -623,10 +623,6 @@ if (isset($_POST['set_auto_update'])) {
     </p>
 
 </script>
-    <?php if ($message): ?>
-        <p><?php echo nl2br(htmlspecialchars($message)); ?></p>
-    <?php endif; ?>
-
     <?php if (!empty($decodedContent)): ?>
         <h2>解码后的内容</h2>
         <textarea name="decoded_content" id="decoded_content" class="copyable" readonly><?php echo htmlspecialchars($decodedContent); ?></textarea>
