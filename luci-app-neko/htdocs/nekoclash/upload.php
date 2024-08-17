@@ -111,11 +111,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($_POST['oldFileName'], $_POST['newFileName'])) {
+    if (isset($_POST['oldFileName'], $_POST['newFileName'], $_POST['fileType'])) {
         $oldFileName = basename($_POST['oldFileName']);
         $newFileName = basename($_POST['newFileName']);
-        $oldFilePath = $uploadDir . $oldFileName;
-        $newFilePath = $uploadDir . $newFileName;
+    
+        if ($_POST['fileType'] === 'proxy') {
+            $oldFilePath = $uploadDir . $oldFileName;
+            $newFilePath = $uploadDir . $newFileName;
+        } elseif ($_POST['fileType'] === 'config') {
+            $oldFilePath = $configDir . $oldFileName;
+            $newFilePath = $configDir . $newFileName;
+        } else {
+            echo '无效的文件类型';
+            exit;
+        }
 
         if (file_exists($oldFilePath) && !file_exists($newFilePath)) {
             if (rename($oldFilePath, $newFilePath)) {
@@ -308,6 +317,7 @@ function formatSize($size) {
                     <form action="" method="post" style="display:inline;">
                         <input type="hidden" name="oldFileName" value="<?php echo htmlspecialchars($file); ?>">
                         <input type="text" name="newFileName" placeholder="新文件名" required>
+                        <input type="hidden" name="fileType" value="proxy">
                         <input type="submit" class="rename-button" value="重命名">
                     </form>
 
@@ -341,6 +351,7 @@ function formatSize($size) {
                     <form action="" method="post" style="display:inline;">
                         <input type="hidden" name="oldFileName" value="<?php echo htmlspecialchars($file); ?>">
                         <input type="text" name="newFileName" placeholder="新文件名" required>
+                        <input type="hidden" name="fileType" value="config">
                         <input type="submit" class="rename-button" value="重命名">
                     </form>
 
