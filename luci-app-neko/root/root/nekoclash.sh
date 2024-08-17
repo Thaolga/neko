@@ -362,6 +362,11 @@ install_php() {
     echo -e "${YELLOW}请重启服务器以应用更改。${RESET}"
 }
 
+reboot_router() {
+    echo -e "${YELLOW}路由器正在重启...${NC}"
+    reboot
+}
+
 while true; do
     echo -e "${YELLOW}=================================${NC}"
     echo -e "${YELLOW}|   1. 安装 NeKoClash           |${NC}"
@@ -398,8 +403,3 @@ while true; do
             ;;
     esac
 done
-
-reboot_router() {
-    echo -e "${YELLOW}路由器正在重启...${NC}"
-    reboot
-}
