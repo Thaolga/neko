@@ -1,11 +1,10 @@
-
 <?php
 
 include './cfg.php';
 
 $dirPath = "$neko_dir/proxy_provider";
 $tmpPath = "$neko_www/lib/tmpProxy.txt";
-$arrFiles = glob("$dirPath/*.yaml");
+$arrFiles = array_merge(glob("$dirPath/*.yaml"), glob("$dirPath/*.json"));
 $strProxy = "";
 $strNewProxy = "";
 $proxyPath = "";
@@ -83,5 +82,3 @@ if (isset($_POST['newproxycfg'])) {
     </div>
   </body>
 </html>
-
-

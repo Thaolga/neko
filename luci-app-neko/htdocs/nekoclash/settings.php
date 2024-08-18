@@ -140,19 +140,47 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
 </td>
 </tr>
 <tr>
-    <td class="col-2">核心版本</td>
+    <td class="col-2">Mihomo核心版本</td>
     <td class="col-4">
         <div class="form-control text-center" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="font-family: monospace;" id="corever">-</div>
             <div style="display: flex; gap: 10px;">              
                 <button id="updateNekoButton" class="button">切换NeKo内核</button>
                 <button id="updateCoreButton" class="button">切换Mihomo内核</button>
-            </div>
-        </div>
-    </td>
-</tr>
-</tbody>
-</table>
+                     </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+
+            <td class="col-2">Sing-box核心版本</td>
+                <td class="col-4">
+                       <div class="form-control text-center" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="font-family: monospace;" id="singBoxCorever"></div>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="updateSingboxButton" class="button">安装Sing-box内核</button>
+                            <button id="getBoxVersionButton" class="button">获取Sing-box版本号</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        document.getElementById('getBoxVersionButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('get_singbox_version.php');
+                if (!response.ok) {
+                    throw new Error('网络响应不是正常状态');
+                }
+                const version = await response.text();
+                document.getElementById('singBoxCorever').textContent = `sing-box 版本号: ${version}`;
+            } catch (error) {
+                console.error('获取版本号时出错:', error);
+                document.getElementById('singBoxCorever').textContent = '获取版本号失败';
+            }
+        });
+    </script>
 
 <style>
     .button {
@@ -200,6 +228,25 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
         xhr.send(); 
     });
 
+    document.getElementById('updateSingboxButton').addEventListener('click', function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'singbox.php', true); 
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        document.getElementById('logOutput').innerHTML = '开始下载核心更新...';
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById('logOutput').innerHTML += '\n核心更新完成！';
+                document.getElementById('logOutput').innerHTML += '\n' + xhr.responseText; 
+            } else {
+                document.getElementById('logOutput').innerHTML += '\n发生错误：' + xhr.statusText;
+            }
+        };
+
+        xhr.send(); 
+    });
+
     document.getElementById('updateCoreButton').addEventListener('click', function() {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'core.php', true); 
@@ -218,6 +265,7 @@ $fwstatus=shell_exec("uci get neko.cfg.new_interface");
 
         xhr.send(); 
     });
+
 
     document.getElementById('updateNekoButton').addEventListener('click', function() {
         const xhr = new XMLHttpRequest();

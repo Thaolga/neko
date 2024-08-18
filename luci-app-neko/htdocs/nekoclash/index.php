@@ -373,48 +373,185 @@ $lang = $_GET['lang'] ?? 'en';
     IP.getIpipnetIP();
     setInterval(IP.getIpipnetIP, 5000);
 </script>
-
 </body>
 </html>
+       
+<tbody>
+    <tr>
+<?php
+$singbox_status = 0;
+
+$logDir = '/etc/neko/tmp/';
+$logFile = $logDir . 'log.txt';
+$kernelLogFile = $logDir . 'neko_log.txt';
+$singBoxLogFile = $logDir . 'singbox_log.txt';
+$singboxStartLogFile = $logDir . 'singbox_start_log.txt'; 
+
+$singBoxPath = '/etc/neko/core/sing-box';
+$configFilePath = '/etc/neko/config/config.json';
+
+function isSingboxRunning() {
+    global $singBoxPath;
+    $command = "ps w | grep '$singBoxPath' | grep -v grep";
+    exec($command, $output);
+    return !empty($output);
+}
+
+if (isSingboxRunning()) {
+    $singbox_status = 1; // Sing-box 运行中
+} else {
+    $singbox_status = 0; // Sing-box 未运行
+}
+
+function getSingboxPID() {
+    global $singBoxPath;
+    $command = "ps w | grep '$singBoxPath' | grep -v grep | awk '{print $1}'";
+    exec($command, $output);
+    return isset($output[0]) ? $output[0] : null;
+}
+
+function stopSingbox() {
+    $pid = getSingboxPID();
+    if ($pid) {
+        exec("kill -9 $pid", $output, $returnVar);
+        return $returnVar === 0;
+    }
+    return false;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['singbox'])) {
+        if ($_POST['singbox'] === 'start') {
+            exec("$singBoxPath run -c $configFilePath > $singBoxLogFile 2>&1 &", $output, $returnVar);
+            if ($returnVar === 0) {
+                $singbox_status = 1;
+                file_put_contents($singBoxLogFile, "Sing-box 已启动\n", FILE_APPEND);
+            } else {
+                file_put_contents($singBoxLogFile, "启动 Sing-box 失败\n", FILE_APPEND);
+            }
+        } elseif ($_POST['singbox'] === 'disable') {
+            $success = stopSingbox();
+            if ($success) {
+                $singbox_status = 0;
+                file_put_contents($singBoxLogFile, "Sing-box 已停止\n", FILE_APPEND);
+            } else {
+                file_put_contents($singBoxLogFile, "停止 Sing-box 失败\n", FILE_APPEND);
+            }
+        } elseif ($_POST['singbox'] === 'restart') {
+            $success = stopSingbox();
+            if ($success) {
+                exec("$singBoxPath run -c $configFilePath > $singBoxLogFile 2>&1 &", $output, $returnVar);
+                if ($returnVar === 0) {
+                    $singbox_status = 1;
+                    file_put_contents($singBoxLogFile, "Sing-box 已重启\n", FILE_APPEND);
+                } else {
+                    file_put_contents($singBoxLogFile, "重启 Sing-box 失败\n", FILE_APPEND);
+                }
+            } else {
+                file_put_contents($singBoxLogFile, "停止 Sing-box 失败\n", FILE_APPEND);
+            }
+        }
+    }
+
+    if (isset($_POST['clear_singbox_log'])) {
+        file_put_contents($singBoxLogFile, ''); 
+        $message = 'Sing-box 日志已清空';
+    }
+
+    if (isset($_POST['clear_plugin_log'])) {
+        file_put_contents($logFile, ''); 
+        $message = '插件日志已清空';
+    }
+
+    if (isset($_POST['clear_kernel_log'])) {
+        file_put_contents($kernelLogFile, ''); 
+        $message = '内核日志已清空';
+    }
+}
+
+function readLogFile($filePath) {
+    if (file_exists($filePath)) {
+        return nl2br(htmlspecialchars(file_get_contents($filePath)));
+    } else {
+        return '日志文件不存在';
+    }
+}
+
+$logContent = readLogFile($logFile);
+$kernelLogContent = readLogFile($kernelLogFile);
+$singboxLogContent = readLogFile($singBoxLogFile);
+$singboxStartLogContent = readLogFile($singboxStartLogFile); 
+?>
+
+<div class="container container-bg border border-3 col-12 mb-4">
+    <h2 class="text-center p-2">NekoClash 控制面板</h2>
+    <table class="table table-borderless mb-2">
         <tbody>
             <tr>
-                <td>状态</td>
-                <td class="d-grid">
-                    <div class="btn-group col" role="group" aria-label="ctrl">            
-                        <?php
-                            if($neko_status==1) 
-                                echo "<button type=\"button\" class=\"btn btn-success\">运行中</button>\n";
-                            else 
-                                echo "<button type=\"button\" class=\"btn btn-outline-danger\">未运行</button>\n";
-                            echo "<button type=\"button\" class=\"btn btn-warning d-grid\">$str_cfg</button>\n";
-                        ?>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>控制</td>
-                <form action="index.php" method="post">
-                    <td class="d-grid">
-                        <div class="btn-group col" role="group" aria-label="ctrl">
-                            <button type="submit" name="neko" value="start" class="btn btn<?php if($neko_status==1) echo "-outline" ?>-success <?php if($neko_status==1) echo "disabled" ?> d-grid">启用</button>
-                            <button type="submit" name="neko" value="disable" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-danger <?php if($neko_status==0) echo "disabled" ?> d-grid">停用</button>
-                            <button type="submit" name="neko" value="restart" class="btn btn<?php if($neko_status==0) echo "-outline" ?>-warning <?php if($neko_status==0) echo "disabled" ?> d-grid">重启</button>
-                        </div>
-                    </td>
-                </form>
-            </tr>
-            <tr>
-                <td>运行模式</td>
-                <td class="d-grid">
-                    <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $neko_cfg['echanced']." | ".$neko_cfg['mode'] ?>" disabled>
-                </td>
-            </tr>
-        </tbody>
+        <td>状态</td>
+        <td class="d-grid">
+            <div class="btn-group col" role="group" aria-label="ctrl">
+                <?php
+                    if ($neko_status == 1) {
+                        echo "<button type=\"button\" class=\"btn btn-success\">Mihomo 运行中</button>\n";
+                    } else {
+                        echo "<button type=\"button\" class=\"btn btn-outline-danger\">Mihomo 未运行</button>\n";
+                    }
+
+                    if ($singbox_status == 1) {
+                        echo "<button type=\"button\" class=\"btn btn-success\">Sing-box 运行中</button>\n";
+                    } else {
+                        echo "<button type=\"button\" class=\"btn btn-outline-danger\">Sing-box 未运行</button>\n";
+                    }
+
+                    echo "<button type=\"button\" class=\"btn btn-warning d-grid\">$str_cfg</button>\n";
+                ?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>控制</td>
+        <form action="index.php" method="post">
+            <td class="d-grid">
+                <div class="btn-group col" role="group" aria-label="ctrl">
+                    <button type="submit" name="neko" value="start" class="btn btn<?php if ($neko_status == 1) echo "-outline" ?>-success <?php if ($neko_status == 1) echo "disabled" ?> d-grid">启用 Mihomo</button>
+                    <button type="submit" name="neko" value="disable" class="btn btn<?php if ($neko_status == 0) echo "-outline" ?>-danger <?php if ($neko_status == 0) echo "disabled" ?> d-grid">停用 Mihomo</button>
+                    <button type="submit" name="neko" value="restart" class="btn btn<?php if ($neko_status == 0) echo "-outline" ?>-warning <?php if ($neko_status == 0) echo "disabled" ?> d-grid">重启 Mihomo</button>
+                </div>
+            </td>
+        </form>
+        <form action="index.php" method="post">
+            <td class="d-grid">
+                <div class="btn-group col" role="group" aria-label="ctrl">
+                    <button type="submit" name="singbox" value="start" class="btn btn<?php if ($singbox_status == 1) echo "-outline" ?>-success <?php if ($singbox_status == 1) echo "disabled" ?> d-grid">启用 Sing-box</button>
+                    <button type="submit" name="singbox" value="disable" class="btn btn<?php if ($singbox_status == 0) echo "-outline" ?>-danger <?php if ($singbox_status == 0) echo "disabled" ?> d-grid">停用 Sing-box</button>
+                    <button type="submit" name="singbox" value="restart" class="btn btn<?php if ($singbox_status == 0) echo "-outline" ?>-warning <?php if ($singbox_status == 0) echo "disabled" ?> d-grid">重启 Sing-box</button>
+                </div>
+            </td>
+        </form>
+    </tr>
+    <tr>
+        <td>运行模式</td>
+        <td class="d-grid">
+             <?php
+             $mode_placeholder = '';
+             if ($neko_status == 1) {
+             $mode_placeholder = $neko_cfg['echanced'] . " | " . $neko_cfg['mode'];
+             } elseif ($singbox_status == 1) {
+             $mode_placeholder = "Rule 模式";
+             } else {
+             $mode_placeholder = "未运行";
+             }
+             ?>
+            <input class="form-control text-center" name="mode" type="text" placeholder="<?php echo $mode_placeholder; ?>" disabled>
+        </td>
+    </tr>
+</tbody>
     </table>
 </div>
 
 <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-    <h2 class="text-center p-2">NekoClash</h2>
+    <h2 class="text-center p-2">系统信息</h2>
     <table class="table table-borderless mb-2">
 
         <tbody>
@@ -461,65 +598,44 @@ $lang = $_GET['lang'] ?? 'en';
     </table>
 </div>
 
-
-
-<?php
-$logDir = '/etc/neko/tmp/';
-$logFile = $logDir . 'log.txt';
-$kernelLogFile = $logDir . 'neko_log.txt';
-
-if (isset($_POST['clear_plugin_log'])) {
-    file_put_contents($logFile, ''); 
-    $message = '插件日志已清空';
-}
-
-if (isset($_POST['clear_kernel_log'])) {
-    file_put_contents($kernelLogFile, ''); 
-    $message = '内核日志已清空';
-}
-
-function readLogFile($filePath) {
-    if (file_exists($filePath)) {
-        return nl2br(htmlspecialchars(file_get_contents($filePath)));
-    } else {
-        return '日志文件不存在';
-    }
-}
-
-$logContent = readLogFile($logFile);
-$kernelLogContent = readLogFile($kernelLogFile);
-?>
-
 <!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日志查看器</title>
 </head>
 <body>
     <div class="container container-bg border border-3 rounded-4 col-12 mb-4">
-        <h2 class="text-center p-2">插件日志</h2>
-        <div class="mb-3">
-            <textarea class="form-control" id="logs" rows="10" readonly><?php echo $logContent; ?></textarea>
-            <form method="post" class="text-center mt-2">
-                <button type="submit" name="clear_plugin_log" class="btn btn-danger">清空插件日志</button>
-            </form>
-        </div>
-
-        <h2 class="text-center p-2">内核日志</h2>
-        <div class="mb-3">
-            <textarea class="form-control" id="bin_logs" rows="10" readonly><?php echo $kernelLogContent; ?></textarea>
-            <form method="post" class="text-center mt-2">
-                <button type="submit" name="clear_kernel_log" class="btn btn-danger">清空内核日志</button>
-            </form>
+        <h2 class="text-center p-2">日志</h2>
+        <div class="row mt-3">
+            <div class="col">
+                <h4>插件日志</h4>
+                <textarea class="form-control" rows="10" readonly><?php echo $logContent; ?></textarea>
+                <form action="index.php" method="post" class="mt-3 text-center">
+                    <button type="submit" name="clear_plugin_log" class="btn btn-danger">清空插件日志</button>
+                </form>
+            </div>
+            <div class="col">
+                <h4>内核日志</h4>
+                <textarea class="form-control" rows="10" readonly><?php echo $kernelLogContent; ?></textarea>
+                <form action="index.php" method="post" class="mt-3 text-center">
+                    <button type="submit" name="clear_kernel_log" class="btn btn-danger">清空内核日志</button>
+                </form>
+            </div>
+            <div class="col">
+                <h4>Sing-box 日志</h4>
+                <textarea class="form-control" rows="10" readonly><?php echo $singboxLogContent; ?></textarea>
+                <form action="index.php" method="post" class="mt-3 text-center">
+                    <button type="submit" name="clear_singbox_log" class="btn btn-danger">清空 Sing-box 日志</button>
+                </form>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <footer class="text-center">
         <p><?php echo isset($message) ? $message : ''; ?></p>
         <p><?php echo $footer; ?></p>
     </footer>
 </body>
 </html>
-
