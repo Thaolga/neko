@@ -380,6 +380,7 @@ $lang = $_GET['lang'] ?? 'en';
     <tr>
 <?php
 $singbox_status = 0;
+$neko_status = 0;
 
 $logDir = '/etc/neko/tmp/';
 $logFile = $logDir . 'log.txt';
@@ -397,10 +398,30 @@ function isSingboxRunning() {
     return !empty($output);
 }
 
+function isMihomoRunning() {
+    $command = "ps w | grep 'mihomo' | grep -v grep";
+    exec($command, $output);
+    return !empty($output);
+}
+
 if (isSingboxRunning()) {
-    $singbox_status = 1; // Sing-box 运行中
+    $singbox_status = 1; 
 } else {
-    $singbox_status = 0; // Sing-box 未运行
+    $singbox_status = 0; 
+}
+
+if (isMihomoRunning()) {
+    $neko_status = 1; 
+} else {
+    $neko_status = 0; 
+}
+
+if ($neko_status == 1) {
+    $str_cfg = 'Mihomo 配置文件';
+} elseif ($singbox_status == 1) {
+    $str_cfg = 'Sing-box 配置文件';
+} else {
+    $str_cfg = '无运行中的服务';
 }
 
 function getSingboxPID() {
