@@ -1,182 +1,384 @@
 {
-    "dns": {
-        "rules": [
-            {
-                "outbound": [
-                    "any"
-                ],
-                "server": "local"
-            },
-            {
-                "clash_mode": "全局代理",
-                "server": "remote"
-            },
-            {
-                "clash_mode": "全局直连",
-                "server": "local"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn"
-                ],
-                "server": "local"
-            },
-            {
-                "rule_set": [
-                    "category-ads-all"
-                ],
-                "server": "block"
-            }
-        ],
-        "servers": [
-            {
-                "address": "https://1.1.1.1/dns-query",
-                "detour": "节点选择",
-                "tag": "remote"
-            },
-            {
-                "address": "https://223.5.5.5/dns-query",
-                "detour": "direct",
-                "tag": "local"
-            },
-            {
-                "address": "rcode://success",
-                "tag": "block"
-            }
-        ],
-        "strategy": "ipv4_only"
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "cache.db",
+      "cache_id": "my_profile2",
+      "store_fakeip": true
     },
-    "experimental": {
-        "cache_file": {
-            "enabled": true
-        },
-        "clash_api": {
-            "external_ui": "/etc/neko/ui/",
-            "external_controller": "0.0.0.0:9090",
-            "secret": "Akun"
-        }
-    },
-    "inbounds": [
-        {
-            "domain_strategy": "prefer_ipv4",
-            "listen": "127.0.0.1",
-            "listen_port": 2334,
-            "sniff": true,
-            "sniff_override_destination": true,
-            "tag": "mixed-in",
-            "type": "mixed",
-            "users": []
-        },
-        {
-            "tag": "tun",
-            "type": "tun",
-            "inet4_address": "172.19.0.0/30",
-            "inet6_address": "fdfe:dcba:9876::0/126",
-            "stack": "system",
-            "auto_route": true,
-            "strict_route": true,
-            "sniff": true,
-            "platform": {
-                "http_proxy": {
-                    "enabled": true,
-                    "server": "0.0.0.0",
-                    "server_port": 7890
-                }
-            }
-        },
-        {
-            "tag": "mixed",
-            "type": "mixed",
-            "listen": "0.0.0.0",
-            "listen_port": 7890,
-            "sniff": true
-        }
-    ],
-    "outbounds": [
-        {
-            "type": "selector",
-            "tag": "节点选择",
-            "outbounds": [
-                "自动选择",
-                        ]
-        },
-        {
-            "type": "urltest",
-            "tag": "自动选择",
-            "outbounds": [
-                        ]
-        },
-        {
-            "type": "dns",
-            "tag": "dns-out"
-        },
-        {
-            "type": "direct",
-            "tag": "direct"
-        },
-        {
-            "type": "block",
-            "tag": "block"
-        },
-        {
-  
-
-    ],
-    "route": {
-        "auto_detect_interface": true,
-        "rules": [
-            {
-                "outbound": "dns-out",
-                "protocol": "dns"
-            },
-            {
-                "clash_mode": "全局直连",
-                "outbound": "direct"
-            },
-            {
-                "clash_mode": "全局代理",
-                "outbound": "节点选择"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geoip-cn"
-                ],
-                "outbound": "direct"
-            },
-            {
-                "ip_is_private": true,
-                "outbound": "direct"
-            },
-            {
-                "rule_set": [
-                    "category-ads-all"
-                ],
-                "outbound": "block"
-            }
-        ],
-        "rule_set": [
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
-                "download_detour": "节点选择"
-            },
-            {
-                "tag": "category-ads-all",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs",
-                "download_detour": "节点选择"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
-                "download_detour": "节点选择"
-            }
-        ]
+    "clash_api": {
+      "external_ui": "ui",
+      "external_controller": "0.0.0.0:9090",
+      "external_ui_download_detour": "Proxy",
+      "default_mode": "rule"
     }
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "google",
+        "address": "tls://8.8.8.8",
+        "detour": "Proxy"
+      },
+      {
+        "tag": "fallback",
+        "address": "8.8.8.8",
+        "address_resolver": "google",
+        "detour": "Proxy"
+      },
+      {
+        "tag": "local-dns",
+        "address": "223.5.5.5",
+        "detour": "direct"
+      },
+      {
+        "tag": "block-dns",
+        "address": "rcode://success"
+      },
+      {
+        "tag": "Youtubedns",
+        "address": "8.8.8.8",
+        "detour": "Youtube"
+      },
+      {
+        "tag": "Telegramdns",
+        "address": "8.8.8.8",
+        "detour": "Telegram"
+      },
+      {
+        "tag": "Githubdns",
+        "address": "8.8.8.8",
+        "detour": "Github"
+      },
+      {
+        "tag": "Openaidns",
+        "address": "8.8.8.8",
+        "detour": "Openai"
+      },
+      {
+        "tag": "Netflixdns",
+        "address": "8.8.8.8",
+        "detour": "Netflix"
+      },
+      {
+        "tag": "Googledns",
+        "address": "8.8.8.8",
+        "detour": "Google"
+      },
+      {
+        "tag": "Directdns",
+        "address": "8.8.8.8",
+        "detour": "Direct"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "local-dns"
+      },
+      {
+        "rule_set": [
+          "Youtube0"
+        ],
+        "server": "Youtubedns"
+      },
+      {
+        "rule_set": [
+          "Telegram1"
+        ],
+        "server": "Telegramdns"
+      },
+      {
+        "rule_set": [
+          "Github0"
+        ],
+        "server": "Githubdns"
+      },
+      {
+        "rule_set": [
+          "Openai0"
+        ],
+        "server": "Openaidns"
+      },
+      {
+        "rule_set": [
+          "Netflix0"
+        ],
+        "server": "Netflixdns"
+      },
+      {
+        "rule_set": [
+          "Google0"
+        ],
+        "server": "Googledns"
+      },
+      {
+        "rule_set": [
+          "Direct1"
+        ],
+        "server": "local-dns"
+      },
+      {
+        "query_type": [
+          "A"
+        ],
+        "rewrite_ttl": 1,
+        "server": "fallback"
+      }
+    ],
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "::",
+      "listen_port": 8888,
+      "sniff": true
+    },
+    {
+      "type": "tproxy",
+      "tag": "tproxy-in",
+      "listen": "::",
+      "listen_port": 9888,
+      "sniff_override_destination": true,
+      "sniff": true
+    },
+    {
+      "type": "direct",
+      "listen": "::",
+      "listen_port": 53,
+      "sniff": true,
+      "tag": "dns-in"
+    }
+  ],
+  "route": {
+    "rule_set": [
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Youtube0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/youtube.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Telegram0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/telegram.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Telegram1",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/telegram.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Github0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/github.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Openai0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/openai.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Netflix0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/netflix.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Netflix1",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geoip/netflix.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Google0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/google.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Direct0",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "Proxy",
+        "tag": "Direct1",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/cn.srs"
+      }
+    ],
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "port": 53,
+        "outbound": "dns-out"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 853
+          },
+          {
+            "network": "udp",
+            "port": 443
+          },
+          {
+            "protocol": "stun"
+          }
+        ],
+        "outbound": "block"
+      },
+      {
+        "rule_set": [
+          "Youtube0"
+        ],
+        "outbound": "Youtube"
+      },
+      {
+        "rule_set": [
+          "Telegram0",
+          "Telegram1"
+        ],
+        "outbound": "Telegram"
+      },
+      {
+        "rule_set": [
+          "Github0"
+        ],
+        "outbound": "Github"
+      },
+      {
+        "rule_set": [
+          "Openai0"
+        ],
+        "outbound": "Openai"
+      },
+      {
+        "rule_set": [
+          "Netflix0",
+          "Netflix1"
+        ],
+        "outbound": "Netflix"
+      },
+      {
+        "rule_set": [
+          "Google0"
+        ],
+        "outbound": "Google"
+      },
+      {
+        "rule_set": [
+          "Direct0",
+          "Direct1"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "Proxy"
+  },
+  "outbounds": [
+    {
+      "tag": "Proxy",
+      "outbounds": [],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Youtube",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Telegram",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Github",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Openai",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Netflix",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "tag": "Google",
+      "outbounds": [
+        "Proxy"
+      ],
+      "interrupt_exist_connections": true,
+      "type": "selector"
+    },
+    {
+      "type": "direct",
+      "tag": "➜ Direct"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ]
 }
