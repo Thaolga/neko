@@ -61,7 +61,7 @@
   ],
 
   
-  "outbounds": [
+   "outbounds": [
     { "tag": " 节点选择", "type": "selector", "outbounds": [" 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换", " 自动选择",  " 全球直连"] },
     { "tag": " YouTube", "type": "selector", "outbounds": [" 节点选择", " 自动选择", " 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
     { "tag": " OpenAI", "type": "selector", "outbounds": [" 节点选择", " 自动选择", " 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
