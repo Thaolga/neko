@@ -1,178 +1,219 @@
 {
-    "dns": {
-        "rules": [
-            {
-                "outbound": [
-                    "any"
-                ],
-                "server": "local"
-            },
-            {
-                "clash_mode": "全局代理",
-                "server": "remote"
-            },
-            {
-                "clash_mode": "全局直连",
-                "server": "local"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn"
-                ],
-                "server": "local"
-            },
-            {
-                "rule_set": [
-                    "category-ads-all"
-                ],
-                "server": "block"
-            }
-        ],
-        "servers": [
-            {
-                "address": "https://1.1.1.1/dns-query",
-                "detour": "节点选择",
-                "tag": "remote"
-            },
-            {
-                "address": "https://223.5.5.5/dns-query",
-                "detour": "direct",
-                "tag": "local"
-            },
-            {
-                "address": "rcode://success",
-                "tag": "block"
-            }
-        ],
-        "strategy": "ipv4_only"
-    },
-    "experimental": {
-        "cache_file": {
-            "enabled": true
-        },
-        "clash_api": {
-            "external_ui": "/etc/neko/ui/",
-            "external_controller": "0.0.0.0:9090",
-            "secret": "Akun"
-        }
-    },
-    "inbounds": [
-        {
-            "domain_strategy": "prefer_ipv4",
-            "listen": "127.0.0.1",
-            "listen_port": 2334,
-            "sniff": true,
-            "sniff_override_destination": true,
-            "tag": "mixed-in",
-            "type": "mixed",
-            "users": []
-        },
-        {
-            "tag": "tun",
-            "type": "tun",
-            "inet4_address": "172.19.0.0/30",
-            "inet6_address": "fdfe:dcba:9876::0/126",
-            "stack": "system",
-            "auto_route": true,
-            "strict_route": true,
-            "sniff": true,
-            "platform": {
-                "http_proxy": {
-                    "enabled": true,
-                    "server": "0.0.0.0",
-                    "server_port": 7890
-                }
-            }
-        },
-        {
-            "tag": "mixed",
-            "type": "mixed",
-            "listen": "0.0.0.0",
-            "listen_port": 7890,
-            "sniff": true
-        }
+  "log": {
+    "disabled": false,
+    "level": "warn",
+    "output": "/var/run/sing-box-c.log",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "default-dns",
+        "address": "223.5.5.5",
+        "detour": "direct-out"
+      },
+      {
+        "tag": "system-dns",
+        "address": "local",
+        "detour": "direct-out"
+      },
+      {
+        "tag": "block-dns",
+        "address": "rcode://name_error"
+      },
+      {
+        "tag": "google",
+        "address": "https://dns.google/dns-query",
+        "address_resolver": "default-dns",
+        "address_strategy": "ipv4_only",
+        "strategy": "ipv4_only",
+        "client_subnet": "1.0.1.0"
+      }
     ],
-    "outbounds": [
-        {
-            "type": "selector",
-            "tag": "节点选择",
-            "outbounds": [
-                "自动选择"
-            ]
-        },
-        {
-            "type": "urltest",
-            "tag": "自动选择",
-            "outbounds": []
-        },
-        {
-            "type": "dns",
-            "tag": "dns-out"
-        },
-        {
-            "type": "direct",
-            "tag": "direct"
-        },
-        {
-            "type": "block",
-            "tag": "block"
-        }
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "default-dns"
+      },
+      {
+        "query_type": "HTTPS",
+        "server": "block-dns"
+      },
+      {
+        "clash_mode": "direct",
+        "server": "default-dns"
+      },
+      {
+        "clash_mode": "global",
+        "server": "google"
+      },
+      {
+        "rule_set": "cnsite",
+        "server": "default-dns"
+      }
     ],
-    "route": {
-        "auto_detect_interface": true,
-        "rules": [
-            {
-                "outbound": "dns-out",
-                "protocol": "dns"
-            },
-            {
-                "clash_mode": "全局直连",
-                "outbound": "direct"
-            },
-            {
-                "clash_mode": "全局代理",
-                "outbound": "节点选择"
-            },
-            {
-                "rule_set": [
-                    "geosite-cn",
-                    "geoip-cn"
-                ],
-                "outbound": "direct"
-            },
-            {
-                "ip_is_private": true,
-                "outbound": "direct"
-            },
-            {
-                "rule_set": [
-                    "category-ads-all"
-                ],
-                "outbound": "block"
-            }
-        ],
-        "rule_set": [
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
-                "download_detour": "节点选择"
-            },
-            {
-                "tag": "category-ads-all",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs",
-                "download_detour": "节点选择"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
-                "download_detour": "节点选择"
-            }
-        ]
+    "strategy": "ipv4_only",
+    "disable_cache": false,
+    "disable_expire": false,
+    "independent_cache": false,
+    "final": "google"
+  },
+  "inbounds": [
+    {
+      "tag": "tun",
+      "type": "tun",
+      "inet4_address": "172.19.0.0/30",
+      "inet6_address": "fdfe:dcba:9876::0/126",
+      "stack": "system",
+      "auto_route": true,
+      "strict_route": true,
+      "sniff": true,
+      "platform": {
+        "http_proxy": {
+          "enabled": true,
+          "server": "0.0.0.0",
+          "server_port": 7890
+        }
+      }
+    },
+    {
+      "tag": "mixed",
+      "type": "mixed",
+      "listen": "0.0.0.0",
+      "listen_port": 7890,
+      "sniff": true
     }
+  ],
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct-out"
+    },
+    {
+      "type": "block",
+      "tag": "block-out"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "urltest",
+      "tag": "自动选择",
+      "outbounds": [
+        "香港",
+        "日本",
+        "美国"
+      ]
+    },
+    {
+      "type": "selector",
+      "tag": "手动选择",
+      "outbounds": [
+        "direct-out",
+        "block-out",
+        "自动选择",
+        "香港",
+        "日本",
+        "美国"
+      ],
+      "default": "自动选择"
+    },
+    {
+      "type": "selector",
+      "tag": "GLOBAL",
+      "outbounds": [
+        "direct-out",
+        "香港",
+        "日本",
+        "美国"
+      ],
+      "default": "手动选择"
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "香港",
+      "server": "abc.com",
+      "server_port": 10001,
+      "password": "fdc43e321a",
+      "method": "aes-128-gcm"
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "日本",
+      "server": "abc.com",
+      "server_port": 10002,
+      "password": "fdc43e321a",
+      "method": "aes-128-gcm"
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "美国",
+      "server": "abc.com",
+      "server_port": 10003,
+      "password": "fdc43e321a",
+      "method": "aes-128-gcm"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "dns-in",
+        "outbound": "dns-out"
+      },
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "protocol": "quic",
+        "outbound": "block-out"
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "direct-out"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "GLOBAL"
+      },
+      {
+        "rule_set": [
+          "cnip",
+          "cnsite"
+        ],
+        "outbound": "direct-out"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "cnip",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geoip/cn.srs",
+        "download_detour": "自动选择"
+      },
+      {
+        "type": "remote",
+        "tag": "cnsite",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geosite/cn.srs",
+        "download_detour": "自动选择"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "手动选择"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "/www/e/cache.db"
+    },
+    "clash_api": {
+      "external_controller": "192.168.2.1:9090",
+      "external_ui": "/etc/nekoclash/ui/",
+      "external_ui_download_detour": "自动选择",
+      "default_mode": "rule"
+    }
+  }
 }
