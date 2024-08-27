@@ -6,63 +6,60 @@
   "experimental": {
     "clash_api": {
       "external_controller": "0.0.0.0:9090",
-      "external_ui": "/etc/neko/ui",
-      "secret": "Akun",
-      "external_ui_download_url": "https://mirror.ghproxy.com/https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
-      "external_ui_download_detour": " 全球直连",
+      "external_ui": "ui",
+      "secret": "",
+      "external_ui_download_url": "https://mirror.ghproxy.com/https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip",
+      "external_ui_download_detour": "🎯 全球直连",
       "default_mode": "rule"
       }
     },
   "dns": {
-    "fakeip": {"enabled": true, "inet4_range": "198.18.0.0/15", "inet6_range": "fc00::/18"},
     "servers": [
-      {"tag": "proxyDns", "address": "tls://8.8.8.8", "address_resolver": "localDns", "address_strategy": "ipv4_only", "detour": " 节点选择"},
-      {"tag": "localDns", "address": "223.5.5.5", "detour": " 全球直连"},
-      {"tag": "fakeip", "address": "fakeip"},
+      {"tag": "proxyDns", "address": "tls://8.8.8.8", "address_resolver": "localDns", "address_strategy": "ipv4_only", "detour": "🚀 节点选择"},
+      {"tag": "localDns", "address": "223.5.5.5", "detour": "🎯 全球直连"},
       {"tag": "block", "address": "rcode://success"}
     ],
     "rules": [
-      {"outbound": "any", "server": "localDns"},
+      {"outbound": "any", "server": "localDns", "disable_cache": true},
+      {"rule_set": "geosite-cn", "server": "localDns"},
       {"clash_mode": "direct", "server": "localDns"},
       {"clash_mode": "global", "server": "proxyDns"},
-      {"query_type": ["A", "AAAA"], "rule_set": "geosite-cn", "server": "fakeip"},
-      {"rule_set": "geosite-cn", "server": "localDns"},
-      {"type": "logical", "mode": "and", "rules": [
-        {"rule_set": "geosite-geolocation-!cn", "invert": true},
-        {"rule_set": "geoip-cn"}
-      ], "server": "proxyDns", "client_subnet": "114.114.114.114/24"},
-      {"query_type": ["A", "AAAA"], "server": "fakeip"}
+      {"rule_set": "geosite-geolocation-!cn", "server": "proxyDns"}
     ],
-    "independent_cache": true,
-    "strategy": "prefer_ipv4"
+    "final": "localDns",
+    "strategy": "ipv4_only"
   },
 
   "inbounds": [
     {
-      "tag": "tun",
       "type": "tun",
-      "inet4_address": "172.19.0.0/30",
-      "inet6_address": "fdfe:dcba:9876::0/126",
-      "stack": "system",
+      "inet4_address": "172.19.0.1/30",
+      "mtu": 9000,
       "auto_route": true,
       "strict_route": true,
       "sniff": true,
+      "endpoint_independent_nat": false,
+      "stack": "system",
       "platform": {
-        "http_proxy": {"enabled": true, "server": "0.0.0.0", "server_port": 7890}
+        "http_proxy": {
+          "enabled": true,
+          "server": "0.0.0.0",
+          "server_port": 2080
+        }
       }
     },
     {
-      "tag": "mixed",
       "type": "mixed",
       "listen": "0.0.0.0",
-      "listen_port": 7890,
-      "sniff": true
+      "listen_port": 2080,
+      "sniff": true,
+      "users": []
     }
   ],
 
   
-   "outbounds": [
-    { "tag": " 节点选择", "type": "selector", "outbounds": [" 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换", " 自动选择",  " 全球直连"] },
+  "outbounds": [
+    { "tag": " 节点选择", "type": "selector", "outbounds": [" 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换", " 自动选择", " 全球直连"] },
     { "tag": " YouTube", "type": "selector", "outbounds": [" 节点选择", " 自动选择", " 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
     { "tag": " OpenAI", "type": "selector", "outbounds": [" 节点选择", " 自动选择", " 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
     { "tag": " Google", "type": "selector", "outbounds": [" 节点选择", " 自动选择", " 香港自动", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
@@ -77,7 +74,6 @@
     { "tag": " 美国节点", "type": "selector", "outbounds": ["{all}"], "filter": [{ "action": "include", "keywords": ["|US|us|美国|美|United States"] }] },
     { "tag": " 香港自动", "type": "urltest", "outbounds": ["{all}"], "filter": [{ "action": "include", "keywords": ["|HK|hk|香港|港|HongKong"] }], "url": "http://www.gstatic.com/generate_204", "interval": "10m", "tolerance": 50 },
     { "tag": " 自动选择", "type": "urltest", "outbounds": ["{all}"], "filter": [{ "action": "exclude", "keywords": ["网站|地址|剩余|过期|时间|有效"] }], "url": "http://www.gstatic.com/generate_204", "interval": "10m", "tolerance": 50 },
-    { "tag": " 漏网之鱼", "type": "selector", "outbounds": [" 节点选择", " 全球直连", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
     { "tag": "GLOBAL", "type": "selector", "outbounds": [" 自动选择", " 全球直连", " 香港节点", " 日本节点", " 美国节点", " 手动切换"] },
     { "tag": " 全球直连", "type": "direct" },
     { "tag": "dns-out", "type": "dns" }
@@ -85,7 +81,7 @@
   
   "route": {
         "auto_detect_interface": true,
-        "final": " 漏网之鱼",
+        "final": "GLOBAL",
     "rules": [
       { "type": "logical", "mode": "or", "rules": [{ "port": 53 }, { "protocol": "dns" }], "outbound": "dns-out" },
       { "clash_mode": "direct", "outbound": " 全球直连" },
