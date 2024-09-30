@@ -498,14 +498,14 @@ while true; do
 
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-    printf "${CLCyan}| %-32s |${NC}\n" "   1. 安装 NeKoBox 中文版        
-    printf "${CLCyan}| %-32s |${NC}\n" "   2. 安装 NeKoBox (Eng)         
-    printf "${CLCyan}| %-32s |${NC}\n" "   3. 安装 Mihomo 核心           
-    printf "${CLCyan}| %-32s |${NC}\n" "   4. 安装 Sing-box 核心         
-    printf "${CLCyan}| %-32s |${NC}\n" "   5. 安装 UI 控制面板           
-    printf "${CLCyan}| %-32s |${NC}\n" "   6. 安装 PHP8 和 PHP8-CGI      
-    printf "${CLCyan}| %-32s |${NC}\n" "   7. 重启路由器                 
-    printf "${CLCyan}| %-32s |${NC}\n" "   0. 退出                       
+    printf "${CLCyan}${NC}\n" "   1. 安装 NeKoBox 中文版        
+    printf "${CLCyan}${NC}\n" "   2. 安装 NeKoBox (Eng)         
+    printf "${CLCyan}${NC}\n" "   3. 安装 Mihomo 核心           
+    printf "${CLCyan}${NC}\n" "   4. 安装 Sing-box 核心         
+    printf "${CLCyan}${NC}\n" "   5. 安装 UI 控制面板           
+    printf "${CLCyan}${NC}\n" "   6. 安装 PHP8 和 PHP8-CGI      
+    printf "${CLCyan}${NC}\n" "   7. 重启路由器                 
+    printf "${CLCyan}${NC}\n" "   0. 退出                       
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 
     read -p "请输入选项并按回车: " choice
