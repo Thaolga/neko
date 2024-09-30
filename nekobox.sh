@@ -475,15 +475,17 @@ install_core_menu() {
     done
 }
 
+ while true; do
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     printf "${CLWhite}%-${WIDTH}s${NC}\n" "              RAKITAN MANAGER AUTO INSTALLER              "
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 
+    # 打印设备信息
     ubus call system board | while read -r line; do
         case "$line" in
-            *"system"*) echo -e "${CLWhite} Processor: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
-            *"model"*) echo -e "${CLWhite} Device Model: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
-            *"board_name"*) echo -e "${CLWhite} Device Board: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
+            *"system"*) printf "${CLWhite}%-${WIDTH}s${NC}\n" " Processor: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
+            *"model"*) printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Model: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
+            *"board_name"*) printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Board: ${CLYellow}$(echo "$line" | awk -F'\"' '{print $4}')" ;;
         esac
     done
 
