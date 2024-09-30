@@ -529,7 +529,7 @@ while true; do
             exit 0
             ;;
         *)
-            echo -e "${RED}无效的选项，请重试。${NC}"
+            echo -e "无效的选项，请重试。"  # 去掉了红色显示
             ;;
     esac
 done
