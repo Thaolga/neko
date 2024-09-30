@@ -481,8 +481,7 @@ while true; do
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     printf "${RED}%-${WIDTH}s${NC}\n" "              RAKITAN MANAGER AUTO INSTALLER              "
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-
-    # 打印设备信息
+    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     ubus call system board | while read -r line; do
         case "$line" in
             *"system"*)
@@ -496,18 +495,19 @@ while true; do
                 printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Board: $board_name" ;;
         esac
     done
-
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-    echo -e "${CLCyan}===================================${NC}"
-    printf "${CLCyan}| %-32s |${NC}\n" "   1. 安装 NeKoBox 中文版        "
-    printf "${CLCyan}| %-32s |${NC}\n" "   2. 安装 NeKoBox (Eng)         "
-    printf "${CLCyan}| %-32s |${NC}\n" "   3. 安装 Mihomo 核心           "
-    printf "${CLCyan}| %-32s |${NC}\n" "   4. 安装 Sing-box 核心         "
-    printf "${CLCyan}| %-32s |${NC}\n" "   5. 安装 UI 控制面板           "
-    printf "${CLCyan}| %-32s |${NC}\n" "   6. 安装 PHP8 和 PHP8-CGI      "
-    printf "${CLCyan}| %-32s |${NC}\n" "   7. 重启路由器                 "
-    printf "${CLCyan}| %-32s |${NC}\n" "   0. 退出                       "
-    echo -e "${CLCyan}===================================${NC}"
+    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
+    printf "${CLCyan}| %-54s |${NC}\n" "   1. 安装 NeKoBox 中文版"
+    printf "${CLCyan}| %-54s |${NC}\n" "   2. 安装 NeKoBox (Eng)"
+    printf "${CLCyan}| %-54s |${NC}\n" "   3. 安装 Mihomo 核心"
+    printf "${CLCyan}| %-54s |${NC}\n" "   4. 安装 Sing-box 核心"
+    printf "${CLCyan}| %-54s |${NC}\n" "   5. 安装 UI 控制面板"
+    printf "${CLCyan}| %-54s |${NC}\n" "   6. 安装 PHP8 和 PHP8-CGI"
+    printf "${CLCyan}| %-54s |${NC}\n" "   7. 重启路由器"
+    printf "${CLCyan}| %-54s |${NC}\n" "   0. 退出"
+    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+    # Rest of your script...
+done
 
     read -p "请输入选项并按回车: " choice
 
