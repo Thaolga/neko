@@ -455,14 +455,16 @@ install_core_menu() {
             printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 Sing-box 核心"
             printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 puernya 核心"
             printf "${CLCyan}  %-54s ${NC}\n" "3. 返回主菜单"
+            printf "${CLCyan}  %-54s ${NC}\n" "8. 切换到英文界面"
             echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-            read -p "请选择要安装的核心: " core_choice
+            read -p "请选择要安装的核心或操作: " core_choice
         else
             printf "${CLCyan}  %-54s ${NC}\n" "1. Install Sing-box Core"
             printf "${CLCyan}  %-54s ${NC}\n" "2. Install puernya Core"
             printf "${CLCyan}  %-54s ${NC}\n" "3. Return to Main Menu"
+            printf "${CLCyan}  %-54s ${NC}\n" "8. Switch to Chinese Interface"
             echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-            read -p "Please select a core to install: " core_choice
+            read -p "Please select a core to install or an action: " core_choice
         fi
         case $core_choice in
             1)
@@ -473,6 +475,13 @@ install_core_menu() {
                 ;;
             3)
                 return
+                ;;
+            8)
+                if [ "$language" = "cn" ]; then
+                    language="en"
+                else
+                    language="cn"
+                fi
                 ;;
             *)
                 if [ "$language" = "cn" ]; then
