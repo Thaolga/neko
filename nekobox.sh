@@ -6,6 +6,24 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
+CLBlack="\e[0;30m"
+CLRed="\e[0;31m"
+CLGreen="\e[0;32m"
+CLYellow="\e[0;33m"
+CLBlue="\e[0;34m"
+CLPurple="\e[0;35m"
+CLCyan="\e[0;36m"
+CLWhite="\e[0;37m"
+
+BGBlack="\e[40m"
+BGRed="\e[41m"
+BGGreen="\e[42m"
+BGYellow="\e[43m"
+BGBlue="\e[44m"
+BGPurple="\e[45m"
+BGCyan="\e[46m"
+BGWhite="\e[47m"
+
 log_message() {
     local message="\$1"
     local log_file='/var/log/neko_update.log'
