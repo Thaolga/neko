@@ -474,16 +474,23 @@ install_core_menu() {
 }
 
 while true; do
-    echo -e "${YELLOW}===================================${NC}"
-    echo -e "${YELLOW}|   1. 安装 NeKoBox 中文版        |${NC}"
-    echo -e "${YELLOW}|   2. 安装 NeKoBox (Eng)         |${NC}"
-    echo -e "${YELLOW}|   3. 安装 Mihomo 核心           |${NC}"
-    echo -e "${YELLOW}|   4. 安装 Sing-box 核心         |${NC}"
-    echo -e "${YELLOW}|   5. 安装 UI 控制面板           |${NC}"
-    echo -e "${YELLOW}|   6. 安装 PHP8 和 PHP8-CGI      |${NC}"
-    echo -e "${YELLOW}|   7. 重启路由器                 |${NC}"
-    echo -e "${YELLOW}|   0. 退出                       |${NC}"
-    echo -e "${YELLOW}===================================${NC}"
+    echo -e "\e[36m╔════════════════════════════════════════════════════════╗"
+    echo -e "\e[41m              RAKITAN MANAGER AUTO INSTALLER              "
+    echo -e "\e[36m╚════════════════════════════════════════════════════════╝"
+    echo -e "\e[37m Processor: \e[33m$(ubus call system board | grep '\"system\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+    echo -e "\e[37m Device Model: \e[33m$(ubus call system board | grep '\"model\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+    echo -e "\e[37m Device Board: \e[33m$(ubus call system board | grep '\"board_name\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+    echo -e "\e[36m╚════════════════════════════════════════════════════════╝"
+    echo -e "\e[33m==================================\e[0m"
+    echo -e "\e[33m|   1. 安装 NeKoBox 中文版        |\e[0m"
+    echo -e "\e[33m|   2. 安装 NeKoBox (Eng)         |\e[0m"
+    echo -e "\e[33m|   3. 安装 Mihomo 核心           |\e[0m"
+    echo -e "\e[33m|   4. 安装 Sing-box 核心         |\e[0m"
+    echo -e "\e[33m|   5. 安装 UI 控制面板           |\e[0m"
+    echo -e "\e[33m|   6. 安装 PHP8 和 PHP8-CGI      |\e[0m"
+    echo -e "\e[33m|   7. 重启路由器                 |\e[0m"
+    echo -e "\e[33m|   0. 退出                       |\e[0m"
+    echo -e "\e[33m==================================\e[0m"
 
     read -p "请输入选项并按回车: " choice
 
