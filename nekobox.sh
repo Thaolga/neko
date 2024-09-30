@@ -478,7 +478,7 @@ install_core_menu() {
 
 while true; do
 echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-printf "${RED}%-${WIDTH}s${NC}\n" "              NeKoBox              "
+printf "${RED}%-${WIDTH}s${NC}\n" "              NeKoBox Installation Manager              "
 echo -e "${CLCyan}╠════════════════════════════════════════════════════════╣"
 ubus call system board | while read -r line; do
     case "$line" in
