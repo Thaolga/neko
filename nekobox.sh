@@ -475,7 +475,7 @@ install_core_menu() {
 
 while true; do
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-    echo -e "${BGRed}              RAKITAN MANAGER AUTO INSTALLER              "
+    echo -e "${CLWhite}              RAKITAN MANAGER AUTO INSTALLER              ${NC}"
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 
     ubus call system board | while read -r line; do
@@ -529,7 +529,7 @@ while true; do
             exit 0
             ;;
         *)
-            echo -e "无效的选项，请重试。"  # 去掉了红色显示
+            echo -e "${RED}无效的选项，请重试。${NC}"  # 错误提示保留红色
             ;;
     esac
 done
