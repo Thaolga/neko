@@ -450,12 +450,12 @@ reboot_router() {
 }
 
 install_core_menu() {
-while true; do
-    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-    printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 Sing-box 核心"
-    printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 puernya 核心"
-    printf "${CLCyan}  %-54s ${NC}\n" "3. 返回主菜单"
-    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+    while true; do
+        echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
+        printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 Sing-box 核心"
+        printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 puernya 核心"
+        printf "${CLCyan}  %-54s ${NC}\n" "3. 返回主菜单"
+        echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 
         read -p "请选择要安装的核心: " core_choice
 
