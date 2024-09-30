@@ -7,7 +7,7 @@ GREEN="\033[32m"
 RED="\033[31m"
 NC="\033[0m"
 
-WIDTH=50
+
 
 log_message() {
     local message="\$1"
@@ -486,13 +486,13 @@ while true; do
         case "$line" in
             *"system"*)
                 processor=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Processor: $processor" ;;
+                printf "${CLCyan} Processor: ${CLYellow}%-${WIDTH}s${NC}\n" "$processor" ;;
             *"model"*)
                 model=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Model: $model" ;;
+                printf "${CLCyan} Device Model: ${CLGreen}%-${WIDTH}s${NC}\n" "$model" ;;
             *"board_name"*)
                 board_name=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Board: $board_name" ;;
+                printf "${CLCyan} Device Board: ${CLMagenta}%-${WIDTH}s${NC}\n" "$board_name" ;;
         esac
     done
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
@@ -506,8 +506,7 @@ while true; do
     printf "${CLCyan}| %-54s |${NC}\n" "   7. 重启路由器"
     printf "${CLCyan}| %-54s |${NC}\n" "   0. 退出"
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-    # Rest of your script...
-done
+
 
     read -p "请输入选项并按回车: " choice
 
