@@ -486,13 +486,13 @@ while true; do
         case "$line" in
             *"system"*)
                 processor=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Processor: ${CLYellow}$processor${NC}" ;;
+                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Processor: $processor" ;;
             *"model"*)
                 model=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Model: ${CLYellow}$model${NC}" ;;
+                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Model: $model" ;;
             *"board_name"*)
                 board_name=$(echo "$line" | awk -F'\"' '{print $4}')
-                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Board: ${CLYellow}$board_name${NC}" ;;
+                printf "${CLWhite}%-${WIDTH}s${NC}\n" " Device Board: $board_name" ;;
         esac
     done
 
