@@ -532,6 +532,7 @@ show_menu() {
         printf "${CLCyan}  %-54s ${NC}\n" "6. 安装 PHP8 和 PHP8-CGI"
         printf "${CLCyan}  %-54s ${NC}\n" "7. 重启路由器"
         printf "${CLCyan}  %-54s ${NC}\n" "8. 切换到英文界面"
+        printf "${CLCyan}  %-54s ${NC}\n" "9. 卸载 NeKoBox"
         printf "${CLCyan}  %-54s ${NC}\n" "0. 退出"
     else
         printf "${CLCyan}  %-54s ${NC}\n" "1. Install NeKoBox (Chinese)"
@@ -542,9 +543,32 @@ show_menu() {
         printf "${CLCyan}  %-54s ${NC}\n" "6. Install PHP8 and PHP8-CGI"
         printf "${CLCyan}  %-54s ${NC}\n" "7. Reboot Router"
         printf "${CLCyan}  %-54s ${NC}\n" "8. Switch to Chinese Interface"
+        printf "${CLCyan}  %-54s ${NC}\n" "9. Uninstall NeKoBox"
         printf "${CLCyan}  %-54s ${NC}\n" "0. Exit"
     fi
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+}
+
+get_installed_package_name() {
+    local package_name_prefix="luci-app-nekobox"
+    installed_package=$(opkg list-installed | grep "^${package_name_prefix}" | awk '{print $1}')
+    echo "$installed_package"
+}
+
+uninstall_nekobox() {
+    local package_name=$(get_installed_package_name)
+    if [ -z "$package_name" ]; then
+        echo -e "${RED}未找到 NeKoBox 安装包。${NC}"
+        return
+    fi
+
+    echo -e "${RED}正在卸载 NeKoBox...${NC}"
+    opkg remove "$package_name"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}NeKoBox 卸载成功。${NC}"
+    else
+        echo -e "${RED}NeKoBox 卸载失败。${NC}"
+    fi
 }
 
 main_menu() {
@@ -586,6 +610,9 @@ main_menu() {
                 else
                     language="cn"
                 fi
+                ;;
+            9)
+                uninstall_nekobox
                 ;;
             0)
                 if [ "$language" = "cn" ]; then
