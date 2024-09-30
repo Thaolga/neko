@@ -479,8 +479,6 @@ install_core_menu() {
 while true; do
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     printf "${RED}%-${WIDTH}s${NC}\n" "              RAKITAN MANAGER AUTO INSTALLER              "
-    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     ubus call system board | while read -r line; do
         case "$line" in
             *"system"*)
@@ -494,8 +492,6 @@ while true; do
                 printf "${CLMagenta} %-${WIDTH}s${NC}\n" "Device Board: $board_name" ;;
         esac
     done
-    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
     printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 NeKoBox 中文版"
     printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 NeKoBox (Eng)"
     printf "${CLCyan}  %-54s ${NC}\n" "3. 安装 Mihomo 核心"
