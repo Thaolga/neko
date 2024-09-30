@@ -475,9 +475,9 @@ install_core_menu() {
     done
 }
 
- while true; do
+while true; do
     echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-    printf "${CLWhite}%-${WIDTH}s${NC}\n" "              RAKITAN MANAGER AUTO INSTALLER              "
+    printf "${RED}%-${WIDTH}s${NC}\n" "              RAKITAN MANAGER AUTO INSTALLER              "
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 
     # 打印设备信息
