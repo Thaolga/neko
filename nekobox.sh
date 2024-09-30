@@ -448,13 +448,22 @@ reboot_router() {
 }
 
 install_core_menu() {
+    local language=$1
     while true; do
         echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-        printf "${CLCyan}  %-54s ${NC}\n" "1. Install Sing-box Core"
-        printf "${CLCyan}  %-54s ${NC}\n" "2. Install puernya Core"
-        printf "${CLCyan}  %-54s ${NC}\n" "3. Return to Main Menu"
-        echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-        read -p "Please select a core to install: " core_choice
+        if [ "$language" = "cn" ]; then
+            printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 Sing-box 核心"
+            printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 puernya 核心"
+            printf "${CLCyan}  %-54s ${NC}\n" "3. 返回主菜单"
+            echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+            read -p "请选择要安装的核心: " core_choice
+        else
+            printf "${CLCyan}  %-54s ${NC}\n" "1. Install Sing-box Core"
+            printf "${CLCyan}  %-54s ${NC}\n" "2. Install puernya Core"
+            printf "${CLCyan}  %-54s ${NC}\n" "3. Return to Main Menu"
+            echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+            read -p "Please select a core to install: " core_choice
+        fi
         case $core_choice in
             1)
                 install_singbox
@@ -466,70 +475,135 @@ install_core_menu() {
                 return
                 ;;
             *)
-                echo -e "${RED}Invalid option, please try again.${NC}"
+                if [ "$language" = "cn" ]; then
+                    echo -e "${RED}无效选项，请重试。${NC}"
+                else
+                    echo -e "${RED}Invalid option, please try again.${NC}"
+                fi
                 ;;
         esac
     done
 }
 
-while true; do
-echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
-printf "${RED}%-${WIDTH}s${NC}\n" "              NeKoBox Installation Manager              "
-echo -e "${CLCyan}╠════════════════════════════════════════════════════════╣"
-ubus call system board | while read -r line; do
-    case "$line" in
-        *"system"*)
-            processor=$(echo "$line" | awk -F'\"' '{print $4}')
-            printf "${CLYellow} %-${WIDTH}s${NC}\n" "Processor: $processor" ;;
-        *"model"*)
-            model=$(echo "$line" | awk -F'\"' '{print $4}')
-            printf "${CLYellow} %-${WIDTH}s${NC}\n" "Device Model: $model" ;;
-        *"board_name"*)
-            board_name=$(echo "$line" | awk -F'\"' '{print $4}')
-            printf "${CLYellow} %-${WIDTH}s${NC}\n" "Device Board: $board_name" ;;
-    esac
-done
-echo -e "${CLCyan}╠════════════════════════════════════════════════════════╣"
-printf "${CLCyan}  %-54s ${NC}\n" "1. Install NeKoBox (Chinese)"
-printf "${CLCyan}  %-54s ${NC}\n" "2. Install NeKoBox (English)"
-printf "${CLCyan}  %-54s ${NC}\n" "3. Install Mihomo Core"
-printf "${CLCyan}  %-54s ${NC}\n" "4. Install Sing-box Core"
-printf "${CLCyan}  %-54s ${NC}\n" "5. Install UI Control Panel"
-printf "${CLCyan}  %-54s ${NC}\n" "6. Install PHP8 and PHP8-CGI"
-printf "${CLCyan}  %-54s ${NC}\n" "7. Reboot Router"
-printf "${CLCyan}  %-54s ${NC}\n" "0. Exit"
-echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
-    read -p "Please enter an option and press Enter: " choice
-    case $choice in
-        1)
-            language_choice="cn"
-            install_ipk
-            ;;
-        2)
-            language_choice="en"
-            install_ipk
-            ;;
-        3)
-            install_core
-            ;;
-        4)
-            install_core_menu
-            ;;
-        5)
-            install_ui
-            ;;
-        6)
-            install_php
-            ;;
-        7)
-            reboot_router
-            ;;
-        0)
-            echo -e "${GREEN}Exiting program.${NC}"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Invalid option, please try again.${NC}"
-            ;;
-    esac
-done
+show_menu() {
+    local language=$1
+    echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
+    if [ "$language" = "cn" ]; then
+        printf "${RED}%-${WIDTH}s${NC}\n" "              NeKoBox 安装管理器              "
+    else
+        printf "${RED}%-${WIDTH}s${NC}\n" "              NeKoBox Installation Manager              "
+    fi
+    echo -e "${CLCyan}╠════════════════════════════════════════════════════════╣"
+    ubus call system board | while read -r line; do
+        case "$line" in
+            *"system"*)
+                processor=$(echo "$line" | awk -F'\"' '{print $4}')
+                if [ "$language" = "cn" ]; then
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "处理器: $processor"
+                else
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "Processor: $processor"
+                fi
+                ;;
+            *"model"*)
+                model=$(echo "$line" | awk -F'\"' '{print $4}')
+                if [ "$language" = "cn" ]; then
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "设备型号: $model"
+                else
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "Device Model: $model"
+                fi
+                ;;
+            *"board_name"*)
+                board_name=$(echo "$line" | awk -F'\"' '{print $4}')
+                if [ "$language" = "cn" ]; then
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "设备主板: $board_name"
+                else
+                    printf "${CLYellow} %-${WIDTH}s${NC}\n" "Device Board: $board_name"
+                fi
+                ;;
+        esac
+    done
+    echo -e "${CLCyan}╠════════════════════════════════════════════════════════╣"
+    if [ "$language" = "cn" ]; then
+        printf "${CLCyan}  %-54s ${NC}\n" "1. 安装 NeKoBox (中文)"
+        printf "${CLCyan}  %-54s ${NC}\n" "2. 安装 NeKoBox (英文)"
+        printf "${CLCyan}  %-54s ${NC}\n" "3. 安装 Mihomo 核心"
+        printf "${CLCyan}  %-54s ${NC}\n" "4. 安装 Sing-box 核心"
+        printf "${CLCyan}  %-54s ${NC}\n" "5. 安装 UI 控制面板"
+        printf "${CLCyan}  %-54s ${NC}\n" "6. 安装 PHP8 和 PHP8-CGI"
+        printf "${CLCyan}  %-54s ${NC}\n" "7. 重启路由器"
+        printf "${CLCyan}  %-54s ${NC}\n" "8. 切换到英文界面"
+        printf "${CLCyan}  %-54s ${NC}\n" "0. 退出"
+    else
+        printf "${CLCyan}  %-54s ${NC}\n" "1. Install NeKoBox (Chinese)"
+        printf "${CLCyan}  %-54s ${NC}\n" "2. Install NeKoBox (English)"
+        printf "${CLCyan}  %-54s ${NC}\n" "3. Install Mihomo Core"
+        printf "${CLCyan}  %-54s ${NC}\n" "4. Install Sing-box Core"
+        printf "${CLCyan}  %-54s ${NC}\n" "5. Install UI Control Panel"
+        printf "${CLCyan}  %-54s ${NC}\n" "6. Install PHP8 and PHP8-CGI"
+        printf "${CLCyan}  %-54s ${NC}\n" "7. Reboot Router"
+        printf "${CLCyan}  %-54s ${NC}\n" "8. Switch to Chinese Interface"
+        printf "${CLCyan}  %-54s ${NC}\n" "0. Exit"
+    fi
+    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+}
+
+main_menu() {
+    local language=${1:-"en"}
+    while true; do
+        show_menu "$language"
+        if [ "$language" = "cn" ]; then
+            read -p "请输入选项并按回车: " choice
+        else
+            read -p "Please enter an option and press Enter: " choice
+        fi
+        case $choice in
+            1)
+                language_choice="cn"
+                install_ipk
+                ;;
+            2)
+                language_choice="en"
+                install_ipk
+                ;;
+            3)
+                install_core
+                ;;
+            4)
+                install_core_menu
+                ;;
+            5)
+                install_ui
+                ;;
+            6)
+                install_php
+                ;;
+            7)
+                reboot_router
+                ;;
+            8)
+                if [ "$language" = "cn" ]; then
+                    language="en"
+                else
+                    language="cn"
+                fi
+                ;;
+            0)
+                if [ "$language" = "cn" ]; then
+                    echo -e "${GREEN}退出程序。${NC}"
+                else
+                    echo -e "${GREEN}Exiting program.${NC}"
+                fi
+                exit 0
+                ;;
+            *)
+                if [ "$language" = "cn" ]; then
+                    echo -e "${RED}无效选项，请重试。${NC}"
+                else
+                    echo -e "${RED}Invalid option, please try again.${NC}"
+                fi
+                ;;
+        esac
+    done
+}
+
+main_menu "en"
