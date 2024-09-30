@@ -3,7 +3,8 @@
 CLCyan="\033[36m"
 CLWhite="\033[37m"
 CLYellow="\033[33m"
-BGRed="\033[41m"
+GREEN="\033[32m"
+RED="\033[31m"
 NC="\033[0m"
 
 WIDTH=50
