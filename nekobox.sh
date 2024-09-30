@@ -474,13 +474,13 @@ install_core_menu() {
 }
 
 while true; do
-    echo -e "${CLCyan}╔══════════════════════════════════════════════════════╗"
-    echo -e "${BGRed}              RAKITAN MANAGER AUTO INSTALLER              "
-    echo -e "${CLCyan}╚══════════════════════════════════════════════════════╝"
-    echo -e "${CLWhite} Processor: ${CLYellow}$(ubus call system board | grep '\"system\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
-    echo -e "${CLWhite} Device Model: ${CLYellow}$(ubus call system board | grep '\"model\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
-    echo -e "${CLWhite} Device Board: ${CLYellow}$(ubus call system board | grep '\"board_name\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
-    echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+        echo -e "${CLCyan}╔════════════════════════════════════════════════════════╗"
+        echo -e "${BGRed}              RAKITAN MANAGER AUTO INSTALLER              "
+        echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
+        echo -e "${CLWhite} Processor: ${CLYellow}$(ubus call system board | grep '\"system\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+        echo -e "${CLWhite} Device Model: ${CLYellow}$(ubus call system board | grep '\"model\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+        echo -e "${CLWhite} Device Board: ${CLYellow}$(ubus call system board | grep '\"board_name\"' | sed 's/ \+/ /g' | awk -F'\"' '{print $4}')"
+        echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
     echo -e "${CLCyan}===================================${NC}"
     echo -e "${CLCyan}|   1. 安装 NeKoBox 中文版        |${NC}"
     echo -e "${CLCyan}|   2. 安装 NeKoBox (Eng)         |${NC}"
