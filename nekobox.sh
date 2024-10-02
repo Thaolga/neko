@@ -532,7 +532,10 @@ show_menu() {
         printf "${CLCyan}  %-54s ${NC}\n" "6. 安装 PHP8 和 PHP8-CGI"
         printf "${CLCyan}  %-54s ${NC}\n" "7. 重启路由器"
         printf "${CLCyan}  %-54s ${NC}\n" "8. 切换到英文界面"
+<<<<<<< HEAD
         printf "${CLCyan}  %-54s ${NC}\n" "9. 卸载 NeKoBox"
+=======
+>>>>>>> 2f26c8ab4be6d795f1a91824fafeb6c72ee5fae4
         printf "${CLCyan}  %-54s ${NC}\n" "0. 退出"
     else
         printf "${CLCyan}  %-54s ${NC}\n" "1. Install NeKoBox (Chinese)"
@@ -543,12 +546,16 @@ show_menu() {
         printf "${CLCyan}  %-54s ${NC}\n" "6. Install PHP8 and PHP8-CGI"
         printf "${CLCyan}  %-54s ${NC}\n" "7. Reboot Router"
         printf "${CLCyan}  %-54s ${NC}\n" "8. Switch to Chinese Interface"
+<<<<<<< HEAD
         printf "${CLCyan}  %-54s ${NC}\n" "9. Uninstall NeKoBox"
+=======
+>>>>>>> 2f26c8ab4be6d795f1a91824fafeb6c72ee5fae4
         printf "${CLCyan}  %-54s ${NC}\n" "0. Exit"
     fi
     echo -e "${CLCyan}╚════════════════════════════════════════════════════════╝"
 }
 
+<<<<<<< HEAD
 get_installed_package_name() {
     local package_name_prefix="luci-app-nekobox"
     installed_package=$(opkg list-installed | grep "^${package_name_prefix}" | awk '{print $1}')
@@ -633,4 +640,65 @@ main_menu() {
     done
 }
 
+=======
+main_menu() {
+    local language=${1:-"en"}
+    while true; do
+        show_menu "$language"
+        if [ "$language" = "cn" ]; then
+            read -p "请输入选项并按回车: " choice
+        else
+            read -p "Please enter an option and press Enter: " choice
+        fi
+        case $choice in
+            1)
+                language_choice="cn"
+                install_ipk
+                ;;
+            2)
+                language_choice="en"
+                install_ipk
+                ;;
+            3)
+                install_core
+                ;;
+            4)
+                install_core_menu "$language"
+                ;;
+            5)
+                install_ui
+                ;;
+            6)
+                install_php
+                ;;
+            7)
+                reboot_router
+                ;;
+            8)
+                if [ "$language" = "cn" ]; then
+                    language="en"
+                else
+                    language="cn"
+                fi
+                ;;
+            0)
+                if [ "$language" = "cn" ]; then
+                    echo -e "${GREEN}退出程序。${NC}"
+                else
+                    echo -e "${GREEN}Exiting program.${NC}"
+                fi
+                exit 0
+                ;;
+            *)
+                if [ "$language" = "cn" ]; then
+                    echo -e "${RED}无效选项，请重试。${NC}"
+                else
+                    echo -e "${RED}Invalid option, please try again.${NC}"
+                fi
+                ;;
+        esac
+    done
+}
+
+>>>>>>> 2f26c8ab4be6d795f1a91824fafeb6c72ee5fae4
 main_menu "en"
